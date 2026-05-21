@@ -8,102 +8,112 @@ const SUPABASE_URL = 'https://gakjmoiwsqfxdmmpfmga.supabase.co';
 
 const SECTIONS = {
   drugs: {
-    label: 'Drugs & medicines',
+    label: 'Drugs & Medicines',
     template: 'drug',
     dbSection: 'drugs',
-    icon: '💊',
+    color: '#1D9E75',
+    abbr: 'Rx',
+    description: 'Monographs, dosing, interactions & NZ funding',
     azFilter: true,
     tabs: [
       { key: 'overview',          label: 'Overview' },
       { key: 'dosing',            label: 'Dosing' },
-      { key: 'renal_dosing',      label: 'Renal dosing' },
-      { key: 'hepatic_dosing',    label: 'Hepatic dosing' },
-      { key: 'adverse_effects',   label: 'Adverse effects' },
+      { key: 'renal_dosing',      label: 'Renal Dosing' },
+      { key: 'hepatic_dosing',    label: 'Hepatic Dosing' },
+      { key: 'adverse_effects',   label: 'Adverse Effects' },
       { key: 'contraindications', label: 'Contraindications' },
       { key: 'interactions',      label: 'Interactions' },
       { key: 'counselling',       label: 'Counselling' },
-      { key: 'nz_notes',          label: 'NZ notes' },
+      { key: 'nz_notes',          label: 'NZ Notes' },
     ],
     suggestions: ['Warfarin', 'Metformin', 'Atorvastatin', 'Ramipril', 'Amlodipine', 'Omeprazole'],
   },
   conditions: {
-    label: 'Health conditions',
+    label: 'Health Conditions',
     template: 'condition',
     dbSection: 'conditions',
-    icon: '🩺',
+    color: '#0F6E56',
+    abbr: 'Dx',
+    description: 'Pathophysiology, stepwise therapeutics & monitoring',
     azFilter: false,
     tabs: [
-      { key: 'overview',             label: 'Overview' },
-      { key: 'pathophysiology',      label: 'Pathophysiology' },
-      { key: 'clinical_features',    label: 'Clinical features' },
-      { key: 'non_pharmacological',  label: 'Non-pharmacological' },
-      { key: 'pharmacological',      label: 'Pharmacological' },
-      { key: 'drug_summary',         label: 'Drug summary' },
-      { key: 'monitoring',           label: 'Monitoring' },
-      { key: 'counselling',          label: 'Counselling' },
-      { key: 'nz_notes',             label: 'NZ notes' },
+      { key: 'overview',            label: 'Overview' },
+      { key: 'pathophysiology',     label: 'Pathophysiology' },
+      { key: 'clinical_features',   label: 'Clinical Features' },
+      { key: 'non_pharmacological', label: 'Non-Pharmacological' },
+      { key: 'pharmacological',     label: 'Pharmacological' },
+      { key: 'drug_summary',        label: 'Drug Summary' },
+      { key: 'monitoring',          label: 'Monitoring' },
+      { key: 'counselling',         label: 'Counselling' },
+      { key: 'nz_notes',            label: 'NZ Notes' },
     ],
-    suggestions: ['Hypertension', 'Type 2 diabetes', 'Asthma', 'Atrial fibrillation', 'GORD', 'Heart failure'],
+    suggestions: ['Hypertension', 'Type 2 Diabetes', 'Asthma', 'Atrial Fibrillation', 'GORD', 'Heart Failure'],
   },
   anatomy: {
-    label: 'Anatomy & physiology',
+    label: 'Anatomy & Physiology',
     template: 'anatomy',
     dbSection: 'anatomy',
-    icon: '🫁',
+    color: '#2E9E6E',
+    abbr: 'A&P',
+    description: 'Body systems, key structures & clinical relevance',
     azFilter: false,
     tabs: [
-      { key: 'overview',              label: 'Overview' },
-      { key: 'key_structures',        label: 'Key structures' },
-      { key: 'physiological_function',label: 'Physiology' },
-      { key: 'clinical_relevance',    label: 'Clinical relevance' },
-      { key: 'pathological_changes',  label: 'Pathological changes' },
+      { key: 'overview',               label: 'Overview' },
+      { key: 'key_structures',         label: 'Key Structures' },
+      { key: 'physiological_function', label: 'Physiology' },
+      { key: 'clinical_relevance',     label: 'Clinical Relevance' },
+      { key: 'pathological_changes',   label: 'Pathological Changes' },
     ],
-    suggestions: ['Renal system', 'Cardiovascular system', 'Respiratory system', 'Liver & biliary'],
+    suggestions: ['Renal System', 'Cardiovascular System', 'Respiratory System', 'Liver & Biliary'],
   },
   skills: {
-    label: 'Clinical skills',
+    label: 'Clinical Skills',
     template: 'skill',
     dbSection: 'skills',
-    icon: '🧮',
+    color: '#085041',
+    abbr: 'Sk',
+    description: 'Formulas, calculations, worked examples & TDM',
     azFilter: false,
     tabs: [
       { key: 'purpose',        label: 'Purpose' },
-      { key: 'formula_method', label: 'Formula / method' },
-      { key: 'worked_example', label: 'Worked example' },
+      { key: 'formula_method', label: 'Formula / Method' },
+      { key: 'worked_example', label: 'Worked Example' },
       { key: 'interpretation', label: 'Interpretation' },
-      { key: 'when_to_use',    label: 'When to use' },
+      { key: 'when_to_use',    label: 'When To Use' },
       { key: 'pitfalls',       label: 'Pitfalls' },
-      { key: 'nz_context',     label: 'NZ context' },
+      { key: 'nz_context',     label: 'NZ Context' },
     ],
-    suggestions: ['CrCl calculation', 'eGFR', 'Warfarin TDM', 'Vancomycin dosing', 'INR interpretation'],
+    suggestions: ['CrCl Calculation', 'eGFR', 'Warfarin TDM', 'Vancomycin Dosing', 'INR Interpretation'],
   },
   regulation: {
-    label: 'NZ law & regulation',
+    label: 'NZ Law & Regulation',
     template: 'regulation',
     dbSection: 'regulation',
-    icon: '⚖️',
+    color: '#147558',
+    abbr: 'NZ',
+    description: 'NZ pharmacy law, scheduling & practice rules',
     azFilter: false,
     tabs: [
       { key: 'overview',         label: 'Overview' },
-      { key: 'legal_basis',      label: 'Legal basis' },
-      { key: 'practical_rules',  label: 'Practical rules' },
-      { key: 'common_scenarios', label: 'Common scenarios' },
-      { key: 'recent_changes',   label: 'Recent changes' },
+      { key: 'legal_basis',      label: 'Legal Basis' },
+      { key: 'practical_rules',  label: 'Practical Rules' },
+      { key: 'common_scenarios', label: 'Common Scenarios' },
+      { key: 'recent_changes',   label: 'Recent Changes' },
     ],
-    suggestions: ['Controlled drugs', 'Special Authority', 'Standing orders', 'Medicines Act 1981'],
+    suggestions: ['Controlled Drugs', 'Special Authority', 'Standing Orders', 'Medicines Act 1981'],
   },
 };
 
 /* ============================================================
-   APP STATE
+   STATE
    ============================================================ */
 
 let sb = null;
 
 const state = {
   user: null,
-  entriesCache: {},   // section -> array
-  activeTab: {},      // entryId -> tab key
+  entriesCache: {},
+  activeTab: {},
   azFilter: null,
   sectionSearch: '',
 };
@@ -141,7 +151,7 @@ async function init() {
     setupListeners();
 
   } catch (err) {
-    document.body.innerHTML = `<div style="padding:2rem;color:#d93025;font-family:system-ui">
+    document.body.innerHTML = `<div style="padding:2rem;color:#c0392b;font-family:system-ui">
       Failed to initialise: ${esc(err.message)}</div>`;
   }
 }
@@ -176,21 +186,25 @@ function route() {
   const hash = window.location.hash.replace('#', '') || 'home';
   const [section, entryId] = hash.split('/');
 
+  const isHome = !section || section === 'home';
+  document.getElementById('app-shell').classList.toggle('home-view', isHome);
+
   updateNavActive(section || 'home');
   closeMobileSidebar();
 
-  // Reset section search when navigating away from a list
   if (!entryId) state.sectionSearch = '';
 
-  setLoading();
-
-  if (!section || section === 'home') {
+  if (isHome) {
+    document.getElementById('main-content').innerHTML = '';
     renderHome();
   } else if (SECTIONS[section] && entryId) {
+    setLoading();
     renderEntry(section, entryId);
   } else if (SECTIONS[section]) {
+    setLoading();
     renderList(section);
   } else {
+    document.getElementById('main-content').innerHTML = '';
     renderHome();
   }
 }
@@ -201,9 +215,7 @@ function updateNavActive(section) {
   });
 }
 
-function go(path) {
-  window.location.hash = path;
-}
+function go(path) { window.location.hash = path; }
 
 function setLoading() {
   document.getElementById('main-content').innerHTML =
@@ -229,12 +241,7 @@ async function getEntries(section) {
 }
 
 async function getEntry(id) {
-  const { data, error } = await sb
-    .from('entries')
-    .select('*')
-    .eq('id', id)
-    .single();
-
+  const { data, error } = await sb.from('entries').select('*').eq('id', id).single();
   if (error) throw error;
   return data;
 }
@@ -245,7 +252,6 @@ async function createEntry(payload) {
     .insert({ ...payload, user_id: state.user.id })
     .select()
     .single();
-
   if (error) throw error;
   state.entriesCache[payload.section] = null;
   return data;
@@ -258,7 +264,6 @@ async function updateEntry(id, updates) {
     .eq('id', id)
     .select()
     .single();
-
   if (error) throw error;
   return data;
 }
@@ -270,10 +275,7 @@ async function deleteEntry(id, section) {
 }
 
 async function toggleFav(id, current) {
-  const { error } = await sb
-    .from('entries')
-    .update({ is_favourite: !current })
-    .eq('id', id);
+  const { error } = await sb.from('entries').update({ is_favourite: !current }).eq('id', id);
   if (error) throw error;
 }
 
@@ -284,13 +286,12 @@ async function recordView(entryId) {
   );
 }
 
-async function getRecentViews(limit = 8) {
+async function getRecentViews(limit = 10) {
   const { data, error } = await sb
     .from('recent_views')
     .select('viewed_at, entries(id, title, section)')
     .order('viewed_at', { ascending: false })
     .limit(limit);
-
   if (error) return [];
   return (data || []).map(r => r.entries).filter(Boolean);
 }
@@ -313,56 +314,90 @@ async function renderHome() {
   const [counts, recent] = await Promise.all([getCounts(), getRecentViews()]);
 
   const hour = new Date().getHours();
-  const greeting = hour < 12 ? 'morning' : hour < 17 ? 'afternoon' : 'evening';
+  const greeting = hour < 12 ? 'Morning' : hour < 17 ? 'Afternoon' : 'Evening';
+
+  const primary = Object.entries(SECTIONS).slice(0, 2);
+  const secondary = Object.entries(SECTIONS).slice(2);
 
   document.getElementById('main-content').innerHTML = `
-    <div class="home">
-      <div class="page-header">
-        <h1>Good ${greeting}, DC</h1>
-        <p class="page-subtitle">Your personal pharmacist knowledge base</p>
-      </div>
+    <div class="home-page">
+      <header class="home-header">
+        <div class="home-brand">
+          <div class="brand">Pharm<span class="brand-dc">DC</span></div>
+          <div class="brand-subtitle">Personal Knowledge Base</div>
+        </div>
+        <div class="home-header-right">
+          <input type="search" id="home-search-input" class="home-search"
+            placeholder="Search All Entries…" autocomplete="off">
+          <div class="home-user">
+            <div class="user-avatar">DC</div>
+            <button class="signout-btn" id="home-signout">Sign Out</button>
+          </div>
+        </div>
+      </header>
 
-      <div class="stat-cards">
-        ${Object.entries(SECTIONS).map(([key, cfg]) => `
-          <a href="#${key}" class="stat-card">
-            <div class="stat-icon">${cfg.icon}</div>
-            <div class="stat-count">${counts[key] ?? 0}</div>
-            <div class="stat-label">${cfg.label}</div>
-          </a>
-        `).join('')}
-      </div>
+      <div class="home-body">
+        <div class="home-greeting">
+          <h1>Good ${greeting}, DC</h1>
+        </div>
 
-      <div class="home-section">
-        <h2>Browse by section</h2>
-        <div class="section-cards">
-          ${Object.entries(SECTIONS).map(([key, cfg]) => `
-            <a href="#${key}" class="section-card">
-              <div class="section-card-icon">${cfg.icon}</div>
-              <div class="section-card-label">${cfg.label}</div>
-              <div class="section-card-count">${counts[key] ?? 0} entries</div>
+        <div class="home-tiles-primary">
+          ${primary.map(([key, cfg]) => `
+            <a href="#${key}" class="section-tile" style="--tile-color:${cfg.color}">
+              <div>
+                <div class="tile-abbr">${cfg.abbr}</div>
+                <div class="tile-name">${cfg.label}</div>
+                <div class="tile-desc">${cfg.description}</div>
+              </div>
+              <div class="tile-footer">
+                <span class="tile-count">${counts[key] ?? 0} entries</span>
+                <span class="tile-arrow">→</span>
+              </div>
             </a>
           `).join('')}
         </div>
-      </div>
 
-      ${recent.length ? `
-        <div class="home-section">
-          <h2>Recently viewed</h2>
-          <div class="recent-list">
-            ${recent.map(e => `
-              <a href="#${e.section}/${e.id}" class="recent-item">
-                <div class="recent-icon">${SECTIONS[e.section]?.icon ?? '📄'}</div>
-                <div class="recent-text">
-                  <div class="recent-title">${esc(e.title)}</div>
-                  <div class="recent-section">${SECTIONS[e.section]?.label ?? e.section}</div>
-                </div>
-              </a>
-            `).join('')}
-          </div>
+        <div class="home-tiles-secondary">
+          ${secondary.map(([key, cfg]) => `
+            <a href="#${key}" class="section-tile" style="--tile-color:${cfg.color}">
+              <div>
+                <div class="tile-abbr">${cfg.abbr}</div>
+                <div class="tile-name">${cfg.label}</div>
+                <div class="tile-desc">${cfg.description}</div>
+              </div>
+              <div class="tile-footer">
+                <span class="tile-count">${counts[key] ?? 0} entries</span>
+                <span class="tile-arrow">→</span>
+              </div>
+            </a>
+          `).join('')}
         </div>
-      ` : ''}
+
+        ${recent.length ? `
+          <div class="home-recent">
+            <h2>Recently Viewed</h2>
+            <div class="recent-pills">
+              ${recent.map(e => `
+                <a href="#${e.section}/${e.id}" class="recent-pill">
+                  <span class="recent-abbr" style="color:${SECTIONS[e.section]?.color ?? 'var(--accent)'}">
+                    ${SECTIONS[e.section]?.abbr ?? '?'}
+                  </span>
+                  ${esc(e.title)}
+                </a>
+              `).join('')}
+            </div>
+          </div>
+        ` : ''}
+      </div>
     </div>
   `;
+
+  document.getElementById('home-search-input').addEventListener('input', e => {
+    const q = e.target.value.trim();
+    if (q.length >= 2) doSearch(q);
+  });
+
+  document.getElementById('home-signout').addEventListener('click', () => sb.auth.signOut());
 }
 
 /* ============================================================
@@ -389,7 +424,6 @@ async function renderList(section) {
     ? filtered.filter(e => e.title.toUpperCase().startsWith(state.azFilter))
     : filtered;
 
-  // Group alphabetically
   const groups = {};
   displayed.forEach(e => {
     const letter = e.title[0].toUpperCase();
@@ -397,8 +431,7 @@ async function renderList(section) {
     groups[letter].push(e);
   });
 
-  const main = document.getElementById('main-content');
-  main.innerHTML = `
+  document.getElementById('main-content').innerHTML = `
     <div class="section-view">
       <div class="page-header">
         <div class="page-header-row">
@@ -406,18 +439,18 @@ async function renderList(section) {
             <h1>${cfg.label}</h1>
             <p class="page-subtitle">${entries.length} ${entries.length === 1 ? 'entry' : 'entries'}</p>
           </div>
-          <button class="btn-primary" id="gen-btn">Generate entry</button>
+          <button class="btn-primary" id="gen-btn">Generate Entry</button>
         </div>
         <div class="section-search">
           <input type="search" id="sec-search" class="search-input"
-            placeholder="Search ${cfg.label.toLowerCase()}…"
+            placeholder="Search ${cfg.label}…"
             value="${esc(state.sectionSearch)}" autocomplete="off">
         </div>
       </div>
 
       ${cfg.azFilter ? renderAZ() : ''}
 
-      <div class="entry-list" id="entry-list">
+      <div class="entry-list">
         ${displayed.length === 0
           ? renderEmpty(section)
           : Object.entries(groups)
@@ -425,7 +458,7 @@ async function renderList(section) {
               .map(([letter, items]) => `
                 <div class="letter-group">
                   <div class="letter-label">${letter}</div>
-                  ${items.map(e => renderEntryRow(e, section)).join('')}
+                  ${items.map(e => entryRowHtml(e, section)).join('')}
                 </div>
               `).join('')
         }
@@ -463,7 +496,7 @@ function renderAZ() {
   `;
 }
 
-function renderEntryRow(entry, section) {
+function entryRowHtml(entry, section) {
   return `
     <a href="#${section}/${entry.id}" class="entry-row">
       <div class="entry-row-main">
@@ -480,9 +513,8 @@ function renderEmpty(section) {
   const cfg = SECTIONS[section];
   return `
     <div class="empty-state">
-      <div class="empty-icon">${cfg.icon}</div>
       <p>No entries yet</p>
-      <p class="empty-hint">Click "Generate entry" to create your first ${cfg.template} entry</p>
+      <p class="empty-hint">Generate your first ${cfg.label.toLowerCase()} entry using the button above</p>
     </div>
   `;
 }
@@ -504,19 +536,19 @@ async function renderEntry(section, entryId) {
 
   recordView(entryId);
 
-  const activeTab = state.activeTab[entryId] ?? cfg.tabs[0].key;
-
-  function buildDetail(e) {
+  function build(e) {
     const tab = state.activeTab[e.id] ?? cfg.tabs[0].key;
     const content = e.content?.[tab] ?? '';
-
     return `
       <div class="entry-detail">
-        <a href="#${section}" class="back-link">← Back to ${cfg.label}</a>
+        <a href="#${section}" class="back-link">← Back To ${cfg.label}</a>
 
         <div class="entry-header">
           <div class="entry-header-content">
-            <div class="entry-icon-square">${cfg.icon}</div>
+            <div class="entry-icon-square"
+              style="background:${cfg.color}18; border:0.5px solid ${cfg.color}50; color:${cfg.color}">
+              ${cfg.abbr}
+            </div>
             <div class="entry-title-block">
               <h1 class="entry-main-title">${esc(e.title)}</h1>
               <div class="entry-tags">
@@ -526,11 +558,11 @@ async function renderEntry(section, entryId) {
             </div>
             <div class="entry-actions">
               <button class="btn-icon ${e.is_favourite ? 'active' : ''}" id="fav-btn"
-                title="${e.is_favourite ? 'Remove from favourites' : 'Add to favourites'}">
+                title="${e.is_favourite ? 'Remove From Favourites' : 'Add To Favourites'}">
                 ${e.is_favourite ? '★' : '☆'}
               </button>
-              <button class="btn-icon" id="regen-btn" title="Regenerate entry">↻</button>
-              <button class="btn-icon btn-danger" id="del-btn" title="Delete entry">🗑</button>
+              <button class="btn-icon" id="regen-btn" title="Regenerate Entry">↻</button>
+              <button class="btn-icon btn-danger" id="del-btn" title="Delete Entry">✕</button>
             </div>
           </div>
         </div>
@@ -548,53 +580,13 @@ async function renderEntry(section, entryId) {
         </div>
 
         <div class="entry-footer">
-          <span class="entry-date">Created ${fmtDate(e.created_at)}
-            ${e.updated_at !== e.created_at ? ` · Updated ${fmtDate(e.updated_at)}` : ''}
-          </span>
+          <span class="entry-date">Created ${fmtDate(e.created_at)}${e.updated_at && e.updated_at !== e.created_at ? ` · Updated ${fmtDate(e.updated_at)}` : ''}</span>
         </div>
       </div>
     `;
   }
 
-  document.getElementById('main-content').innerHTML = buildDetail(entry);
-
-  // Tab switching (no re-render, just swap content)
-  document.querySelectorAll('.tab-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      state.activeTab[entry.id] = btn.dataset.tab;
-      document.querySelectorAll('.tab-btn').forEach(b =>
-        b.classList.toggle('active', b === btn)
-      );
-      document.getElementById('tab-panel').innerHTML = md(entry.content?.[btn.dataset.tab] ?? '');
-    });
-  });
-
-  // Favourite
-  document.getElementById('fav-btn').addEventListener('click', async () => {
-    await toggleFav(entry.id, entry.is_favourite);
-    entry.is_favourite = !entry.is_favourite;
-    state.entriesCache[section] = null;
-    document.getElementById('main-content').innerHTML = buildDetail(entry);
-    attachEntryListeners(entry, section, buildDetail);
-  });
-
-  // Regenerate
-  document.getElementById('regen-btn').addEventListener('click', () => {
-    openModal(section, entry.title, entry.id);
-  });
-
-  // Delete
-  document.getElementById('del-btn').addEventListener('click', async () => {
-    if (!confirm(`Delete "${entry.title}"? This cannot be undone.`)) return;
-    try {
-      await deleteEntry(entry.id, section);
-      go(section);
-    } catch (err) {
-      alert(`Delete failed: ${err.message}`);
-    }
-  });
-
-  function attachEntryListeners(e, sec, builder) {
+  function attach(e) {
     document.querySelectorAll('.tab-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         state.activeTab[e.id] = btn.dataset.tab;
@@ -608,25 +600,28 @@ async function renderEntry(section, entryId) {
     document.getElementById('fav-btn')?.addEventListener('click', async () => {
       await toggleFav(e.id, e.is_favourite);
       e.is_favourite = !e.is_favourite;
-      state.entriesCache[sec] = null;
-      document.getElementById('main-content').innerHTML = builder(e);
-      attachEntryListeners(e, sec, builder);
+      state.entriesCache[section] = null;
+      document.getElementById('main-content').innerHTML = build(e);
+      attach(e);
     });
 
     document.getElementById('regen-btn')?.addEventListener('click', () => {
-      openModal(sec, e.title, e.id);
+      openModal(section, e.title, e.id);
     });
 
     document.getElementById('del-btn')?.addEventListener('click', async () => {
       if (!confirm(`Delete "${e.title}"? This cannot be undone.`)) return;
       try {
-        await deleteEntry(e.id, sec);
-        go(sec);
-      } catch (err2) {
-        alert(`Delete failed: ${err2.message}`);
+        await deleteEntry(e.id, section);
+        go(section);
+      } catch (err) {
+        alert(`Delete failed: ${err.message}`);
       }
     });
   }
+
+  document.getElementById('main-content').innerHTML = build(entry);
+  attach(entry);
 }
 
 /* ============================================================
@@ -671,10 +666,7 @@ async function submitGenerate() {
   const existingId = modal.dataset.existingId || null;
   const topic = document.getElementById('generate-topic').value.trim();
 
-  if (!topic) {
-    document.getElementById('generate-topic').focus();
-    return;
-  }
+  if (!topic) { document.getElementById('generate-topic').focus(); return; }
 
   const cfg = SECTIONS[section];
   const progressEl = document.getElementById('generate-progress');
@@ -707,13 +699,7 @@ async function submitGenerate() {
       saved = await updateEntry(existingId, { title: topic, content });
       state.entriesCache[section] = null;
     } else {
-      saved = await createEntry({
-        title: topic,
-        section,
-        template: cfg.template,
-        content,
-        tags: [],
-      });
+      saved = await createEntry({ title: topic, section, template: cfg.template, content, tags: [] });
     }
 
     closeModal();
@@ -728,10 +714,11 @@ async function submitGenerate() {
 }
 
 /* ============================================================
-   GLOBAL SEARCH
+   SEARCH
    ============================================================ */
 
 async function doSearch(query) {
+  document.getElementById('app-shell').classList.remove('home-view');
   setLoading();
 
   try {
@@ -746,7 +733,7 @@ async function doSearch(query) {
     document.getElementById('main-content').innerHTML = `
       <div class="section-view">
         <div class="page-header">
-          <h1>Search results</h1>
+          <h1>Search Results</h1>
           <p class="page-subtitle">
             ${data.length} result${data.length !== 1 ? 's' : ''} for "${esc(query)}"
           </p>
@@ -757,7 +744,9 @@ async function doSearch(query) {
               ${data.map(e => `
                 <a href="#${e.section}/${e.id}" class="entry-row">
                   <div class="entry-row-main">
-                    <span class="search-result-icon">${SECTIONS[e.section]?.icon ?? '📄'}</span>
+                    <span class="search-result-abbr" style="color:${SECTIONS[e.section]?.color ?? 'var(--accent)'}">
+                      ${SECTIONS[e.section]?.abbr ?? '?'}
+                    </span>
                     <span class="entry-title">${esc(e.title)}</span>
                   </div>
                   <span class="entry-section-badge">${SECTIONS[e.section]?.label ?? e.section}</span>
@@ -778,7 +767,6 @@ async function doSearch(query) {
    ============================================================ */
 
 function setupListeners() {
-  // Login
   document.getElementById('login-form').addEventListener('submit', async e => {
     e.preventDefault();
     const email = document.getElementById('email').value;
@@ -787,7 +775,7 @@ function setupListeners() {
     const btn = document.getElementById('login-btn');
 
     btn.disabled = true;
-    btn.textContent = 'Signing in…';
+    btn.textContent = 'Signing In…';
     errEl.classList.add('hidden');
 
     const error = await signIn(email, password);
@@ -795,17 +783,14 @@ function setupListeners() {
       errEl.textContent = error.message;
       errEl.classList.remove('hidden');
       btn.disabled = false;
-      btn.textContent = 'Sign in';
+      btn.textContent = 'Sign In';
     }
   });
 
-  // Sign out
   document.getElementById('signout-btn').addEventListener('click', () => sb.auth.signOut());
 
-  // Hash routing
   window.addEventListener('hashchange', route);
 
-  // Modal
   document.getElementById('modal-close').addEventListener('click', closeModal);
   document.getElementById('modal-backdrop').addEventListener('click', closeModal);
   document.getElementById('generate-submit-btn').addEventListener('click', submitGenerate);
@@ -814,7 +799,6 @@ function setupListeners() {
     if (e.key === 'Escape') closeModal();
   });
 
-  // Global search
   let searchTimer;
   document.getElementById('global-search').addEventListener('input', e => {
     clearTimeout(searchTimer);
@@ -826,12 +810,13 @@ function setupListeners() {
     }
   });
 
-  // Mobile sidebar
   document.getElementById('menu-btn').addEventListener('click', () => {
     document.getElementById('sidebar').classList.toggle('open');
     document.getElementById('sidebar-overlay').classList.toggle('show');
   });
+
   document.getElementById('sidebar-overlay').addEventListener('click', closeMobileSidebar);
+
   document.querySelectorAll('.nav-item').forEach(el => {
     el.addEventListener('click', closeMobileSidebar);
   });
