@@ -1,6 +1,39 @@
 'use strict';
 
 /* ============================================================
+   THEME
+   ============================================================ */
+
+(function applyTheme() {
+  const saved = localStorage.getItem('pharmdc-theme');
+  if (saved === 'light' || saved === 'dark') {
+    document.documentElement.dataset.theme = saved;
+  }
+  // If nothing saved, leave the attribute unset so the CSS media query takes over
+})();
+
+function getEffectiveTheme() {
+  const saved = localStorage.getItem('pharmdc-theme');
+  if (saved === 'light' || saved === 'dark') return saved;
+  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+}
+
+function toggleTheme() {
+  const current = getEffectiveTheme();
+  const next = current === 'dark' ? 'light' : 'dark';
+  localStorage.setItem('pharmdc-theme', next);
+  document.documentElement.dataset.theme = next;
+  updateThemeToggleLabel();
+}
+
+function updateThemeToggleLabel() {
+  const btn = document.getElementById('theme-toggle-btn');
+  if (!btn) return;
+  const current = getEffectiveTheme();
+  btn.textContent = current === 'dark' ? 'Switch to light mode' : 'Switch to dark mode';
+}
+
+/* ============================================================
    SECTION CONFIGURATION
    ============================================================ */
 
@@ -936,13 +969,21 @@ function setupListeners() {
   document.getElementById('signout-btn').addEventListener('click', () => sb.auth.signOut());
   document.getElementById('mobile-signout-btn')?.addEventListener('click', () => sb.auth.signOut());
 
-  // Avatar dropdown
+  // Theme toggle
+  document.getElementById('theme-toggle-btn')?.addEventListener('click', e => {
+    e.stopPropagation();
+    toggleTheme();
+    document.getElementById('avatar-dropdown')?.classList.add('hidden');
+  });
+
+  // Avatar dropdown — update toggle label each time it opens
   const avatarBtn = document.getElementById('nav-avatar-btn');
   const dropdown  = document.getElementById('avatar-dropdown');
   avatarBtn?.addEventListener('click', e => {
     e.stopPropagation();
     const open = dropdown.classList.toggle('hidden');
     avatarBtn.setAttribute('aria-expanded', !open);
+    if (!open) updateThemeToggleLabel(); // dropdown just opened
   });
   document.addEventListener('click', () => dropdown?.classList.add('hidden'));
 
