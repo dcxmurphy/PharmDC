@@ -32,7 +32,7 @@ const SECTIONS = {
     label: 'Health Conditions',
     template: 'condition',
     dbSection: 'conditions',
-    color: '#0F6E56',
+    color: '#1D9E75',
     abbr: 'Dx',
     description: 'Pathophysiology, stepwise therapeutics & monitoring',
     azFilter: false,
@@ -53,7 +53,7 @@ const SECTIONS = {
     label: 'Anatomy & Physiology',
     template: 'anatomy',
     dbSection: 'anatomy',
-    color: '#2E9E6E',
+    color: '#1D9E75',
     abbr: 'A&P',
     description: 'Body systems, key structures & clinical relevance',
     azFilter: false,
@@ -70,7 +70,7 @@ const SECTIONS = {
     label: 'Clinical Skills',
     template: 'skill',
     dbSection: 'skills',
-    color: '#085041',
+    color: '#1D9E75',
     abbr: 'Sk',
     description: 'Formulas, calculations, worked examples & TDM',
     azFilter: false,
@@ -86,12 +86,12 @@ const SECTIONS = {
     suggestions: ['CrCl Calculation', 'eGFR', 'Warfarin TDM', 'Vancomycin Dosing', 'INR Interpretation'],
   },
   regulation: {
-    label: 'NZ Law & Regulation',
+    label: 'Law & Regulation',
     template: 'regulation',
     dbSection: 'regulation',
-    color: '#147558',
-    abbr: 'NZ',
-    description: 'NZ pharmacy law, scheduling & practice rules',
+    color: '#1D9E75',
+    abbr: 'Law',
+    description: 'Pharmacy law, scheduling & practice rules',
     azFilter: false,
     tabs: [
       { key: 'overview',         label: 'Overview' },
@@ -103,6 +103,25 @@ const SECTIONS = {
     suggestions: ['Controlled Drugs', 'Special Authority', 'Standing Orders', 'Medicines Act 1981'],
   },
 };
+
+const BODY_SYSTEMS = [
+  { name: 'Cardiovascular',    icon: `<path d="M8 13.5C8 13.5 1.5 9.5 1.5 5.5a3.2 3.2 0 016.5-1 3.2 3.2 0 016.5 1c0 4-6.5 8-6.5 8z" stroke="#1D9E75" stroke-width="1.35" stroke-linejoin="round"/>` },
+  { name: 'Respiratory',       icon: `<path d="M8 2v4" stroke="#1D9E75" stroke-width="1.35" stroke-linecap="round"/><path d="M5 6C3 6 2 7.5 2 9.5c0 1.5.8 2.8 2 3l1 .5V6H5z" stroke="#1D9E75" stroke-width="1.35" stroke-linejoin="round"/><path d="M11 6v7l1-.5c1.2-.2 2-1.5 2-3 0-2-1-3.5-3-3.5h-1z" stroke="#1D9E75" stroke-width="1.35" stroke-linejoin="round"/>` },
+  { name: 'Neurology',         icon: `<path d="M5 13V9.5C5 9.5 3 9 3 6.5a4.5 4.5 0 019 0C12 9 10 9.5 10 9.5V13" stroke="#1D9E75" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 11h5" stroke="#1D9E75" stroke-width="1.35" stroke-linecap="round"/><path d="M6 13h4" stroke="#1D9E75" stroke-width="1.35" stroke-linecap="round"/>` },
+  { name: 'Psychiatry',        icon: `<circle cx="8" cy="5.5" r="3" stroke="#1D9E75" stroke-width="1.35"/><path d="M5.5 9.5C4 10 3 11 3 12.5h10c0-1.5-1-2.5-2.5-3" stroke="#1D9E75" stroke-width="1.35" stroke-linecap="round"/><path d="M6.5 8.5c0 1 .5 2 1.5 2s1.5-1 1.5-2" stroke="#1D9E75" stroke-width="1.35" stroke-linecap="round"/>` },
+  { name: 'Endocrine',         icon: `<circle cx="8" cy="8" r="2.5" stroke="#1D9E75" stroke-width="1.35"/><circle cx="8" cy="2.5" r="1.2" stroke="#1D9E75" stroke-width="1.2"/><circle cx="8" cy="13.5" r="1.2" stroke="#1D9E75" stroke-width="1.2"/><circle cx="2.5" cy="8" r="1.2" stroke="#1D9E75" stroke-width="1.2"/><circle cx="13.5" cy="8" r="1.2" stroke="#1D9E75" stroke-width="1.2"/>` },
+  { name: 'Gastroenterology',  icon: `<path d="M4 4h8a1 1 0 011 1v1.5c0 3-1.5 5.5-5 6-3.5-.5-5-3-5-6V5a1 1 0 011-1z" stroke="#1D9E75" stroke-width="1.35" stroke-linejoin="round"/><path d="M8 8v3M6.5 9.5h3" stroke="#1D9E75" stroke-width="1.35" stroke-linecap="round"/>` },
+  { name: 'Renal',             icon: `<path d="M5 3.5C3.5 3.5 2.5 5 2.5 6.5c0 1 .5 1.5.5 2.5 0 2 1 4 2.5 4.5C7 14 8 12.5 8 11V9c0-1 .5-1.5.5-2.5 0-1.5-1-3-2.5-3H5z" stroke="#1D9E75" stroke-width="1.35" stroke-linejoin="round"/><path d="M11 3.5c1.5 0 2.5 1.5 2.5 3 0 1-.5 1.5-.5 2.5 0 2-1 4-2.5 4.5C9 14 8 12.5 8 11V9c0-1-.5-1.5-.5-2.5 0-1.5 1-3 2.5-3H11z" stroke="#1D9E75" stroke-width="1.35" stroke-linejoin="round"/>` },
+  { name: 'Musculoskeletal',   icon: `<rect x="6" y="2" width="4" height="4" rx="1" stroke="#1D9E75" stroke-width="1.35"/><rect x="6" y="10" width="4" height="4" rx="1" stroke="#1D9E75" stroke-width="1.35"/><path d="M8 6v4" stroke="#1D9E75" stroke-width="1.35" stroke-linecap="round"/><path d="M3 8h3M10 8h3" stroke="#1D9E75" stroke-width="1.35" stroke-linecap="round"/>` },
+  { name: 'Dermatology',       icon: `<path d="M2 12.5C2 12.5 4 11 8 11s6 1.5 6 1.5" stroke="#1D9E75" stroke-width="1.35" stroke-linecap="round"/><path d="M2 9.5C2 9.5 4 8 8 8s6 1.5 6 1.5" stroke="#1D9E75" stroke-width="1.35" stroke-linecap="round"/><path d="M2 6.5C2 6.5 4 5 8 5s6 1.5 6 1.5" stroke="#1D9E75" stroke-width="1.35" stroke-linecap="round"/>` },
+  { name: 'Haematology',       icon: `<path d="M8 2.5L9.5 6h3.5l-2.8 2 1 3.5L8 9.5 4.8 11.5l1-3.5L3 6h3.5z" stroke="#1D9E75" stroke-width="1.3" stroke-linejoin="round"/>` },
+  { name: 'Infectious Disease',icon: `<circle cx="8" cy="8" r="3" stroke="#1D9E75" stroke-width="1.35"/><path d="M8 2v1.5M8 12.5V14M2 8h1.5M12.5 8H14" stroke="#1D9E75" stroke-width="1.35" stroke-linecap="round"/><circle cx="8" cy="8" r="1" fill="#1D9E75"/>` },
+  { name: 'Ophthalmology',     icon: `<path d="M8 3C5 3 2.5 5.5 2.5 8S5 13 8 13s5.5-2.5 5.5-5S11 3 8 3z" stroke="#1D9E75" stroke-width="1.35"/><path d="M5 8c0-1.7 1.3-3 3-3" stroke="#1D9E75" stroke-width="1.35" stroke-linecap="round"/><circle cx="8" cy="8" r="1" fill="#1D9E75"/>` },
+  { name: 'ENT',               icon: `<path d="M10 4C10 4 13 5 13 8c0 2.5-1.5 4-3 4.5" stroke="#1D9E75" stroke-width="1.35" stroke-linecap="round"/><path d="M10 4C8 4 6.5 5.5 6.5 7.5c0 1.5.8 2.8 2 3.3" stroke="#1D9E75" stroke-width="1.35" stroke-linecap="round"/><path d="M8.5 10.5L7 13M6 13h3" stroke="#1D9E75" stroke-width="1.35" stroke-linecap="round"/>` },
+  { name: 'Immunology',        icon: `<path d="M8 2L3 5v4c0 2.5 2 4.5 5 5 3-.5 5-2.5 5-5V5L8 2z" stroke="#1D9E75" stroke-width="1.35" stroke-linejoin="round"/><path d="M5.5 8l2 2 3-3" stroke="#1D9E75" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round"/>` },
+  { name: 'Reproductive Health', icon: `<circle cx="5.5" cy="5.5" r="2.5" stroke="#1D9E75" stroke-width="1.35"/><circle cx="10.5" cy="10.5" r="2.5" stroke="#1D9E75" stroke-width="1.35"/><path d="M7.5 7.5l1 1" stroke="#1D9E75" stroke-width="1.35" stroke-linecap="round"/>` },
+  { name: 'Oncology',          icon: `<path d="M8 2L6 6H2l3.5 2.5-1.5 4.5L8 10.5l4 2.5-1.5-4.5L14 6h-4z" stroke="#1D9E75" stroke-width="1.3" stroke-linejoin="round"/>` },
+];
 
 /* ============================================================
    STATE
@@ -138,21 +157,15 @@ async function init() {
     }
 
     sb.auth.onAuthStateChange((event, session) => {
-      if (event === 'SIGNED_IN') {
-        state.user = session.user;
-        showApp();
-      } else if (event === 'SIGNED_OUT') {
-        state.user = null;
-        state.entriesCache = {};
-        showLogin();
-      }
+      if (event === 'SIGNED_IN') { state.user = session.user; showApp(); }
+      else if (event === 'SIGNED_OUT') { state.user = null; state.entriesCache = {}; showLogin(); }
     });
 
     setupListeners();
 
   } catch (err) {
-    document.body.innerHTML = `<div style="padding:2rem;color:#c0392b;font-family:system-ui">
-      Failed to initialise: ${esc(err.message)}</div>`;
+    document.body.innerHTML =
+      `<div style="padding:2rem;color:#c0392b;font-family:system-ui">Failed to initialise: ${esc(err.message)}</div>`;
   }
 }
 
@@ -185,12 +198,10 @@ function route() {
 
   const hash = window.location.hash.replace('#', '') || 'home';
   const [section, entryId] = hash.split('/');
-
   const isHome = !section || section === 'home';
-  document.getElementById('app-shell').classList.toggle('home-view', isHome);
 
   updateNavActive(section || 'home');
-  closeMobileSidebar();
+  closeMobileNav();
 
   if (!entryId) state.sectionSearch = '';
 
@@ -210,7 +221,7 @@ function route() {
 }
 
 function updateNavActive(section) {
-  document.querySelectorAll('.nav-item').forEach(el => {
+  document.querySelectorAll('.top-nav-tab, .mobile-nav-item').forEach(el => {
     el.classList.toggle('active', el.dataset.section === section);
   });
 }
@@ -228,13 +239,11 @@ function setLoading() {
 
 async function getEntries(section) {
   if (state.entriesCache[section]) return state.entriesCache[section];
-
   const { data, error } = await sb
     .from('entries')
     .select('id, title, template, tags, is_favourite, created_at')
     .eq('section', section)
     .order('title');
-
   if (error) throw error;
   state.entriesCache[section] = data || [];
   return state.entriesCache[section];
@@ -286,14 +295,14 @@ async function recordView(entryId) {
   );
 }
 
-async function getRecentViews(limit = 10) {
+async function getRecentViews(limit = 8) {
   const { data, error } = await sb
     .from('recent_views')
     .select('viewed_at, entries(id, title, section)')
     .order('viewed_at', { ascending: false })
     .limit(limit);
   if (error) return [];
-  return (data || []).map(r => r.entries).filter(Boolean);
+  return (data || []).map(r => ({ ...r.entries, viewed_at: r.viewed_at })).filter(Boolean);
 }
 
 async function getCounts() {
@@ -315,80 +324,60 @@ async function renderHome() {
 
   const hour = new Date().getHours();
   const greeting = hour < 12 ? 'Morning' : hour < 17 ? 'Afternoon' : 'Evening';
-
-  const primary = Object.entries(SECTIONS).slice(0, 2);
-  const secondary = Object.entries(SECTIONS).slice(2);
+  const dateStr = new Date().toLocaleDateString('en-NZ', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
 
   document.getElementById('main-content').innerHTML = `
-    <div class="home-page">
-      <header class="home-header">
-        <div class="home-brand">
-          <div class="brand">Pharm<span class="brand-dc">DC</span></div>
-          <div class="brand-subtitle">Personal Knowledge Base</div>
-        </div>
-        <div class="home-header-right">
-          <input type="search" id="home-search-input" class="home-search"
-            placeholder="Search All Entries…" autocomplete="off">
-          <div class="home-user">
-            <div class="user-avatar">DC</div>
-            <button class="signout-btn" id="home-signout">Sign Out</button>
-          </div>
-        </div>
-      </header>
+    <div class="home-wrap">
 
-      <div class="home-body">
-        <div class="home-greeting">
-          <h1>Good ${greeting}, DC</h1>
-        </div>
+      <div class="home-greeting">Good ${greeting}, <strong>DC</strong></div>
+      <div class="home-date">${dateStr}</div>
 
-        <div class="home-tiles-primary">
-          ${primary.map(([key, cfg]) => `
-            <a href="#${key}" class="section-tile" style="--tile-color:${cfg.color}">
-              <div>
-                <div class="tile-abbr">${cfg.abbr}</div>
-                <div class="tile-name">${cfg.label}</div>
-                <div class="tile-desc">${cfg.description}</div>
-              </div>
-              <div class="tile-footer">
-                <span class="tile-count">${counts[key] ?? 0} entries</span>
-                <span class="tile-arrow">→</span>
-              </div>
-            </a>
-          `).join('')}
-        </div>
-
-        <div class="home-tiles-secondary">
-          ${secondary.map(([key, cfg]) => `
-            <a href="#${key}" class="section-tile" style="--tile-color:${cfg.color}">
-              <div>
-                <div class="tile-abbr">${cfg.abbr}</div>
-                <div class="tile-name">${cfg.label}</div>
-                <div class="tile-desc">${cfg.description}</div>
-              </div>
-              <div class="tile-footer">
-                <span class="tile-count">${counts[key] ?? 0} entries</span>
-                <span class="tile-arrow">→</span>
-              </div>
-            </a>
-          `).join('')}
-        </div>
-
-        ${recent.length ? `
-          <div class="home-recent">
-            <h2>Recently Viewed</h2>
-            <div class="recent-pills">
-              ${recent.map(e => `
-                <a href="#${e.section}/${e.id}" class="recent-pill">
-                  <span class="recent-abbr" style="color:${SECTIONS[e.section]?.color ?? 'var(--accent)'}">
-                    ${SECTIONS[e.section]?.abbr ?? '?'}
-                  </span>
-                  ${esc(e.title)}
-                </a>
-              `).join('')}
-            </div>
-          </div>
-        ` : ''}
+      <div class="home-search-bar" id="home-search-bar">
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <circle cx="7" cy="7" r="5" stroke="#ccc" stroke-width="1.5"/>
+          <path d="M11 11l3 3" stroke="#ccc" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+        <input type="text" id="home-search-input" placeholder="Search your knowledge base…" autocomplete="off">
+        <span class="home-search-hint">⌘K</span>
       </div>
+
+      <div class="home-section-label">Browse by body system</div>
+      <div class="systems-grid">
+        ${BODY_SYSTEMS.map(sys => `
+          <a class="system-tile" href="#" data-system="${esc(sys.name)}">
+            <div class="system-icon">
+              <svg width="15" height="15" viewBox="0 0 16 16" fill="none">${sys.icon}</svg>
+            </div>
+            <span class="system-name">${esc(sys.name)}</span>
+          </a>
+        `).join('')}
+      </div>
+
+      <div class="home-section-label">Sections</div>
+      <div class="home-sections-grid">
+        ${Object.entries(SECTIONS).map(([key, cfg]) => `
+          <a class="home-section-tile" href="#${key}">
+            <div class="hst-count">${counts[key] ?? 0}</div>
+            <div class="hst-name">${cfg.label}</div>
+            <div class="hst-desc">${cfg.description}</div>
+          </a>
+        `).join('')}
+      </div>
+
+      ${recent.length ? `
+        <div class="home-section-label">Recently viewed</div>
+        <div class="home-recent-list">
+          ${recent.map(e => `
+            <a href="#${e.section}/${e.id}" class="home-recent-row">
+              <div class="home-recent-name">${esc(e.title)}</div>
+              <div class="home-recent-section">${SECTIONS[e.section]?.label ?? e.section}</div>
+              <div class="home-recent-time">${timeAgo(e.viewed_at)}</div>
+              <span class="home-recent-chev">›</span>
+            </a>
+          `).join('')}
+        </div>
+      ` : ''}
+
     </div>
   `;
 
@@ -396,8 +385,16 @@ async function renderHome() {
     const q = e.target.value.trim();
     if (q.length >= 2) doSearch(q);
   });
+  document.getElementById('home-search-bar').addEventListener('click', () => {
+    document.getElementById('home-search-input').focus();
+  });
 
-  document.getElementById('home-signout').addEventListener('click', () => sb.auth.signOut());
+  document.querySelectorAll('.system-tile').forEach(tile => {
+    tile.addEventListener('click', e => {
+      e.preventDefault();
+      doSystemSearch(tile.dataset.system);
+    });
+  });
 }
 
 /* ============================================================
@@ -432,20 +429,21 @@ async function renderList(section) {
   });
 
   document.getElementById('main-content').innerHTML = `
-    <div class="section-view">
+    <div class="section-wrap">
       <div class="page-header">
         <div class="page-header-row">
           <div>
             <h1>${cfg.label}</h1>
             <p class="page-subtitle">${entries.length} ${entries.length === 1 ? 'entry' : 'entries'}</p>
           </div>
-          <button class="btn-primary" id="gen-btn">Generate Entry</button>
+          <button class="btn-primary" id="gen-btn">
+            <svg width="11" height="11" viewBox="0 0 16 16" fill="none"><path d="M8 2v12M2 8h12" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/></svg>
+            Generate entry
+          </button>
         </div>
-        <div class="section-search">
-          <input type="search" id="sec-search" class="search-input"
-            placeholder="Search ${cfg.label}…"
-            value="${esc(state.sectionSearch)}" autocomplete="off">
-        </div>
+        <input type="search" id="sec-search" class="section-search-input"
+          placeholder="Search ${cfg.label}…"
+          value="${esc(state.sectionSearch)}" autocomplete="off">
       </div>
 
       ${cfg.azFilter ? renderAZ() : ''}
@@ -467,7 +465,6 @@ async function renderList(section) {
   `;
 
   document.getElementById('gen-btn').addEventListener('click', () => openModal(section));
-
   document.getElementById('sec-search').addEventListener('input', e => {
     state.sectionSearch = e.target.value;
     renderList(section);
@@ -527,12 +524,8 @@ async function renderEntry(section, entryId) {
   const cfg = SECTIONS[section];
   let entry;
 
-  try {
-    entry = await getEntry(entryId);
-  } catch {
-    showError('Entry not found.');
-    return;
-  }
+  try { entry = await getEntry(entryId); }
+  catch { showError('Entry not found.'); return; }
 
   recordView(entryId);
 
@@ -540,30 +533,28 @@ async function renderEntry(section, entryId) {
     const tab = state.activeTab[e.id] ?? cfg.tabs[0].key;
     const content = e.content?.[tab] ?? '';
     return `
-      <div class="entry-detail">
-        <a href="#${section}" class="back-link">← Back To ${cfg.label}</a>
+      <div class="entry-detail-wrap">
+        <div class="breadcrumb">
+          <a href="#home">Home</a>
+          <span class="breadcrumb-sep">›</span>
+          <a href="#${section}">${cfg.label}</a>
+          <span class="breadcrumb-sep">›</span>
+          <span class="breadcrumb-current">${esc(e.title)}</span>
+        </div>
 
         <div class="entry-header">
-          <div class="entry-header-content">
-            <div class="entry-icon-square"
-              style="background:${cfg.color}18; border:0.5px solid ${cfg.color}50; color:${cfg.color}">
-              ${cfg.abbr}
-            </div>
-            <div class="entry-title-block">
-              <h1 class="entry-main-title">${esc(e.title)}</h1>
-              <div class="entry-tags">
-                <span class="entry-template-badge">${cfg.template}</span>
-                ${(e.tags || []).map(t => `<span class="entry-tag">${esc(t)}</span>`).join('')}
-              </div>
-            </div>
-            <div class="entry-actions">
-              <button class="btn-icon ${e.is_favourite ? 'active' : ''}" id="fav-btn"
-                title="${e.is_favourite ? 'Remove From Favourites' : 'Add To Favourites'}">
-                ${e.is_favourite ? '★' : '☆'}
-              </button>
-              <button class="btn-icon" id="regen-btn" title="Regenerate Entry">↻</button>
-              <button class="btn-icon btn-danger" id="del-btn" title="Delete Entry">✕</button>
-            </div>
+          <h1 class="entry-main-title">${esc(e.title)}</h1>
+          <div class="entry-meta">
+            <span class="entry-tag-badge accent">${cfg.template}</span>
+            ${(e.tags || []).map(t => `<span class="entry-tag-badge">${esc(t)}</span>`).join('')}
+          </div>
+          <div class="entry-actions">
+            <button class="btn-icon ${e.is_favourite ? 'active' : ''}" id="fav-btn"
+              title="${e.is_favourite ? 'Remove from favourites' : 'Add to favourites'}">
+              ${e.is_favourite ? '★' : '☆'}
+            </button>
+            <button class="btn-icon" id="regen-btn" title="Regenerate entry">↻</button>
+            <button class="btn-icon btn-danger" id="del-btn" title="Delete entry">✕</button>
           </div>
         </div>
 
@@ -573,11 +564,7 @@ async function renderEntry(section, entryId) {
           `).join('')}
         </div>
 
-        <div class="tab-content">
-          <div class="markdown-content" id="tab-panel">
-            ${md(content)}
-          </div>
-        </div>
+        <div class="markdown-content" id="tab-panel">${md(content)}</div>
 
         <div class="entry-footer">
           <span class="entry-date">Created ${fmtDate(e.created_at)}${e.updated_at && e.updated_at !== e.created_at ? ` · Updated ${fmtDate(e.updated_at)}` : ''}</span>
@@ -590,9 +577,7 @@ async function renderEntry(section, entryId) {
     document.querySelectorAll('.tab-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         state.activeTab[e.id] = btn.dataset.tab;
-        document.querySelectorAll('.tab-btn').forEach(b =>
-          b.classList.toggle('active', b === btn)
-        );
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b === btn));
         document.getElementById('tab-panel').innerHTML = md(e.content?.[btn.dataset.tab] ?? '');
       });
     });
@@ -605,23 +590,134 @@ async function renderEntry(section, entryId) {
       attach(e);
     });
 
-    document.getElementById('regen-btn')?.addEventListener('click', () => {
-      openModal(section, e.title, e.id);
-    });
+    document.getElementById('regen-btn')?.addEventListener('click', () => openModal(section, e.title, e.id));
 
     document.getElementById('del-btn')?.addEventListener('click', async () => {
       if (!confirm(`Delete "${e.title}"? This cannot be undone.`)) return;
-      try {
-        await deleteEntry(e.id, section);
-        go(section);
-      } catch (err) {
-        alert(`Delete failed: ${err.message}`);
-      }
+      try { await deleteEntry(e.id, section); go(section); }
+      catch (err) { alert(`Delete failed: ${err.message}`); }
     });
   }
 
   document.getElementById('main-content').innerHTML = build(entry);
   attach(entry);
+}
+
+/* ============================================================
+   SYSTEM SEARCH
+   ============================================================ */
+
+async function doSystemSearch(systemName) {
+  setLoading();
+  try {
+    const { data, error } = await sb
+      .from('entries')
+      .select('id, title, section, tags')
+      .or(`tags.cs.{"${systemName}"},tags.cs.{"${systemName.toLowerCase()}"}`)
+      .limit(40);
+
+    if (error) throw error;
+
+    const titleMatches = await sb
+      .from('entries')
+      .select('id, title, section, tags')
+      .ilike('title', `%${systemName}%`)
+      .limit(20);
+
+    const combined = [...(data || [])];
+    (titleMatches.data || []).forEach(r => {
+      if (!combined.find(c => c.id === r.id)) combined.push(r);
+    });
+
+    renderSearchResults(`${systemName} system`, combined);
+  } catch (err) {
+    showError(`Search failed: ${err.message}`);
+  }
+}
+
+/* ============================================================
+   SEARCH
+   ============================================================ */
+
+async function doSearch(query) {
+  try {
+    const { data, error } = await sb
+      .from('entries')
+      .select('id, title, section')
+      .ilike('title', `%${query}%`)
+      .limit(25);
+    if (error) throw error;
+    renderSearchResults(query, data, true);
+  } catch (err) {
+    showError(`Search failed: ${err.message}`);
+  }
+}
+
+function renderSearchResults(query, data, isTextSearch = false) {
+  document.getElementById('main-content').innerHTML = `
+    <div class="section-wrap">
+      <div class="page-header">
+        <h1>${isTextSearch ? 'Search Results' : esc(query)}</h1>
+        <p class="page-subtitle">${data.length} result${data.length !== 1 ? 's' : ''}${isTextSearch ? ` for "${esc(query)}"` : ''}</p>
+      </div>
+      ${data.length === 0
+        ? `<div class="empty-state"><p>No entries found</p></div>`
+        : `<div class="entry-list">
+            ${data.map(e => `
+              <a href="#${e.section}/${e.id}" class="entry-row">
+                <div class="entry-row-main">
+                  <span class="entry-title">${esc(e.title)}</span>
+                </div>
+                <span class="entry-section-badge">${SECTIONS[e.section]?.label ?? e.section}</span>
+                <span class="entry-chevron">›</span>
+              </a>
+            `).join('')}
+          </div>`
+      }
+    </div>
+  `;
+}
+
+/* ============================================================
+   SEARCH OVERLAY
+   ============================================================ */
+
+function openSearchOverlay() {
+  const overlay = document.getElementById('search-overlay');
+  overlay.classList.remove('hidden');
+  document.getElementById('search-overlay-input').focus();
+  document.getElementById('search-overlay-results').innerHTML = '';
+}
+
+function closeSearchOverlay() {
+  document.getElementById('search-overlay').classList.add('hidden');
+  document.getElementById('search-overlay-input').value = '';
+}
+
+let overlaySearchTimer;
+async function handleOverlaySearch(query) {
+  const results = document.getElementById('search-overlay-results');
+  if (!query || query.length < 2) { results.innerHTML = ''; return; }
+  try {
+    const { data } = await sb
+      .from('entries')
+      .select('id, title, section')
+      .ilike('title', `%${query}%`)
+      .limit(12);
+    if (!data?.length) {
+      results.innerHTML = `<div class="search-no-results">No entries match "${esc(query)}"</div>`;
+      return;
+    }
+    results.innerHTML = data.map(e => `
+      <a href="#${e.section}/${e.id}" class="search-result-item" id="sr-${e.id}">
+        <span class="search-result-title">${esc(e.title)}</span>
+        <span class="search-result-badge">${SECTIONS[e.section]?.label ?? e.section}</span>
+      </a>
+    `).join('');
+    results.querySelectorAll('.search-result-item').forEach(item => {
+      item.addEventListener('click', closeSearchOverlay);
+    });
+  } catch { /* silent */ }
 }
 
 /* ============================================================
@@ -632,7 +728,10 @@ function openModal(section, prefill = '', existingId = null) {
   const cfg = SECTIONS[section];
   const modal = document.getElementById('generate-modal');
 
-  document.getElementById('modal-template-name').textContent = cfg.template;
+  const select = document.getElementById('modal-section-select');
+  select.value = section;
+  updateModalTemplate(section);
+
   document.getElementById('generate-topic').value = prefill;
   document.getElementById('generate-progress').classList.add('hidden');
   document.getElementById('generate-error').classList.add('hidden');
@@ -651,7 +750,23 @@ function openModal(section, prefill = '', existingId = null) {
   modal.dataset.section = section;
   modal.dataset.existingId = existingId ?? '';
   modal.classList.remove('hidden');
-  document.getElementById('generate-topic').focus();
+  setTimeout(() => document.getElementById('generate-topic').focus(), 50);
+}
+
+function updateModalTemplate(section) {
+  const cfg = SECTIONS[section];
+  document.getElementById('modal-template-name').textContent = cfg?.template ?? '';
+  const chips = document.getElementById('generate-chips');
+  if (cfg && chips.children.length) {
+    chips.innerHTML = cfg.suggestions.map(s =>
+      `<button class="chip" data-topic="${esc(s)}">${esc(s)}</button>`
+    ).join('');
+    chips.querySelectorAll('.chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        document.getElementById('generate-topic').value = chip.dataset.topic;
+      });
+    });
+  }
 }
 
 function closeModal() {
@@ -662,7 +777,7 @@ function closeModal() {
 
 async function submitGenerate() {
   const modal = document.getElementById('generate-modal');
-  const section = modal.dataset.section;
+  const section = document.getElementById('modal-section-select').value;
   const existingId = modal.dataset.existingId || null;
   const topic = document.getElementById('generate-topic').value.trim();
 
@@ -683,16 +798,12 @@ async function submitGenerate() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ topic, template: cfg.template, section }),
     });
-
     const body = await res.json();
     if (!res.ok) throw new Error(body.error ?? `API error ${res.status}`);
 
     let content;
-    try {
-      content = JSON.parse(body.content);
-    } catch {
-      throw new Error('Failed to parse AI response — please try again.');
-    }
+    try { content = JSON.parse(body.content); }
+    catch { throw new Error('Failed to parse AI response — please try again.'); }
 
     let saved;
     if (existingId) {
@@ -706,59 +817,94 @@ async function submitGenerate() {
     go(`${section}/${saved.id}`);
 
   } catch (err) {
-    errorEl.textContent = err.message;
-    errorEl.classList.remove('hidden');
+    document.getElementById('generate-error').textContent = err.message;
+    document.getElementById('generate-error').classList.remove('hidden');
     submitBtn.disabled = false;
     progressEl.classList.add('hidden');
   }
 }
 
 /* ============================================================
-   SEARCH
+   AI WIDGET
    ============================================================ */
 
-async function doSearch(query) {
-  document.getElementById('app-shell').classList.remove('home-view');
-  setLoading();
+function toggleAiPanel() {
+  const panel = document.getElementById('ai-panel');
+  const trigger = document.getElementById('ai-trigger');
+  const isOpen = panel.classList.toggle('is-open');
+  trigger.classList.toggle('is-open', isOpen);
+  trigger.setAttribute('aria-expanded', isOpen);
+  panel.setAttribute('aria-hidden', !isOpen);
+  if (isOpen) document.getElementById('ai-input').focus();
+}
+
+function addAiMessage(role, content, sources = []) {
+  const msgs = document.getElementById('ai-messages');
+  const div = document.createElement('div');
+  div.className = `ai-msg ai-msg--${role}`;
+
+  const sourcesHtml = sources.length
+    ? `<div class="ai-msg-source">From ${sources.map(s =>
+        `<a href="#${s.section}/${s.id}" class="ai-source-chip">${esc(s.title)}</a>`
+      ).join(' ')}</div>`
+    : '';
+
+  div.innerHTML = `
+    <div class="ai-msg-avatar">${role === 'assistant' ? 'AI' : 'DC'}</div>
+    <div>
+      <div class="ai-msg-bubble">${content}</div>
+      ${sourcesHtml}
+    </div>
+  `;
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+  return div;
+}
+
+function showAiTyping() {
+  const msgs = document.getElementById('ai-messages');
+  const div = document.createElement('div');
+  div.className = 'ai-msg ai-msg--assistant';
+  div.id = 'ai-typing-indicator';
+  div.innerHTML = `
+    <div class="ai-msg-avatar">AI</div>
+    <div class="ai-msg-bubble ai-typing">
+      <span></span><span></span><span></span>
+    </div>
+  `;
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function removeAiTyping() {
+  document.getElementById('ai-typing-indicator')?.remove();
+}
+
+async function sendAiMessage(query) {
+  if (!query.trim()) return;
+
+  document.getElementById('ai-suggestions').classList.add('hidden');
+  document.getElementById('ai-input').value = '';
+
+  addAiMessage('user', esc(query));
+  showAiTyping();
 
   try {
-    const { data, error } = await sb
-      .from('entries')
-      .select('id, title, section')
-      .ilike('title', `%${query}%`)
-      .limit(25);
+    const res = await fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ query }),
+    });
+    const body = await res.json();
+    removeAiTyping();
 
-    if (error) throw error;
+    if (!res.ok) throw new Error(body.error ?? `Error ${res.status}`);
 
-    document.getElementById('main-content').innerHTML = `
-      <div class="section-view">
-        <div class="page-header">
-          <h1>Search Results</h1>
-          <p class="page-subtitle">
-            ${data.length} result${data.length !== 1 ? 's' : ''} for "${esc(query)}"
-          </p>
-        </div>
-        ${data.length === 0
-          ? `<div class="empty-state"><p>No entries match "${esc(query)}"</p></div>`
-          : `<div class="entry-list">
-              ${data.map(e => `
-                <a href="#${e.section}/${e.id}" class="entry-row">
-                  <div class="entry-row-main">
-                    <span class="search-result-abbr" style="color:${SECTIONS[e.section]?.color ?? 'var(--accent)'}">
-                      ${SECTIONS[e.section]?.abbr ?? '?'}
-                    </span>
-                    <span class="entry-title">${esc(e.title)}</span>
-                  </div>
-                  <span class="entry-section-badge">${SECTIONS[e.section]?.label ?? e.section}</span>
-                  <span class="entry-chevron">›</span>
-                </a>
-              `).join('')}
-            </div>`
-        }
-      </div>
-    `;
+    addAiMessage('assistant', body.answer, body.sources || []);
+
   } catch (err) {
-    showError(`Search failed: ${err.message}`);
+    removeAiTyping();
+    addAiMessage('assistant', `Sorry, I couldn't search the knowledge base right now. <em>${esc(err.message)}</em>`);
   }
 }
 
@@ -767,30 +913,57 @@ async function doSearch(query) {
    ============================================================ */
 
 function setupListeners() {
+  // Login
   document.getElementById('login-form').addEventListener('submit', async e => {
     e.preventDefault();
-    const email = document.getElementById('email').value;
+    const email    = document.getElementById('email').value;
     const password = document.getElementById('password').value;
-    const errEl = document.getElementById('login-error');
-    const btn = document.getElementById('login-btn');
+    const errEl    = document.getElementById('login-error');
+    const btn      = document.getElementById('login-btn');
 
-    btn.disabled = true;
-    btn.textContent = 'Signing In…';
+    btn.disabled = true; btn.textContent = 'Signing in…';
     errEl.classList.add('hidden');
 
     const error = await signIn(email, password);
     if (error) {
       errEl.textContent = error.message;
       errEl.classList.remove('hidden');
-      btn.disabled = false;
-      btn.textContent = 'Sign In';
+      btn.disabled = false; btn.textContent = 'Sign in';
     }
   });
 
+  // Sign out (avatar dropdown)
   document.getElementById('signout-btn').addEventListener('click', () => sb.auth.signOut());
+  document.getElementById('mobile-signout-btn')?.addEventListener('click', () => sb.auth.signOut());
 
+  // Avatar dropdown
+  const avatarBtn = document.getElementById('nav-avatar-btn');
+  const dropdown  = document.getElementById('avatar-dropdown');
+  avatarBtn?.addEventListener('click', e => {
+    e.stopPropagation();
+    const open = dropdown.classList.toggle('hidden');
+    avatarBtn.setAttribute('aria-expanded', !open);
+  });
+  document.addEventListener('click', () => dropdown?.classList.add('hidden'));
+
+  // Top nav generate button
+  document.getElementById('nav-gen-btn')?.addEventListener('click', () => {
+    const hash    = window.location.hash.replace('#', '') || 'home';
+    const section = hash.split('/')[0];
+    openModal(SECTIONS[section] ? section : 'drugs');
+  });
+
+  // Modal section selector
+  document.getElementById('modal-section-select')?.addEventListener('change', e => {
+    const section = e.target.value;
+    document.getElementById('generate-modal').dataset.section = section;
+    updateModalTemplate(section);
+  });
+
+  // Routing
   window.addEventListener('hashchange', route);
 
+  // Modal
   document.getElementById('modal-close').addEventListener('click', closeModal);
   document.getElementById('modal-backdrop').addEventListener('click', closeModal);
   document.getElementById('generate-submit-btn').addEventListener('click', submitGenerate);
@@ -799,32 +972,61 @@ function setupListeners() {
     if (e.key === 'Escape') closeModal();
   });
 
-  let searchTimer;
-  document.getElementById('global-search').addEventListener('input', e => {
-    clearTimeout(searchTimer);
-    const q = e.target.value.trim();
-    if (q.length >= 2) {
-      searchTimer = setTimeout(() => doSearch(q), 300);
-    } else if (!q) {
-      route();
+  // Search overlay
+  const cmdBtn = document.getElementById('cmd-search-btn');
+  cmdBtn?.addEventListener('click', openSearchOverlay);
+
+  document.getElementById('search-backdrop')?.addEventListener('click', closeSearchOverlay);
+  document.getElementById('search-overlay-input')?.addEventListener('input', e => {
+    clearTimeout(overlaySearchTimer);
+    overlaySearchTimer = setTimeout(() => handleOverlaySearch(e.target.value.trim()), 200);
+  });
+  document.getElementById('search-overlay-input')?.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeSearchOverlay();
+  });
+
+  // ⌘K shortcut
+  document.addEventListener('keydown', e => {
+    if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+      e.preventDefault();
+      const overlay = document.getElementById('search-overlay');
+      if (overlay.classList.contains('hidden')) openSearchOverlay();
+      else closeSearchOverlay();
+    }
+    if (e.key === 'Escape') {
+      closeSearchOverlay();
+      closeModal();
     }
   });
 
-  document.getElementById('menu-btn').addEventListener('click', () => {
-    document.getElementById('sidebar').classList.toggle('open');
-    document.getElementById('sidebar-overlay').classList.toggle('show');
+  // Mobile menu
+  document.getElementById('menu-btn')?.addEventListener('click', () => {
+    document.getElementById('mobile-drawer').classList.toggle('open');
+    document.getElementById('mobile-overlay').classList.toggle('show');
+  });
+  document.getElementById('mobile-overlay')?.addEventListener('click', closeMobileNav);
+  document.querySelectorAll('.mobile-nav-item').forEach(el => {
+    el.addEventListener('click', closeMobileNav);
   });
 
-  document.getElementById('sidebar-overlay').addEventListener('click', closeMobileSidebar);
+  // AI widget
+  document.getElementById('ai-trigger').addEventListener('click', toggleAiPanel);
+  document.getElementById('ai-close').addEventListener('click', toggleAiPanel);
 
-  document.querySelectorAll('.nav-item').forEach(el => {
-    el.addEventListener('click', closeMobileSidebar);
+  document.getElementById('ai-send-btn').addEventListener('click', () => {
+    sendAiMessage(document.getElementById('ai-input').value);
+  });
+  document.getElementById('ai-input').addEventListener('keydown', e => {
+    if (e.key === 'Enter') sendAiMessage(document.getElementById('ai-input').value);
+  });
+  document.querySelectorAll('.ai-sugg-chip').forEach(chip => {
+    chip.addEventListener('click', () => sendAiMessage(chip.textContent));
   });
 }
 
-function closeMobileSidebar() {
-  document.getElementById('sidebar').classList.remove('open');
-  document.getElementById('sidebar-overlay').classList.remove('show');
+function closeMobileNav() {
+  document.getElementById('mobile-drawer').classList.remove('open');
+  document.getElementById('mobile-overlay').classList.remove('show');
 }
 
 /* ============================================================
@@ -834,23 +1036,31 @@ function closeMobileSidebar() {
 function esc(str) {
   if (!str) return '';
   return String(str)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;');
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
 
 function md(text) {
   if (!text) return '<p class="content-empty">No content for this section.</p>';
-  const html = marked.parse(String(text));
-  return DOMPurify.sanitize(html);
+  return DOMPurify.sanitize(marked.parse(String(text)));
 }
 
 function fmtDate(iso) {
   if (!iso) return '';
-  return new Date(iso).toLocaleDateString('en-NZ', {
-    day: 'numeric', month: 'short', year: 'numeric',
-  });
+  return new Date(iso).toLocaleDateString('en-NZ', { day: 'numeric', month: 'short', year: 'numeric' });
+}
+
+function timeAgo(iso) {
+  if (!iso) return '';
+  const diff = Date.now() - new Date(iso).getTime();
+  const mins = Math.floor(diff / 60000);
+  if (mins < 60) return mins < 2 ? 'Just now' : `${mins}m ago`;
+  const hrs = Math.floor(mins / 60);
+  if (hrs < 24) return `${hrs}h ago`;
+  const days = Math.floor(hrs / 24);
+  if (days === 1) return 'Yesterday';
+  if (days < 7) return `${days}d ago`;
+  return fmtDate(iso);
 }
 
 function showError(msg) {
