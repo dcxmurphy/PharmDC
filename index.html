@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PharmDC</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- ── LOGIN ─────────────────────────────────────────── -->
+  <div id="login-screen" class="login-screen">
+    <div class="login-card">
+      <div class="login-brand">Pharm<span class="brand-dc">DC</span></div>
+      <p class="login-subtitle">Personal knowledge base</p>
+      <form id="login-form" class="login-form" novalidate>
+        <div class="form-field">
+          <label for="email">Email</label>
+          <input type="email" id="email" autocomplete="email" required placeholder="dc@example.com">
+        </div>
+        <div class="form-field">
+          <label for="password">Password</label>
+          <input type="password" id="password" autocomplete="current-password" required>
+        </div>
+        <p id="login-error" class="form-error hidden"></p>
+        <button type="submit" class="btn-primary" id="login-btn">Sign in</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ── APP SHELL ──────────────────────────────────────── -->
+  <div id="app-shell" class="app-shell hidden">
+
+    <!-- Sidebar overlay for mobile tap-to-close -->
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-brand">
+        <div class="brand">Pharm<span class="brand-dc">DC</span></div>
+        <p class="brand-subtitle">Personal knowledge base</p>
+      </div>
+
+      <div class="sidebar-search">
+        <input type="search" id="global-search" class="search-input" placeholder="Search…" autocomplete="off">
+      </div>
+
+      <nav class="sidebar-nav" id="sidebar-nav">
+        <a href="#home"       class="nav-item" data-section="home">Home</a>
+        <a href="#drugs"      class="nav-item" data-section="drugs">Drugs &amp; medicines</a>
+        <a href="#conditions" class="nav-item" data-section="conditions">Health conditions</a>
+        <a href="#anatomy"    class="nav-item" data-section="anatomy">Anatomy &amp; physiology</a>
+        <a href="#skills"     class="nav-item" data-section="skills">Clinical skills</a>
+        <a href="#regulation" class="nav-item" data-section="regulation">NZ law &amp; regulation</a>
+      </nav>
+
+      <div class="sidebar-user">
+        <div class="user-avatar">DC</div>
+        <div class="user-meta">
+          <div class="user-name">DC</div>
+          <div class="user-role">Pharmacist · NZ</div>
+        </div>
+        <button id="signout-btn" class="signout-btn">Sign out</button>
+      </div>
+    </aside>
+
+    <div class="main-wrapper">
+      <!-- Mobile top bar -->
+      <div class="mobile-bar">
+        <button class="menu-btn" id="menu-btn" aria-label="Open menu">☰</button>
+        <div class="mobile-brand">Pharm<span class="brand-dc">DC</span></div>
+      </div>
+
+      <main id="main-content" class="main-content">
+        <div class="loading"><div class="spinner"></div></div>
+      </main>
+    </div>
+  </div>
+
+  <!-- ── GENERATE MODAL ─────────────────────────────────── -->
+  <div id="generate-modal" class="modal hidden" role="dialog" aria-modal="true">
+    <div class="modal-backdrop" id="modal-backdrop"></div>
+    <div class="modal-card">
+      <div class="modal-header">
+        <h2>Generate entry</h2>
+        <button class="modal-close" id="modal-close" aria-label="Close">✕</button>
+      </div>
+      <p class="modal-hint">Generating a <strong id="modal-template-name"></strong> entry</p>
+      <input type="text" id="generate-topic" class="generate-input" placeholder="Topic name…" autocomplete="off" spellcheck="false">
+      <div class="generate-chips" id="generate-chips"></div>
+      <div class="modal-actions">
+        <button class="btn-primary" id="generate-submit-btn">Generate</button>
+      </div>
+      <div id="generate-progress" class="generate-progress hidden">
+        <div class="spinner"></div>
+        <span>Generating entry…</span>
+      </div>
+      <p id="generate-error" class="form-error hidden"></p>
+    </div>
+  </div>
+
+  <!-- CDN libraries -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/dompurify@3/dist/purify.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
