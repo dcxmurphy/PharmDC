@@ -24,7 +24,7 @@ One-line format: [Class] · [Role]
 ---FIELD_END
 
 ---FIELD_START: overview
-1-2 paragraphs introducing the drug class, therapeutic role, and clinical significance ONLY — do NOT describe the mechanism here. Then: blockquote > ⚡ **Mechanism:** [one-sentence summary of mechanism of action only]. Then: ### Detailed mechanism of action, followed by 3-4 detailed paragraphs explaining HOW the drug works. Then: any warning blockquotes (> ⚠️ **Note:** [warning] or > 🚨 **Warning:** [serious warning]) if relevant. CRITICAL: Mechanism must appear ONLY in the h3 section and blockquote, not in the introductory paragraphs.
+1-2 paragraphs introducing the drug class, therapeutic role, and clinical significance FIRST. Then: blockquote > ⚡ **Mechanism:** [one-sentence summary]. Then: ### Detailed mechanism of action, followed by 3-4 detailed paragraphs explaining HOW the drug works. Then: any warning blockquotes (> ⚠️ **Note:** [warning] or > 🚨 **Warning:** [serious warning]) if relevant. Do NOT repeat warning information in the detailed mechanism.
 ---FIELD_END
 
 ---FIELD_START: dosing
@@ -40,7 +40,7 @@ Markdown table: Status | Severity | Dose adjustment | Notes. MUST include emoji 
 ---FIELD_END
 
 ---FIELD_START: adverse_effects
-Markdown table: Severity | Effect | Action. Severity cell must contain ONLY the word "Common", "Serious", or "Rare" (no emoji). Effect is the adverse effect name. Action is what to do if it occurs. List common effects first, then serious, then rare.
+Markdown table: Severity | Effect | Action if it occurs. Severity is "Common" (>1%), "Serious", or "Rare". List common effects first, then serious/rare. Each row shows the effect and what to do about it.
 ---FIELD_END
 
 ---FIELD_START: contraindications
@@ -48,22 +48,19 @@ Two sections: ### Absolute contraindications with bullet list, then ### Cautions
 ---FIELD_END
 
 ---FIELD_START: interactions
-REQUIRED — ABSOLUTELY GENERATE THIS FIELD. Markdown table with 4 columns: Drug or class | Mechanism | Severity | Management. CRITICAL: Severity cell MUST start with emoji + keyword exactly as shown: "🔴 CRITICAL" (major risk), "🟠 HIGH" (significant), "🟡 MODERATE" (monitor), or "🟢 MINOR". Sort rows by severity (CRITICAL first). Generate AT LEAST 3 interactions even if not major. THIS MUST BE GENERATED.
+ALWAYS GENERATE. Markdown table: Drug or class | Mechanism | Severity | Management. Severity MUST be formatted EXACTLY as: "🔴 CRITICAL" (major risk, contraindicated), "🟠 HIGH" (significant interaction, dose adjustment), "🟡 MODERATE" (monitor), or "🟢 MINOR". Sort rows by severity (CRITICAL first). Generate at least 3 interactions.
 ---FIELD_END
 
 ---FIELD_START: counselling
-REQUIRED — ABSOLUTELY GENERATE THIS FIELD OR THE ENTRY WILL BE INCOMPLETE. Generate 8-12 patient counselling bullet points in plain language. Cover: how to take the drug, common side effects, what to watch for, when to contact a doctor. Format as a markdown bullet list. Example:
-- Take with food to reduce nausea
-- Dizziness may occur initially
-If no drug-specific counselling, generate general guidance. THIS MUST BE GENERATED.
+ALWAYS GENERATE. 8-12 markdown bullet points in plain language for patients. Cover: how to take the drug, common side effects, what to watch for, when to contact doctor.
 ---FIELD_END
 
 ---FIELD_START: nz_notes
-REQUIRED — ABSOLUTELY GENERATE THIS FIELD OR THE ENTRY WILL BE INCOMPLETE. Include EXACTLY these sections: **Funding:** [PHARMAC subsidy status], **Special Authority:** [criteria or "Not required"], **Schedule:** [Rx/Pharmacist-only/Restricted/General sale], **Formulations:** [list available in NZ], **Practice notes:** [NZ-specific guidance]. THIS MUST BE GENERATED WITHOUT FAIL.
+ALWAYS GENERATE. **Funding:** [PHARMAC subsidy status], **Special Authority:** [criteria or "None"], **Schedule:** [Rx/Pharmacist-only/Restricted/General sale], **Formulations:** [available in NZ], **Practice notes:** [NZ guidance/pearls]. Always provide funding and scheduling.
 ---FIELD_END
 
 ---FIELD_START: body_systems
-REQUIRED. Comma-separated list of 1-3 body systems. Choose from ONLY: Cardiovascular, Respiratory, Neurology, Psychiatry, Endocrine, Gastroenterology, Renal, Musculoskeletal, Dermatology, Haematology, Infectious Disease, Ophthalmology, ENT, Immunology, Reproductive Health, Oncology. Example: Endocrine, Renal
+REQUIRED. Comma-separated list of 1-3 body systems that this drug primarily acts on or is relevant to. Choose from ONLY: Cardiovascular, Respiratory, Neurology, Psychiatry, Endocrine, Gastroenterology, Renal, Musculoskeletal, Dermatology, Haematology, Infectious Disease, Ophthalmology, ENT, Immunology, Reproductive Health, Oncology. Example: Endocrine, Renal
 ---FIELD_END`,
 
   condition: (topic) => `Generate a complete PharmDC health condition & therapeutics entry for: "${topic}".
@@ -213,7 +210,7 @@ export default async function handler(req, res) {
       },
       body: JSON.stringify({
         model: 'claude-sonnet-4-6',
-        max_tokens: 4096,
+        max_tokens: 6000,
         system: SYSTEM_PROMPT,
         messages: [{ role: 'user', content: buildPrompt(topic) }],
       }),
