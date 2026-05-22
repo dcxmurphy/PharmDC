@@ -698,50 +698,92 @@ function postProcessTabContent() {
         summary.innerHTML = '<span class="moa-chevron">▾</span><span>Detailed mechanism of action</span>';
         details.appendChild(summary);
 
-        // Collect all paragraphs after h3 until next heading, blockquote, or end
+        // Collect all paragraphs after h3 until next heading, blockquote, or end, and MOVE them (not clone)
         let current = h3.nextElementSibling;
-        const fragment = document.createDocumentFragment();
+        const toRemove = [];
         while (current && current.tagName !== 'H2' && current.tagName !== 'H3' && current.tagName !== 'BLOCKQUOTE') {
           if (current.tagName === 'P') {
-            fragment.appendChild(current.cloneNode(true));
+            toRemove.push(current);
+            details.appendChild(current);
           }
           current = current.nextElementSibling;
         }
-        details.appendChild(fragment);
         h3.replaceWith(details);
       }
     });
   }
 
-  // Add severity styling to adverse effects table rows and interactions table rows
-  if (activeTab === 'adverse_effects' || activeTab === 'safety') {
+  // Add pill badge styling to renal/hepatic Status column (first column)
+  if (activeTab === 'renal_hepatic') {
     panel.querySelectorAll('table tbody tr').forEach(row => {
-      const firstCell = row.querySelector('td');
-      if (!firstCell) return;
-      const severity = firstCell.textContent.toLowerCase().trim();
-      if (severity.includes('common')) row.classList.add('severity-common');
-      else if (severity.includes('serious')) row.classList.add('severity-serious');
-      else if (severity.includes('rare')) row.classList.add('severity-rare');
+      const statusCell = row.querySelector('td');
+      if (!statusCell) return;
+      const text = statusCell.textContent.trim();
+      let pillClass = '';
+
+      if (text.includes('🟢')) pillClass = 'pill-green';
+      else if (text.includes('🟡')) pillClass = 'pill-amber';
+      else if (text.includes('🟠')) pillClass = 'pill-orange';
+      else if (text.includes('🔴')) pillClass = 'pill-red';
+
+      if (pillClass) {
+        const pill = document.createElement('span');
+        pill.className = `pill ${pillClass}`;
+        pill.textContent = text;
+        statusCell.innerHTML = '';
+        statusCell.appendChild(pill);
+      }
     });
   }
 
-  // Add visual severity bars to interactions table based on emoji/keyword
-  if (activeTab === 'interactions') {
+  // Add severity badge styling to adverse effects table Severity column (safety tab)
+  if (activeTab === 'safety') {
     panel.querySelectorAll('table tbody tr').forEach(row => {
       const cells = row.querySelectorAll('td');
       if (cells.length > 0) {
-        const severityCell = cells[2]; // Severity column
-        if (severityCell) {
-          const text = severityCell.textContent;
-          if (text.includes('🔴') || text.includes('CRITICAL')) {
-            severityCell.classList.add('sev-critical');
-          } else if (text.includes('🟠') || text.includes('HIGH')) {
-            severityCell.classList.add('sev-high');
-          } else if (text.includes('🟡') || text.includes('MODERATE')) {
-            severityCell.classList.add('sev-moderate');
-          } else if (text.includes('🟢') || text.includes('MINOR')) {
-            severityCell.classList.add('sev-minor');
-          }
+        const severityCell = cells[0]; // Severity is first column in adverse effects table
+        const severityText = severityCell.textContent.toLowerCase().trim();
+        let severityClass = '';
+
+        if (severityText.includes('common')) severityClass = 'sev-common';
+        else if (severityText.includes('serious')) severityClass = 'sev-serious';
+        else if (severityText.includes('rare')) severityClass = 'sev-rare';
+
+        if (severityClass) {
+          const badge = document.createElement('span');
+          badge.className = `ae-sev ${severityClass}`;
+          badge.textContent = severityText.charAt(0).toUpperCase() + severityText.slice(1);
+          severityCell.innerHTML = '';
+          severityCell.appendChild(badge);
+        }
+
+        row.classList.add(`severity-${severityClass.replace('sev-', '')}`);
+      }
+    });
+  }
+
+  // Add visual severity bars to interactions table Severity column
+  if (activeTab === 'interactions') {
+    panel.querySelectorAll('table tbody tr').forEach(row => {
+      const cells = row.querySelectorAll('td');
+      if (cells.length > 2) {
+        const severityCell = cells[2]; // Severity column (3rd column)
+        const text = severityCell.textContent.trim();
+
+        let barHtml = '';
+        if (text.includes('🔴') || text.includes('CRITICAL')) {
+          barHtml = '<div class="sig-bar"><div class="sig-block sig-block-red"></div><div class="sig-block sig-block-red"></div><div class="sig-block sig-block-red"></div></div>';
+        } else if (text.includes('🟠') || text.includes('HIGH')) {
+          barHtml = '<div class="sig-bar"><div class="sig-block sig-block-orange"></div><div class="sig-block sig-block-orange"></div><div class="sig-block sig-block-empty"></div></div>';
+        } else if (text.includes('🟡') || text.includes('MODERATE')) {
+          barHtml = '<div class="sig-bar"><div class="sig-block sig-block-yellow"></div><div class="sig-block sig-block-empty"></div><div class="sig-block sig-block-empty"></div></div>';
+        } else if (text.includes('🟢') || text.includes('MINOR')) {
+          barHtml = '<div class="sig-bar"><div class="sig-block sig-block-empty"></div><div class="sig-block sig-block-empty"></div><div class="sig-block sig-block-empty"></div></div>';
+        }
+
+        if (barHtml) {
+          severityCell.innerHTML = barHtml;
+          severityCell.style.textAlign = 'center';
         }
       }
     });

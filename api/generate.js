@@ -24,7 +24,7 @@ One-line format: [Class] · [Role]
 ---FIELD_END
 
 ---FIELD_START: overview
-1-2 paragraphs introducing the drug class, therapeutic role, and clinical significance FIRST. Then: blockquote > ⚡ **Mechanism:** [one-sentence summary]. Then: ### Detailed mechanism of action, followed by 3-4 detailed paragraphs. Then: any warning blockquotes (> ⚠️ **Note:** [warning] or > 🚨 **Warning:** [serious warning]) if relevant. Do NOT repeat warning information in the detailed mechanism.
+1-2 paragraphs introducing the drug class, therapeutic role, and clinical significance ONLY — do NOT describe the mechanism here. Then: blockquote > ⚡ **Mechanism:** [one-sentence summary of mechanism of action only]. Then: ### Detailed mechanism of action, followed by 3-4 detailed paragraphs explaining HOW the drug works. Then: any warning blockquotes (> ⚠️ **Note:** [warning] or > 🚨 **Warning:** [serious warning]) if relevant. CRITICAL: Mechanism must appear ONLY in the h3 section and blockquote, not in the introductory paragraphs.
 ---FIELD_END
 
 ---FIELD_START: dosing
@@ -32,15 +32,15 @@ Markdown table: Indication | Starting dose | Maintenance dose | Maximum dose. Ma
 ---FIELD_END
 
 ---FIELD_START: renal_dosing
-Markdown table: Status | eGFR | Dose adjustment | Notes. MUST start each row with 🟢🟡🟠🔴 emoji.
+Markdown table: Status | eGFR | Dose adjustment | Notes. MUST start Status cell with 🟢🟡🟠🔴 emoji and include text like "🟢 Normal dose" or "🔴 Avoid if eGFR <30".
 ---FIELD_END
 
 ---FIELD_START: hepatic_dosing
-Markdown table: Status | Severity | Dose adjustment | Notes with emoji, OR: "No clinically significant adjustment required"
+Markdown table: Status | Severity | Dose adjustment | Notes. MUST include emoji in Status cells (e.g. "🟢 Normal dose"), OR if not applicable: "No clinically significant adjustment required"
 ---FIELD_END
 
 ---FIELD_START: adverse_effects
-Markdown table: Severity | Effect | Action if it occurs. Severity is "Common" (>1%), "Serious", or "Rare". List common effects first, then serious/rare. Each row shows the effect and what to do about it.
+Markdown table: Severity | Effect | Action. Severity cell must contain ONLY the word "Common", "Serious", or "Rare" (no emoji). Effect is the adverse effect name. Action is what to do if it occurs. List common effects first, then serious, then rare.
 ---FIELD_END
 
 ---FIELD_START: contraindications
@@ -48,19 +48,19 @@ Two sections: ### Absolute contraindications with bullet list, then ### Cautions
 ---FIELD_END
 
 ---FIELD_START: interactions
-Markdown table: Drug | Mechanism | Severity | Management. Severity column MUST start with severity keyword for visual indication: "🔴 CRITICAL" (major risk, contraindicated), "🟠 HIGH" (significant interaction, dose adjustment), "🟡 MODERATE" (monitor), or "🟢 MINOR". Sort rows by severity (CRITICAL first, then HIGH, MODERATE, MINOR).
+Markdown table: Drug | Mechanism | Severity | Management. CRITICAL: Severity cell MUST start with emoji + keyword: "🔴 CRITICAL", "🟠 HIGH", "🟡 MODERATE", or "🟢 MINOR". Sort rows by severity (CRITICAL first, then HIGH, MODERATE, MINOR). MUST generate this field even if no major interactions — list at least 3 common interactions.
 ---FIELD_END
 
 ---FIELD_START: counselling
-REQUIRED. 8-12 bullet points in plain language. If no specific counselling points, provide general guidance on how to take the drug, common side effects, what to watch for, and when to contact doctor.
+REQUIRED — ALWAYS generate this field. 8-12 bullet points in plain language. Cover: how to take the drug, common side effects, what to watch for, when to contact doctor. If no specific counselling points, provide general guidance. ALWAYS GENERATE.
 ---FIELD_END
 
 ---FIELD_START: nz_notes
-REQUIRED. **Funding:** [PHARMAC status], **Special Authority:** [criteria or None], **Schedule:** [Rx/Pharmacist-only/Restricted/General sale], **Formulations:** [available in NZ], **Practice notes:** [NZ guidance/pearls]. Never leave this blank — always provide at least funding and scheduling info.
+REQUIRED — ALWAYS generate this field. **Funding:** [PHARMAC status], **Special Authority:** [criteria or None], **Schedule:** [Rx/Pharmacist-only/Restricted/General sale], **Formulations:** [available in NZ], **Practice notes:** [NZ guidance/pearls]. Never leave blank — always provide at least funding and scheduling. ALWAYS GENERATE.
 ---FIELD_END
 
 ---FIELD_START: body_systems
-REQUIRED. Comma-separated list of 1-3 body systems that this drug primarily acts on or is relevant to. Choose from ONLY: Cardiovascular, Respiratory, Neurology, Psychiatry, Endocrine, Gastroenterology, Renal, Musculoskeletal, Dermatology, Haematology, Infectious Disease, Ophthalmology, ENT, Immunology, Reproductive Health, Oncology. Example: Endocrine, Renal
+REQUIRED. Comma-separated list of 1-3 body systems. Choose from ONLY: Cardiovascular, Respiratory, Neurology, Psychiatry, Endocrine, Gastroenterology, Renal, Musculoskeletal, Dermatology, Haematology, Infectious Disease, Ophthalmology, ENT, Immunology, Reproductive Health, Oncology. Example: Endocrine, Renal
 ---FIELD_END`,
 
   condition: (topic) => `Generate a complete PharmDC health condition & therapeutics entry for: "${topic}".

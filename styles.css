@@ -903,6 +903,50 @@ input, textarea, select { font-family: inherit; font-size: inherit; }
 .markdown-content td.sev-moderate { background: #fef3c7; }
 .markdown-content td.sev-minor { background: #dcfce7; }
 
+/* Pill badges — for renal/hepatic Status column */
+.pill {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 16px;
+  font-size: 12.5px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+.pill-green { background: #dcfce7; color: #15803d; }
+.pill-amber { background: #fef3c7; color: #a16207; }
+.pill-orange { background: #ffedd5; color: #9a3412; }
+.pill-red { background: #fee2e2; color: #b91c1c; }
+
+/* Adverse effects severity badges */
+.ae-sev {
+  display: inline-block;
+  padding: 3px 9px;
+  border-radius: 4px;
+  font-size: 11.5px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+.ae-sev.sev-common { background: #f1f5f9; color: #334155; }
+.ae-sev.sev-serious { background: #fee2e2; color: #991b1b; }
+.ae-sev.sev-rare { background: #f5f3ff; color: #6b21a8; }
+
+/* Interaction severity visual bars */
+.sig-bar {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  height: 16px;
+}
+.sig-block {
+  width: 10px;
+  height: 6px;
+  border-radius: 1px;
+}
+.sig-block-red { background: #ef4444; }
+.sig-block-orange { background: #f97316; }
+.sig-block-yellow { background: #eab308; }
+.sig-block-empty { background: #d1d5db; }
+
 /* Renal / hepatic row tints — applied via JS after render */
 .markdown-content .row-green td { background: #f0fdf4; }
 .markdown-content .row-green td:first-child { border-left: 3px solid #22c55e; }
