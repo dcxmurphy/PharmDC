@@ -20,15 +20,15 @@ const TEMPLATE_PROMPTS = {
 Return a JSON object with EXACTLY these keys:
 {
   "drug_class": "One-line string: drug class and therapeutic role. Format: '[Class] · [Role]', e.g. 'Biguanide · Oral antidiabetic' or 'ACE inhibitor · Antihypertensive'. No markdown.",
-  "overview": "Drug class, mechanism of action, clinical role and main indications. 2-3 paragraphs.",
+  "overview": "Drug class, mechanism of action, clinical role and main indications. 2-3 paragraphs. REQUIRED: Include a brief mechanism summary as a blockquote callout with this EXACT format on its own line: '> ⚡ **Mechanism:** [one concise sentence describing the mechanism of action]'. If there is a notable clinical warning, also include on its own line: '> ⚠️ **Note:** [warning text]'. If there is a serious danger or black-box-equivalent warning, include: '> 🚨 **Warning:** [danger text]'. Place these blockquotes naturally within the overview text.",
   "dosing": "Markdown table with columns: Indication | Starting dose | Maintenance dose | Maximum dose. Include all major indications.",
-  "renal_dosing": "Markdown table: eGFR (mL/min) | Dose adjustment | Notes. Add a Status column using 🟢 Normal dose, 🟡 Reduce dose, 🔴 Avoid/contraindicated.",
-  "hepatic_dosing": "Dose adjustments for hepatic impairment. Write 'No clinically significant adjustment required' if not relevant.",
+  "renal_dosing": "Markdown table with columns: Status | eGFR (mL/min) | Dose adjustment | Notes. The Status column is REQUIRED and MUST use EXACTLY one of these four emoji per row — 🟢 (Normal dose, eGFR ≥60), 🟡 (Use with caution, eGFR 30–60), 🟠 (Significant reduction required, eGFR 15–30), 🔴 (Avoid / Contraindicated, eGFR <15 or dialysis). Every single row must begin with the appropriate emoji. Do not omit or substitute the emoji.",
+  "hepatic_dosing": "If dose adjustments are required: markdown table with columns: Status | Severity | Dose adjustment | Notes. Status column MUST use 🟢 (Child-Pugh A — normal dose), 🟡 (Child-Pugh B — use with caution), 🔴 (Child-Pugh C — avoid). If not relevant, write the single line: 'No clinically significant adjustment required'.",
   "adverse_effects": "List common (>1%) effects then serious/rare effects. Use markdown subheadings **Common** and **Serious**.",
   "contraindications": "Markdown list of absolute contraindications, then a list of important cautions/relative contraindications.",
   "interactions": "Markdown table: Drug or class | Mechanism | Clinical significance | Management. Cover the most important interactions only.",
   "counselling": "Markdown bullet list of 8-12 patient counselling points in plain language.",
-  "nz_notes": "PHARMAC funding status (fully subsidised / part charge / not funded), Special Authority criteria if applicable, NZ Medicine schedule classification, formulations available in NZ, any NZ practice pearls.",
+  "nz_notes": "Format with bold labels on separate lines: **Funding:** [PHARMAC status — fully subsidised, part charge, or not funded]. **Special Authority:** [SA criteria summary, or 'None']. **Schedule:** [NZ Medicine classification: Prescription / Pharmacist-only / Restricted / General sale]. **Formulations:** [available NZ formulations and strengths]. **Practice notes:** [NZ-specific clinical pearls, BPAC NZ or NZF guidance references].",
   "body_systems": ["array", "of", "1-3 strings"]
 }
 

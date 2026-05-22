@@ -660,6 +660,8 @@ function postProcessTabContent() {
   const panel = document.getElementById('tab-panel');
   if (!panel) return;
 
+  const activeTab = document.querySelector('.tab-btn.active')?.dataset.tab;
+
   // Colour-code renal/hepatic table rows by 🟢🟡🟠🔴 emoji
   panel.querySelectorAll('tbody tr').forEach(row => {
     const text = row.textContent;
@@ -669,8 +671,38 @@ function postProcessTabContent() {
     else if (text.includes('🔴')) row.classList.add('row-red');
   });
 
+  // Wrap tables in a div so border-radius works (border-collapse: collapse prevents it on the table itself)
+  panel.querySelectorAll('table').forEach(table => {
+    if (table.parentElement.classList.contains('table-wrap')) return;
+    const wrap = document.createElement('div');
+    wrap.className = 'table-wrap';
+    table.parentNode.insertBefore(wrap, table);
+    wrap.appendChild(table);
+  });
+
+  // Classify blockquotes by lead emoji — amber for ⚠️, red for 🚨, default teal for everything else
+  panel.querySelectorAll('blockquote').forEach(bq => {
+    const text = bq.textContent.trim();
+    if (text.startsWith('⚠️') || text.startsWith('⚠')) bq.classList.add('callout-amber');
+    else if (text.startsWith('🚨')) bq.classList.add('callout-red');
+  });
+
+  // NZ Notes tab: wrap content in a teal card with header
+  if (activeTab === 'nz_notes') {
+    const card = document.createElement('div');
+    card.className = 'nz-notes-card';
+    const header = document.createElement('div');
+    header.className = 'nz-notes-header';
+    header.innerHTML = '<span class="nz-notes-icon">🇳🇿</span><span class="nz-notes-title">NZ context</span>';
+    const body = document.createElement('div');
+    body.className = 'nz-notes-body';
+    while (panel.firstChild) body.appendChild(panel.firstChild);
+    card.appendChild(header);
+    card.appendChild(body);
+    panel.appendChild(card);
+  }
+
   // Transform counselling bullet list → two-column checkbox card grid
-  const activeTab = document.querySelector('.tab-btn.active')?.dataset.tab;
   if (activeTab === 'counselling') {
     panel.querySelectorAll('ul').forEach(ul => {
       const grid = document.createElement('div');
