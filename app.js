@@ -53,8 +53,7 @@ const SECTIONS = {
       { key: 'dosing',            label: 'Dosing' },
       { key: 'renal_dosing',      label: 'Renal Dosing' },
       { key: 'hepatic_dosing',    label: 'Hepatic Dosing' },
-      { key: 'adverse_effects',   label: 'Adverse Effects' },
-      { key: 'contraindications', label: 'Contraindications' },
+      { key: 'safety',            label: 'Safety' },
       { key: 'interactions',      label: 'Interactions' },
       { key: 'counselling',       label: 'Counselling' },
       { key: 'nz_notes',          label: 'NZ Notes' },
@@ -562,9 +561,18 @@ async function renderEntry(section, entryId) {
 
   recordView(entryId);
 
+  function getTabContent(e, tab) {
+    if (tab === 'safety') {
+      const ae = e.content?.adverse_effects ?? '';
+      const ci = e.content?.contraindications ?? '';
+      return ae + (ae && ci ? '\n\n---\n\n' : '') + ci;
+    }
+    return e.content?.[tab] ?? '';
+  }
+
   function build(e) {
     const tab = state.activeTab[e.id] ?? cfg.tabs[0].key;
-    const content = e.content?.[tab] ?? '';
+    const content = getTabContent(e, tab);
     return `
       <div class="entry-detail-wrap">
         <div class="breadcrumb">
@@ -576,9 +584,9 @@ async function renderEntry(section, entryId) {
         </div>
 
         <div class="entry-header">
-          <h1 class="entry-main-title">${esc(e.title)}</h1>
+          <div class="entry-main-title">${esc(e.title)}</div>
+          ${e.content?.drug_class ? `<div class="entry-drug-subtitle">${esc(e.content.drug_class)}</div>` : ''}
           <div class="entry-meta">
-            <span class="entry-tag-badge accent">${cfg.template}</span>
             ${(e.tags || []).map(t => `<span class="entry-tag-badge">${esc(t)}</span>`).join('')}
           </div>
           <div class="entry-actions">
@@ -611,7 +619,8 @@ async function renderEntry(section, entryId) {
       btn.addEventListener('click', () => {
         state.activeTab[e.id] = btn.dataset.tab;
         document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b === btn));
-        document.getElementById('tab-panel').innerHTML = md(e.content?.[btn.dataset.tab] ?? '');
+        document.getElementById('tab-panel').innerHTML = md(getTabContent(e, btn.dataset.tab));
+        postProcessTabContent();
       });
     });
 
@@ -634,11 +643,24 @@ async function renderEntry(section, entryId) {
 
   document.getElementById('main-content').innerHTML = build(entry);
   attach(entry);
+  postProcessTabContent();
 }
 
 /* ============================================================
    SYSTEM SEARCH
    ============================================================ */
+
+function postProcessTabContent() {
+  const panel = document.getElementById('tab-panel');
+  if (!panel) return;
+  panel.querySelectorAll('tbody tr').forEach(row => {
+    const text = row.textContent;
+    if      (text.includes('🟢')) row.classList.add('row-green');
+    else if (text.includes('🟡')) row.classList.add('row-amber');
+    else if (text.includes('🟠')) row.classList.add('row-orange');
+    else if (text.includes('🔴')) row.classList.add('row-red');
+  });
+}
 
 async function doSystemSearch(systemName) {
   setLoading();
@@ -843,7 +865,10 @@ async function submitGenerate() {
       saved = await updateEntry(existingId, { title: topic, content });
       state.entriesCache[section] = null;
     } else {
-      saved = await createEntry({ title: topic, section, template: cfg.template, content, tags: [] });
+      const bodySystemTags = (cfg.template === 'drug' && Array.isArray(content.body_systems))
+        ? content.body_systems.filter(t => typeof t === 'string')
+        : [];
+      saved = await createEntry({ title: topic, section, template: cfg.template, content, tags: bodySystemTags });
     }
 
     closeModal();

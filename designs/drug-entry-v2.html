@@ -1,0 +1,1141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PharmDC — Metformin (v2 Design Exploration)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'DM Sans', system-ui, sans-serif;
+      font-size: 14px;
+      line-height: 1.6;
+      background: #fafafa;
+      color: #111;
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+    }
+
+    /* ── TOP NAV ── */
+    .topnav {
+      height: 52px;
+      background: #fff;
+      border-bottom: 0.5px solid #ebebeb;
+      display: flex;
+      align-items: center;
+      padding: 0 32px;
+      position: sticky; top: 0; z-index: 20;
+    }
+    .brand { font-size: 16px; font-weight: 500; letter-spacing: -0.03em; color: #111; margin-right: 36px; flex-shrink: 0; }
+    .brand span { color: #1D9E75; }
+    .nav-tabs { display: flex; align-items: stretch; height: 100%; flex: 1; }
+    .nav-tab {
+      display: flex; align-items: center; padding: 0 15px;
+      font-size: 13px; color: #999; text-decoration: none;
+      border-bottom: 2px solid transparent;
+      transition: color 0.1s, border-color 0.12s; cursor: pointer; white-space: nowrap;
+    }
+    .nav-tab:hover { color: #333; }
+    .nav-tab.active { color: #1D9E75; font-weight: 500; border-bottom-color: #1D9E75; }
+    .topnav-right { display: flex; align-items: center; gap: 10px; margin-left: auto; }
+    .btn-generate {
+      display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px;
+      background: #1D9E75; color: #fff; border: none; border-radius: 7px;
+      font-family: inherit; font-size: 12.5px; font-weight: 500; cursor: pointer;
+    }
+    .avatar { width: 28px; height: 28px; border-radius: 50%; background: #1D9E75; color: #fff; font-size: 10.5px; font-weight: 500; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+
+    /* ── LAYOUT ── */
+    .page { max-width: 900px; margin: 0 auto; padding: 36px 24px 100px; }
+
+    /* ── BREADCRUMB ── */
+    .breadcrumb {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 12px; color: #bbb; margin-bottom: 22px;
+    }
+    .breadcrumb a { color: #bbb; text-decoration: none; }
+    .breadcrumb a:hover { color: #1D9E75; }
+    .breadcrumb-sep { color: #ddd; }
+    .breadcrumb-current { color: #777; }
+
+    /* ════════════════════════════════════════
+       ENTRY HEADER — two variants shown
+    ════════════════════════════════════════ */
+
+    /* ── HEADER VARIANT A: Clean flat ── */
+    .header-a {
+      background: #fff;
+      border: 0.5px solid #e8e8e8;
+      border-radius: 14px;
+      padding: 24px 28px;
+      margin-bottom: 10px;
+    }
+    .header-a .drug-name {
+      font-size: 30px; font-weight: 400; letter-spacing: -0.04em;
+      color: #111; line-height: 1.1; margin-bottom: 6px;
+    }
+    .header-a .drug-generic {
+      font-size: 13px; color: #aaa; margin-bottom: 14px;
+    }
+    .badge-row { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; }
+    .badge {
+      display: inline-flex; align-items: center; gap: 4px;
+      font-size: 11.5px; padding: 3px 10px; border-radius: 20px; font-weight: 500;
+    }
+    .badge-teal  { background: #E1F5EE; color: #0F6E56; border: 0.5px solid #9FE1CB; }
+    .badge-blue  { background: #eff6ff; color: #1d4ed8; border: 0.5px solid #bfdbfe; }
+    .badge-amber { background: #fffbeb; color: #92400e; border: 0.5px solid #fcd34d; }
+    .badge-slate { background: #f8fafc; color: #475569; border: 0.5px solid #e2e8f0; }
+    .badge-red   { background: #fff1f2; color: #9f1239; border: 0.5px solid #fecdd3; }
+
+    .header-actions { display: flex; gap: 8px; }
+    .btn-sm {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 5px 12px; border: 0.5px solid #e4e4e4; border-radius: 7px;
+      font-family: inherit; font-size: 12px; color: #666; background: #fff; cursor: pointer;
+    }
+    .btn-sm:hover { background: #f8f8f8; }
+    .btn-sm.primary { background: #1D9E75; color: #fff; border-color: #1D9E75; }
+    .btn-sm.primary:hover { background: #0F6E56; }
+
+    /* ── HEADER VARIANT B: Accent left border ── */
+    .header-b {
+      border-left: 3px solid #1D9E75;
+      padding-left: 22px;
+      margin-bottom: 10px;
+    }
+    .header-b .drug-name {
+      font-size: 30px; font-weight: 400; letter-spacing: -0.04em;
+      color: #111; line-height: 1.1; margin-bottom: 4px;
+    }
+    .header-b .drug-class { font-size: 13px; color: #1D9E75; font-weight: 500; margin-bottom: 10px; }
+
+    /* ════════════════════════════════════════
+       QUICK FACTS BAR — key stats strip
+    ════════════════════════════════════════ */
+    .variant-label {
+      font-size: 10px; color: #ccc; letter-spacing: 0.1em; text-transform: uppercase;
+      margin: 28px 0 8px;
+    }
+
+    /* VARIANT A: Bordered grid */
+    .quick-facts-a {
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      border: 0.5px solid #e8e8e8; border-radius: 12px; overflow: hidden;
+      background: #f9f9f9; margin-bottom: 8px;
+    }
+    .qf-cell {
+      padding: 14px 18px; background: #fff; border-right: 0.5px solid #e8e8e8;
+    }
+    .qf-cell:last-child { border-right: none; }
+    .qf-label { font-size: 10.5px; color: #bbb; letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 4px; }
+    .qf-value { font-size: 14px; font-weight: 500; color: #111; }
+    .qf-value.teal { color: #1D9E75; }
+
+    /* VARIANT B: Pill row */
+    .quick-facts-b {
+      display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 8px;
+    }
+    .qf-pill {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 8px 16px; background: #fff; border: 0.5px solid #e8e8e8;
+      border-radius: 30px;
+    }
+    .qf-pill-label { font-size: 11px; color: #bbb; }
+    .qf-pill-value { font-size: 13px; font-weight: 500; color: #111; }
+    .qf-divider { width: 0.5px; background: #e8e8e8; height: 14px; }
+
+    /* ════════════════════════════════════════
+       SECTION HEADINGS — multiple styles
+    ════════════════════════════════════════ */
+
+    /* Style A: thin top border + label */
+    .section-a {
+      border-top: 0.5px solid #e8e8e8;
+      padding-top: 24px; margin-top: 24px; margin-bottom: 16px;
+    }
+    .section-a-title {
+      font-size: 13px; font-weight: 500; color: #111;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .section-a-title .sec-icon {
+      width: 22px; height: 22px; border-radius: 6px;
+      background: #E1F5EE; display: flex; align-items: center; justify-content: center;
+      font-size: 12px; flex-shrink: 0;
+    }
+
+    /* Style B: ALL CAPS muted label */
+    .section-b {
+      margin-top: 28px; margin-bottom: 14px;
+    }
+    .section-b-title {
+      font-size: 10.5px; font-weight: 500; color: #bbb;
+      letter-spacing: 0.1em; text-transform: uppercase;
+    }
+
+    /* Style C: large with count */
+    .section-c {
+      display: flex; align-items: baseline; gap: 10px;
+      margin-top: 28px; margin-bottom: 16px;
+    }
+    .section-c-title { font-size: 16px; font-weight: 400; letter-spacing: -0.02em; color: #111; }
+    .section-c-count {
+      font-size: 11px; color: #bbb;
+    }
+
+    /* ════════════════════════════════════════
+       TAB STRIP — variants
+    ════════════════════════════════════════ */
+    /* Variant A: underline (existing) */
+    .tabs-a {
+      display: flex; border-bottom: 0.5px solid #ebebeb;
+      margin-bottom: 28px; overflow-x: auto;
+    }
+    .tabs-a::-webkit-scrollbar { display: none; }
+    .tab-a {
+      padding: 10px 16px; font-size: 13px; color: #aaa;
+      border-bottom: 2px solid transparent; white-space: nowrap; cursor: pointer;
+      transition: color 0.1s, border-color 0.12s;
+    }
+    .tab-a:hover { color: #444; }
+    .tab-a.active { color: #1D9E75; font-weight: 500; border-bottom-color: #1D9E75; }
+
+    /* Variant B: pill tabs */
+    .tabs-b {
+      display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 28px;
+    }
+    .tab-b {
+      padding: 6px 14px; font-size: 12.5px; border-radius: 20px;
+      border: 0.5px solid transparent; color: #888; cursor: pointer; white-space: nowrap;
+      transition: all 0.1s;
+    }
+    .tab-b:hover { background: #f5f5f5; }
+    .tab-b.active { background: #E1F5EE; color: #0F6E56; border-color: #9FE1CB; font-weight: 500; }
+
+    /* ════════════════════════════════════════
+       PROSE / OVERVIEW
+    ════════════════════════════════════════ */
+    .prose { font-size: 14px; color: #333; line-height: 1.75; }
+    .prose p { margin-bottom: 12px; }
+    .prose p:last-child { margin-bottom: 0; }
+
+    /* Key insight callout */
+    .callout-info {
+      display: flex; gap: 12px; align-items: flex-start;
+      background: #f0faf6; border: 0.5px solid #9FE1CB;
+      border-radius: 10px; padding: 14px 16px; margin: 14px 0;
+    }
+    .callout-info-icon { font-size: 15px; flex-shrink: 0; margin-top: 1px; }
+    .callout-info-text { font-size: 13.5px; color: #1a3d2e; line-height: 1.6; }
+
+    .callout-warn {
+      display: flex; gap: 12px; align-items: flex-start;
+      background: #fffbeb; border: 0.5px solid #fcd34d;
+      border-radius: 10px; padding: 14px 16px; margin: 14px 0;
+    }
+    .callout-warn-icon { font-size: 15px; flex-shrink: 0; margin-top: 1px; }
+    .callout-warn-text { font-size: 13.5px; color: #78350f; line-height: 1.6; }
+
+    .callout-danger {
+      display: flex; gap: 12px; align-items: flex-start;
+      background: #fff1f2; border: 0.5px solid #fecdd3;
+      border-radius: 10px; padding: 14px 16px; margin: 14px 0;
+    }
+    .callout-danger-icon { font-size: 15px; flex-shrink: 0; margin-top: 1px; }
+    .callout-danger-text { font-size: 13.5px; color: #881337; line-height: 1.6; }
+
+    .callout-note {
+      display: flex; gap: 12px; align-items: flex-start;
+      background: #f8fafc; border: 0.5px solid #e2e8f0;
+      border-left: 3px solid #94a3b8;
+      border-radius: 0 10px 10px 0; padding: 12px 16px; margin: 14px 0;
+    }
+    .callout-note-text { font-size: 13.5px; color: #475569; line-height: 1.6; font-style: italic; }
+
+    /* ════════════════════════════════════════
+       DOSING TABLES — multiple styles
+    ════════════════════════════════════════ */
+
+    /* Style A: Clean bordered */
+    .table-wrap {
+      border: 0.5px solid #e8e8e8; border-radius: 11px;
+      overflow: hidden; margin-bottom: 20px;
+    }
+    .dtable { width: 100%; border-collapse: collapse; }
+    .dtable thead tr { background: #fafafa; }
+    .dtable th {
+      padding: 10px 16px; text-align: left;
+      font-size: 10.5px; font-weight: 500; color: #aaa;
+      letter-spacing: 0.07em; text-transform: uppercase;
+      border-bottom: 0.5px solid #ebebeb;
+    }
+    .dtable td {
+      padding: 12px 16px; font-size: 13.5px; color: #222;
+      border-bottom: 0.5px solid #f3f3f3; vertical-align: top;
+    }
+    .dtable tr:last-child td { border-bottom: none; }
+    .dtable tbody tr:hover td { background: #f9fffd; }
+    .td-muted { color: #888; font-size: 13px; }
+    .td-mono { font-family: 'SF Mono', 'Fira Code', monospace; font-size: 12.5px; color: #0F6E56; }
+
+    /* Style B: Teal header */
+    .table-wrap-b { border: 0.5px solid #9FE1CB; border-radius: 11px; overflow: hidden; margin-bottom: 20px; }
+    .dtable-b { width: 100%; border-collapse: collapse; }
+    .dtable-b thead tr { background: #1D9E75; }
+    .dtable-b th {
+      padding: 11px 16px; text-align: left;
+      font-size: 11px; font-weight: 500; color: rgba(255,255,255,0.85);
+      letter-spacing: 0.05em; text-transform: uppercase;
+    }
+    .dtable-b td {
+      padding: 12px 16px; font-size: 13.5px; color: #222;
+      border-bottom: 0.5px solid #f3f3f3; vertical-align: top;
+      background: #fff;
+    }
+    .dtable-b tbody tr:nth-child(even) td { background: #f9fffd; }
+    .dtable-b tr:last-child td { border-bottom: none; }
+
+    /* ════════════════════════════════════════
+       RENAL DOSING — traffic light styles
+    ════════════════════════════════════════ */
+
+    /* Style A: Row-tinted with dot */
+    .renal-row-green td { background: #f0fdf4; }
+    .renal-row-amber  td { background: #fefce8; }
+    .renal-row-orange td { background: #fff7ed; }
+    .renal-row-red    td { background: #fff1f2; }
+    .renal-row-green td:first-child { border-left: 3px solid #22c55e; }
+    .renal-row-amber  td:first-child { border-left: 3px solid #eab308; }
+    .renal-row-orange td:first-child { border-left: 3px solid #f97316; }
+    .renal-row-red    td:first-child { border-left: 3px solid #ef4444; }
+
+    /* Pill badge variants */
+    .pill { display: inline-block; padding: 2px 9px; border-radius: 20px; font-size: 11.5px; font-weight: 500; }
+    .pill-green  { background: #dcfce7; color: #166534; }
+    .pill-amber  { background: #fef9c3; color: #854d0e; }
+    .pill-orange { background: #ffedd5; color: #9a3412; }
+    .pill-red    { background: #fee2e2; color: #991b1b; }
+
+    /* Dot indicator */
+    .tl-dot {
+      display: inline-block; width: 8px; height: 8px;
+      border-radius: 50%; margin-right: 6px; vertical-align: middle;
+    }
+    .tl-green  { background: #22c55e; }
+    .tl-amber  { background: #eab308; }
+    .tl-orange { background: #f97316; }
+    .tl-red    { background: #ef4444; }
+
+    /* ════════════════════════════════════════
+       ADVERSE EFFECTS — layout variants
+    ════════════════════════════════════════ */
+
+    /* Style A: Two columns, card per category */
+    .ae-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px;
+    }
+    .ae-card {
+      border: 0.5px solid #e8e8e8; border-radius: 10px; padding: 16px 18px;
+    }
+    .ae-card.ae-common { border-top: 2px solid #e8e8e8; }
+    .ae-card.ae-serious { border-top: 2px solid #ef4444; }
+    .ae-card-title {
+      font-size: 11px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+    .ae-common .ae-card-title { color: #888; }
+    .ae-serious .ae-card-title { color: #ef4444; }
+    .ae-list { list-style: none; }
+    .ae-list li {
+      font-size: 13.5px; color: #333; padding: 5px 0;
+      border-bottom: 0.5px solid #f5f5f5; display: flex; align-items: baseline; gap: 8px;
+    }
+    .ae-list li:last-child { border-bottom: none; }
+    .ae-dot { width: 4px; height: 4px; border-radius: 50%; background: #ccc; flex-shrink: 0; margin-top: 7px; }
+    .ae-dot.red { background: #ef4444; }
+
+    /* Style B: Single list with severity badge inline */
+    .ae-list-b { list-style: none; }
+    .ae-list-b li {
+      display: flex; align-items: flex-start; gap: 10px;
+      padding: 9px 0; border-bottom: 0.5px solid #f3f3f3; font-size: 13.5px; color: #333;
+    }
+    .ae-list-b li:last-child { border-bottom: none; }
+    .ae-severity {
+      font-size: 10px; font-weight: 500; padding: 2px 7px; border-radius: 4px;
+      flex-shrink: 0; margin-top: 2px; text-transform: uppercase; letter-spacing: 0.05em;
+    }
+    .ae-sev-common  { background: #f1f5f9; color: #64748b; }
+    .ae-sev-serious { background: #fee2e2; color: #991b1b; }
+    .ae-sev-rare    { background: #f5f3ff; color: #6b21a8; }
+
+    /* ════════════════════════════════════════
+       CONTRAINDICATIONS
+    ════════════════════════════════════════ */
+
+    /* Style A: Danger box */
+    .contra-box {
+      background: #fff1f2; border: 0.5px solid #fecdd3;
+      border-radius: 10px; padding: 16px 18px; margin-bottom: 12px;
+    }
+    .contra-box-title {
+      font-size: 11px; font-weight: 500; color: #9f1239;
+      letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 10px;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .contra-list { list-style: none; }
+    .contra-list li {
+      font-size: 13.5px; color: #3d0c14; padding: 4px 0;
+      display: flex; align-items: baseline; gap: 8px;
+    }
+    .contra-list li::before { content: '✕'; font-size: 10px; color: #ef4444; flex-shrink: 0; }
+
+    .caution-box {
+      background: #fffbeb; border: 0.5px solid #fcd34d;
+      border-radius: 10px; padding: 16px 18px; margin-bottom: 12px;
+    }
+    .caution-box-title {
+      font-size: 11px; font-weight: 500; color: #92400e;
+      letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 10px;
+    }
+    .caution-list { list-style: none; }
+    .caution-list li {
+      font-size: 13.5px; color: #451a03; padding: 4px 0;
+      display: flex; align-items: baseline; gap: 8px;
+    }
+    .caution-list li::before { content: '!'; font-size: 11px; font-weight: 700; color: #f59e0b; flex-shrink: 0; width: 14px; text-align: center; }
+
+    /* ════════════════════════════════════════
+       INTERACTIONS
+    ════════════════════════════════════════ */
+    .int-sig-major  { color: #991b1b; font-weight: 500; }
+    .int-sig-mod    { color: #92400e; font-weight: 500; }
+    .int-sig-minor  { color: #555; }
+
+    /* Significance bar variant */
+    .sig-bar { display: inline-flex; gap: 2px; vertical-align: middle; }
+    .sig-block { width: 6px; height: 12px; border-radius: 2px; }
+    .sig-block.filled-red    { background: #ef4444; }
+    .sig-block.filled-orange { background: #f97316; }
+    .sig-block.filled-amber  { background: #eab308; }
+    .sig-block.empty         { background: #e5e7eb; }
+
+    /* ════════════════════════════════════════
+       COUNSELLING
+    ════════════════════════════════════════ */
+
+    /* Style A: Numbered teal circles */
+    .counsel-a { list-style: none; }
+    .counsel-a li {
+      display: flex; gap: 12px; align-items: flex-start;
+      padding: 10px 0; border-bottom: 0.5px solid #f3f3f3;
+      font-size: 14px; color: #333; line-height: 1.55;
+    }
+    .counsel-a li:last-child { border-bottom: none; }
+    .counsel-num {
+      font-size: 11px; font-weight: 500; color: #1D9E75;
+      background: #E1F5EE; border-radius: 50%;
+      width: 22px; height: 22px; min-width: 22px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; margin-top: 1px;
+    }
+
+    /* Style B: Checkmark list */
+    .counsel-b { list-style: none; }
+    .counsel-b li {
+      display: flex; gap: 10px; align-items: flex-start;
+      padding: 9px 0; border-bottom: 0.5px solid #f3f3f3;
+      font-size: 14px; color: #333; line-height: 1.55;
+    }
+    .counsel-b li:last-child { border-bottom: none; }
+    .counsel-check {
+      width: 18px; height: 18px; min-width: 18px;
+      border: 0.5px solid #9FE1CB; border-radius: 4px;
+      background: #E1F5EE; display: flex; align-items: center;
+      justify-content: center; flex-shrink: 0; margin-top: 2px;
+      color: #1D9E75; font-size: 10px;
+    }
+
+    /* Style C: Card grid */
+    .counsel-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+    }
+    .counsel-card {
+      background: #fff; border: 0.5px solid #e8e8e8;
+      border-radius: 10px; padding: 12px 14px;
+      font-size: 13.5px; color: #333; line-height: 1.55;
+      display: flex; gap: 10px; align-items: flex-start;
+    }
+    .counsel-card-num {
+      font-size: 10px; font-weight: 500; color: #1D9E75;
+      min-width: 18px;
+    }
+
+    /* ════════════════════════════════════════
+       NZ NOTES
+    ════════════════════════════════════════ */
+
+    /* Style A: Teal callout block */
+    .nz-box-a {
+      background: #f0faf6; border: 0.5px solid #9FE1CB;
+      border-radius: 12px; padding: 20px 22px;
+    }
+    .nz-box-a-header {
+      display: flex; align-items: center; gap: 8px; margin-bottom: 14px;
+    }
+    .nz-icon {
+      width: 26px; height: 26px; border-radius: 7px;
+      background: #1D9E75; color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; flex-shrink: 0;
+    }
+    .nz-box-a-title { font-size: 13px; font-weight: 500; color: #0F6E56; }
+    .nz-box-a-body { font-size: 13.5px; color: #1a3d2e; line-height: 1.65; }
+    .nz-box-a-body p { margin-bottom: 8px; }
+    .nz-box-a-body p:last-child { margin-bottom: 0; }
+
+    /* Style B: Side flag strip */
+    .nz-box-b {
+      border-left: 3px solid #1D9E75;
+      padding: 14px 18px; background: #fff;
+      border: 0.5px solid #e8e8e8;
+      border-left-width: 3px; border-left-color: #1D9E75;
+      border-radius: 0 10px 10px 0;
+    }
+    .nz-box-b-title { font-size: 12px; font-weight: 500; color: #1D9E75; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.06em; }
+    .nz-box-b-body { font-size: 13.5px; color: #333; line-height: 1.6; }
+
+    /* Funding chip strip */
+    .funding-strip { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+    .funding-chip {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-size: 12px; padding: 4px 12px; border-radius: 20px; font-weight: 500;
+    }
+    .fc-funded   { background: #E1F5EE; color: #0F6E56; border: 0.5px solid #9FE1CB; }
+    .fc-sa       { background: #fffbeb; color: #92400e; border: 0.5px solid #fcd34d; }
+    .fc-rx       { background: #eff6ff; color: #1e40af; border: 0.5px solid #bfdbfe; }
+    .fc-general  { background: #f0fdf4; color: #166534; border: 0.5px solid #bbf7d0; }
+
+    /* ════════════════════════════════════════
+       SEPARATOR
+    ════════════════════════════════════════ */
+    .design-sep {
+      border: none; border-top: 1px dashed #e0e0e0;
+      margin: 40px 0 32px;
+    }
+    .design-note {
+      font-size: 11.5px; color: #ccc; margin-bottom: 24px;
+      padding: 8px 14px; background: #fafafa; border-radius: 6px; border: 0.5px solid #eee;
+    }
+
+  </style>
+</head>
+<body>
+
+  <!-- TOP NAV -->
+  <nav class="topnav">
+    <div class="brand">Pharm<span>DC</span></div>
+    <div class="nav-tabs">
+      <a class="nav-tab" href="#">Home</a>
+      <a class="nav-tab active" href="#">Drugs &amp; Medicines</a>
+      <a class="nav-tab" href="#">Health Conditions</a>
+      <a class="nav-tab" href="#">Anatomy &amp; Physiology</a>
+      <a class="nav-tab" href="#">Clinical Skills</a>
+      <a class="nav-tab" href="#">Law &amp; Regulation</a>
+    </div>
+    <div class="topnav-right">
+      <button class="btn-generate">+ Generate</button>
+      <div class="avatar">DC</div>
+    </div>
+  </nav>
+
+  <div class="page">
+
+    <div class="breadcrumb">
+      <a href="#">Home</a>
+      <span class="breadcrumb-sep">›</span>
+      <a href="#">Drugs &amp; Medicines</a>
+      <span class="breadcrumb-sep">›</span>
+      <span class="breadcrumb-current">Metformin</span>
+    </div>
+
+    <!-- ══════════════════════════════════════
+         SECTION 1: ENTRY HEADERS
+    ══════════════════════════════════════ -->
+    <p class="variant-label">Entry header — Variant A: Card with border</p>
+
+    <div class="header-a">
+      <div class="drug-name">Metformin</div>
+      <div class="drug-generic">metformin hydrochloride</div>
+      <div class="badge-row">
+        <span class="badge badge-blue">Biguanide</span>
+        <span class="badge badge-teal">PHARMAC funded</span>
+        <span class="badge badge-amber">Prescription only</span>
+        <span class="badge badge-slate">Oral antidiabetic</span>
+        <span class="badge badge-slate">T2DM · PCOS</span>
+      </div>
+      <div class="header-actions">
+        <button class="btn-sm">✎ Edit</button>
+        <button class="btn-sm">↺ Regenerate</button>
+        <button class="btn-sm">☆ Bookmark</button>
+      </div>
+    </div>
+
+    <p class="variant-label">Entry header — Variant B: Left accent border (no card)</p>
+
+    <div class="header-b">
+      <div class="drug-name">Metformin</div>
+      <div class="drug-class">Biguanide · Oral antidiabetic</div>
+      <div class="badge-row">
+        <span class="badge badge-teal">PHARMAC funded</span>
+        <span class="badge badge-amber">Prescription only</span>
+        <span class="badge badge-slate">T2DM · PCOS</span>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════
+         SECTION 2: QUICK FACTS BAR
+    ══════════════════════════════════════ -->
+    <hr class="design-sep">
+    <p class="variant-label">Quick facts strip — Variant A: Bordered grid</p>
+    <div class="quick-facts-a">
+      <div class="qf-cell">
+        <div class="qf-label">Drug class</div>
+        <div class="qf-value">Biguanide</div>
+      </div>
+      <div class="qf-cell">
+        <div class="qf-label">Onset</div>
+        <div class="qf-value teal">2–3 weeks</div>
+      </div>
+      <div class="qf-cell">
+        <div class="qf-label">Renal clearance</div>
+        <div class="qf-value">100% (unchanged)</div>
+      </div>
+      <div class="qf-cell">
+        <div class="qf-label">Half-life</div>
+        <div class="qf-value">~5 hours</div>
+      </div>
+    </div>
+
+    <p class="variant-label">Quick facts strip — Variant B: Pill row</p>
+    <div class="quick-facts-b">
+      <div class="qf-pill">
+        <span class="qf-pill-label">Class</span>
+        <span class="qf-divider"></span>
+        <span class="qf-pill-value">Biguanide</span>
+      </div>
+      <div class="qf-pill">
+        <span class="qf-pill-label">Onset</span>
+        <span class="qf-divider"></span>
+        <span class="qf-pill-value">2–3 weeks</span>
+      </div>
+      <div class="qf-pill">
+        <span class="qf-pill-label">t½</span>
+        <span class="qf-divider"></span>
+        <span class="qf-pill-value">~5 h</span>
+      </div>
+      <div class="qf-pill">
+        <span class="qf-pill-label">Elimination</span>
+        <span class="qf-divider"></span>
+        <span class="qf-pill-value">Renal (100%)</span>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════
+         SECTION 3: TAB STRIPS
+    ══════════════════════════════════════ -->
+    <hr class="design-sep">
+    <p class="variant-label">Tab strip — Variant A: Underline (current design)</p>
+    <div class="tabs-a">
+      <div class="tab-a active">Overview</div>
+      <div class="tab-a">Dosing</div>
+      <div class="tab-a">Renal/Hepatic</div>
+      <div class="tab-a">Adverse effects</div>
+      <div class="tab-a">Interactions</div>
+      <div class="tab-a">Counselling</div>
+      <div class="tab-a">NZ notes</div>
+    </div>
+
+    <p class="variant-label">Tab strip — Variant B: Pill tabs</p>
+    <div class="tabs-b">
+      <div class="tab-b active">Overview</div>
+      <div class="tab-b">Dosing</div>
+      <div class="tab-b">Renal/Hepatic</div>
+      <div class="tab-b">Adverse effects</div>
+      <div class="tab-b">Interactions</div>
+      <div class="tab-b">Counselling</div>
+      <div class="tab-b">NZ notes</div>
+    </div>
+
+    <!-- ══════════════════════════════════════
+         SECTION 4: OVERVIEW / PROSE
+    ══════════════════════════════════════ -->
+    <hr class="design-sep">
+    <p class="variant-label">Overview content — with callout variants</p>
+
+    <div class="prose">
+      <p>Metformin is a biguanide antidiabetic agent and is the first-line pharmacological treatment for type 2 diabetes mellitus (T2DM) in most international and NZ guidelines. It exerts its primary effect by reducing hepatic glucose output, principally via inhibition of complex I of the mitochondrial electron transport chain, which reduces ATP production and activates AMP-kinase.</p>
+    </div>
+
+    <!-- Callout A: Info (teal) -->
+    <div class="callout-info">
+      <span class="callout-info-icon">💡</span>
+      <span class="callout-info-text"><strong>Mechanism:</strong> Activates AMPK → suppresses hepatic gluconeogenesis. Does not stimulate insulin secretion — no hypoglycaemia risk as monotherapy.</span>
+    </div>
+
+    <div class="prose">
+      <p>Beyond glycaemic control, metformin has established cardiovascular benefits in overweight patients with T2DM (UKPDS). It is also used off-label in polycystic ovarian syndrome (PCOS) to improve insulin sensitivity and restore ovulatory cycles.</p>
+    </div>
+
+    <!-- Callout B: Warning (amber) -->
+    <div class="callout-warn">
+      <span class="callout-warn-icon">⚠️</span>
+      <span class="callout-warn-text"><strong>Withhold before contrast media:</strong> Hold metformin 48h before iodinated contrast in patients with eGFR &lt;45 mL/min/1.73m². Restart once renal function confirmed stable.</span>
+    </div>
+
+    <!-- Callout C: Danger (red) -->
+    <div class="callout-danger">
+      <span class="callout-danger-icon">🚨</span>
+      <span class="callout-danger-text"><strong>Lactic acidosis risk:</strong> Rare but life-threatening. Risk increases significantly with eGFR &lt;30, hepatic impairment, or acute illness. Do not use in eGFR &lt;30.</span>
+    </div>
+
+    <!-- Callout D: Subtle note -->
+    <div class="callout-note">
+      <span class="callout-note-text">Metformin does not cause weight gain and may be associated with modest weight loss, making it preferred in overweight patients. Unlike sulfonylureas, it does not stimulate insulin secretion.</span>
+    </div>
+
+    <!-- ══════════════════════════════════════
+         SECTION 5: DOSING TABLES
+    ══════════════════════════════════════ -->
+    <hr class="design-sep">
+    <p class="variant-label">Dosing table — Variant A: Plain bordered</p>
+
+    <div class="table-wrap">
+      <table class="dtable">
+        <thead>
+          <tr>
+            <th>Indication</th>
+            <th>Starting dose</th>
+            <th>Maintenance dose</th>
+            <th>Maximum dose</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="td-bold">Type 2 diabetes mellitus</td>
+            <td class="td-mono">500 mg daily</td>
+            <td class="td-mono">500–1000 mg BD</td>
+            <td class="td-mono">3000 mg/day</td>
+          </tr>
+          <tr>
+            <td class="td-bold">PCOS (off-label)</td>
+            <td class="td-mono">500 mg daily</td>
+            <td class="td-mono">1500–2000 mg/day</td>
+            <td class="td-mono">2000 mg/day</td>
+          </tr>
+          <tr>
+            <td class="td-bold">Pre-diabetes prevention</td>
+            <td class="td-mono">500 mg daily</td>
+            <td class="td-mono">850 mg BD</td>
+            <td class="td-mono">1700 mg/day</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p class="variant-label">Dosing table — Variant B: Teal header</p>
+
+    <div class="table-wrap-b">
+      <table class="dtable-b">
+        <thead>
+          <tr>
+            <th>Indication</th>
+            <th>Starting dose</th>
+            <th>Maintenance dose</th>
+            <th>Maximum dose</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Type 2 diabetes mellitus</strong></td>
+            <td>500 mg daily</td>
+            <td>500–1000 mg BD</td>
+            <td>3000 mg/day</td>
+          </tr>
+          <tr>
+            <td><strong>PCOS (off-label)</strong></td>
+            <td>500 mg daily</td>
+            <td>1500–2000 mg/day</td>
+            <td>2000 mg/day</td>
+          </tr>
+          <tr>
+            <td><strong>Pre-diabetes prevention</strong></td>
+            <td>500 mg daily</td>
+            <td>850 mg BD</td>
+            <td>1700 mg/day</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ══════════════════════════════════════
+         SECTION 6: RENAL DOSING
+    ══════════════════════════════════════ -->
+    <hr class="design-sep">
+    <p class="variant-label">Renal dosing — Variant A: Row-tinted with left border + pill badge</p>
+
+    <div class="table-wrap">
+      <table class="dtable">
+        <thead>
+          <tr>
+            <th>eGFR (mL/min/1.73m²)</th>
+            <th>Status</th>
+            <th>Recommendation</th>
+            <th>Notes</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="renal-row-green">
+            <td class="td-bold">≥ 60</td>
+            <td><span class="pill pill-green">Normal dose</span></td>
+            <td>No adjustment required</td>
+            <td class="td-muted">Monitor annually</td>
+          </tr>
+          <tr class="renal-row-amber">
+            <td class="td-bold">45 – 59</td>
+            <td><span class="pill pill-amber">Use with caution</span></td>
+            <td>Continue; monitor renal function 3–6 monthly</td>
+            <td class="td-muted">Reassess at each visit</td>
+          </tr>
+          <tr class="renal-row-orange">
+            <td class="td-bold">30 – 44</td>
+            <td><span class="pill pill-orange">Reduce dose</span></td>
+            <td>Reduce to max 1000 mg/day; specialist input advised</td>
+            <td class="td-muted">Hold if acute illness or dehydration</td>
+          </tr>
+          <tr class="renal-row-red">
+            <td class="td-bold">&lt; 30</td>
+            <td><span class="pill pill-red">Contraindicated</span></td>
+            <td>Discontinue. Switch to alternative agent</td>
+            <td class="td-muted">Risk of lactic acidosis</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p class="variant-label">Renal dosing — Variant B: Dot indicator (minimal)</p>
+
+    <div class="table-wrap">
+      <table class="dtable">
+        <thead>
+          <tr>
+            <th>eGFR (mL/min/1.73m²)</th>
+            <th>Dose adjustment</th>
+            <th>Notes</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="tl-dot tl-green"></span><strong>≥ 60</strong></td>
+            <td>Normal dose</td>
+            <td class="td-muted">Monitor annually</td>
+          </tr>
+          <tr>
+            <td><span class="tl-dot tl-amber"></span><strong>45 – 59</strong></td>
+            <td>Continue with caution; 3–6 monthly monitoring</td>
+            <td class="td-muted">Reassess regularly</td>
+          </tr>
+          <tr>
+            <td><span class="tl-dot tl-orange"></span><strong>30 – 44</strong></td>
+            <td>Reduce to max 1000 mg/day</td>
+            <td class="td-muted">Hold if acute illness</td>
+          </tr>
+          <tr>
+            <td><span class="tl-dot tl-red"></span><strong>&lt; 30</strong></td>
+            <td>Contraindicated — discontinue</td>
+            <td class="td-muted">Lactic acidosis risk</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ══════════════════════════════════════
+         SECTION 7: ADVERSE EFFECTS
+    ══════════════════════════════════════ -->
+    <hr class="design-sep">
+    <p class="variant-label">Adverse effects — Variant A: Two-column cards</p>
+
+    <div class="ae-grid">
+      <div class="ae-card ae-common">
+        <div class="ae-card-title">Common (&gt;5%)</div>
+        <ul class="ae-list">
+          <li><span class="ae-dot"></span>Nausea and vomiting</li>
+          <li><span class="ae-dot"></span>Diarrhoea</li>
+          <li><span class="ae-dot"></span>Abdominal discomfort</li>
+          <li><span class="ae-dot"></span>Anorexia / reduced appetite</li>
+          <li><span class="ae-dot"></span>Metallic taste</li>
+        </ul>
+      </div>
+      <div class="ae-card ae-serious">
+        <div class="ae-card-title">Serious / Rare</div>
+        <ul class="ae-list">
+          <li><span class="ae-dot red"></span>Lactic acidosis (&lt;1/10,000)</li>
+          <li><span class="ae-dot red"></span>Severe hypoglycaemia (combination)</li>
+          <li><span class="ae-dot red"></span>Vitamin B12 deficiency (chronic use)</li>
+          <li><span class="ae-dot red"></span>Hepatotoxicity (rare)</li>
+        </ul>
+      </div>
+    </div>
+
+    <p class="variant-label">Adverse effects — Variant B: Single list with severity badges</p>
+
+    <div class="table-wrap">
+      <ul class="ae-list-b" style="padding: 4px 16px;">
+        <li><span class="ae-severity ae-sev-common">Common</span>Nausea, vomiting, diarrhoea, abdominal discomfort — usually transient and improve with food or dose titration</li>
+        <li><span class="ae-severity ae-sev-common">Common</span>Metallic taste, anorexia</li>
+        <li><span class="ae-severity ae-sev-serious">Serious</span>Lactic acidosis — rare but potentially fatal; risk increases with renal impairment, dehydration, contrast media</li>
+        <li><span class="ae-severity ae-sev-serious">Serious</span>Vitamin B12 deficiency — occurs with long-term use; monitor levels in symptomatic patients</li>
+        <li><span class="ae-severity ae-sev-rare">Rare</span>Hepatotoxicity, megaloblastic anaemia</li>
+      </ul>
+    </div>
+
+    <!-- ══════════════════════════════════════
+         SECTION 8: CONTRAINDICATIONS
+    ══════════════════════════════════════ -->
+    <hr class="design-sep">
+    <p class="variant-label">Contraindications — Variant A: Colour-coded boxes</p>
+
+    <div class="contra-box">
+      <div class="contra-box-title">✕ Absolute contraindications</div>
+      <ul class="contra-list">
+        <li>eGFR &lt; 30 mL/min/1.73m² (risk of lactic acidosis)</li>
+        <li>Acute or decompensated heart failure</li>
+        <li>Hepatic impairment (ALT/AST &gt;3× ULN)</li>
+        <li>Active or recent lactic acidosis</li>
+        <li>Acute illness with dehydration or haemodynamic instability</li>
+        <li>Perioperative period with significant fasting (withhold 24–48h)</li>
+      </ul>
+    </div>
+
+    <div class="caution-box">
+      <div class="caution-box-title">! Cautions / Relative contraindications</div>
+      <ul class="caution-list">
+        <li>eGFR 30–60 — use with caution; reduce dose if eGFR 30–45</li>
+        <li>Iodinated contrast media — withhold 48h if eGFR &lt;45</li>
+        <li>Excess alcohol use (increases lactic acidosis risk)</li>
+        <li>Elderly patients — monitor renal function more frequently</li>
+        <li>Pregnancy — generally considered safe (discuss risk/benefit)</li>
+      </ul>
+    </div>
+
+    <!-- ══════════════════════════════════════
+         SECTION 9: INTERACTIONS
+    ══════════════════════════════════════ -->
+    <hr class="design-sep">
+    <p class="variant-label">Interactions — Variant A: Colour-coded significance text</p>
+
+    <div class="table-wrap">
+      <table class="dtable">
+        <thead>
+          <tr>
+            <th>Drug or class</th>
+            <th>Mechanism</th>
+            <th>Significance</th>
+            <th>Management</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="td-bold">Iodinated contrast media</td>
+            <td class="td-muted">Acute nephrotoxicity → metformin accumulation</td>
+            <td><span class="int-sig-major">● Major</span></td>
+            <td>Withhold 48h prior; restart once renal function confirmed stable</td>
+          </tr>
+          <tr>
+            <td class="td-bold">Alcohol (excess)</td>
+            <td class="td-muted">Impairs hepatic lactate clearance</td>
+            <td><span class="int-sig-major">● Major</span></td>
+            <td>Advise against heavy alcohol use</td>
+          </tr>
+          <tr>
+            <td class="td-bold">Cimetidine</td>
+            <td class="td-muted">Competes for renal tubular secretion (OCT2)</td>
+            <td><span class="int-sig-mod">● Moderate</span></td>
+            <td>Metformin levels may increase ~40%; monitor for GI effects</td>
+          </tr>
+          <tr>
+            <td class="td-bold">Corticosteroids</td>
+            <td class="td-muted">Antagonise glucose-lowering effect</td>
+            <td><span class="int-sig-mod">● Moderate</span></td>
+            <td>Monitor BSL closely; may need dose increase or addition of insulin</td>
+          </tr>
+          <tr>
+            <td class="td-bold">Diuretics (thiazide)</td>
+            <td class="td-muted">Raise blood glucose; diuresis may affect renal function</td>
+            <td><span class="int-sig-minor">● Minor</span></td>
+            <td>Monitor glycaemic control and renal function</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p class="variant-label">Interactions — Variant B: Severity bar indicator</p>
+
+    <div class="table-wrap">
+      <table class="dtable">
+        <thead>
+          <tr>
+            <th>Drug or class</th>
+            <th>Effect</th>
+            <th>Severity</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="td-bold">Iodinated contrast</td>
+            <td>Metformin accumulation, lactic acidosis risk</td>
+            <td>
+              <div class="sig-bar">
+                <div class="sig-block filled-red"></div>
+                <div class="sig-block filled-red"></div>
+                <div class="sig-block filled-red"></div>
+              </div>
+            </td>
+            <td>Withhold 48h; check eGFR before restarting</td>
+          </tr>
+          <tr>
+            <td class="td-bold">Cimetidine</td>
+            <td>↑ Metformin levels ~40% (OCT2 competition)</td>
+            <td>
+              <div class="sig-bar">
+                <div class="sig-block filled-orange"></div>
+                <div class="sig-block filled-orange"></div>
+                <div class="sig-block empty"></div>
+              </div>
+            </td>
+            <td>Monitor for GI effects; consider alternatives</td>
+          </tr>
+          <tr>
+            <td class="td-bold">Thiazide diuretics</td>
+            <td>Antagonises glucose-lowering effect</td>
+            <td>
+              <div class="sig-bar">
+                <div class="sig-block filled-amber"></div>
+                <div class="sig-block empty"></div>
+                <div class="sig-block empty"></div>
+              </div>
+            </td>
+            <td>Monitor BSL; may require dose adjustment</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ══════════════════════════════════════
+         SECTION 10: COUNSELLING
+    ══════════════════════════════════════ -->
+    <hr class="design-sep">
+    <p class="variant-label">Counselling — Variant A: Numbered teal circles</p>
+
+    <ul class="counsel-a">
+      <li>
+        <span class="counsel-num">1</span>
+        Take with food to reduce nausea and stomach upset — the most common side effects when starting.
+      </li>
+      <li>
+        <span class="counsel-num">2</span>
+        Start with a low dose and increase slowly over several weeks — this greatly reduces GI side effects.
+      </li>
+      <li>
+        <span class="counsel-num">3</span>
+        Metformin does not cause hypoglycaemia when taken alone, but may do so if combined with insulin or sulfonylureas.
+      </li>
+      <li>
+        <span class="counsel-num">4</span>
+        If you need a CT scan with dye (contrast), tell the radiologist you take metformin — it may need to be stopped temporarily.
+      </li>
+      <li>
+        <span class="counsel-num">5</span>
+        Avoid heavy alcohol use while taking metformin, as it increases the risk of a rare but serious side effect.
+      </li>
+    </ul>
+
+    <p class="variant-label">Counselling — Variant B: Checkbox style</p>
+
+    <ul class="counsel-b">
+      <li>
+        <span class="counsel-check">✓</span>
+        Take with food to reduce nausea and stomach upset — the most common side effects when starting.
+      </li>
+      <li>
+        <span class="counsel-check">✓</span>
+        Start with a low dose and increase slowly over several weeks — this greatly reduces GI side effects.
+      </li>
+      <li>
+        <span class="counsel-check">✓</span>
+        Metformin does not cause hypoglycaemia when taken alone — but can if combined with insulin or sulfonylureas.
+      </li>
+      <li>
+        <span class="counsel-check">✓</span>
+        If you need a CT scan with contrast dye, tell the radiologist you take metformin.
+      </li>
+    </ul>
+
+    <p class="variant-label">Counselling — Variant C: Two-column card grid</p>
+
+    <div class="counsel-grid">
+      <div class="counsel-card"><span class="counsel-card-num">01</span>Take with food to reduce nausea and stomach upset when starting.</div>
+      <div class="counsel-card"><span class="counsel-card-num">02</span>Start low, go slow — dose increases over weeks reduce GI side effects.</div>
+      <div class="counsel-card"><span class="counsel-card-num">03</span>No hypoglycaemia risk as monotherapy — blood sugar will not drop dangerously.</div>
+      <div class="counsel-card"><span class="counsel-card-num">04</span>Alert radiology team if CT with contrast is planned — may need temporary hold.</div>
+      <div class="counsel-card"><span class="counsel-card-num">05</span>Avoid heavy alcohol — it increases risk of a rare but serious side effect.</div>
+      <div class="counsel-card"><span class="counsel-card-num">06</span>Long-term use may deplete vitamin B12 — annual monitoring if symptomatic.</div>
+    </div>
+
+    <!-- ══════════════════════════════════════
+         SECTION 11: NZ NOTES
+    ══════════════════════════════════════ -->
+    <hr class="design-sep">
+    <p class="variant-label">NZ notes — Variant A: Teal callout card</p>
+
+    <div class="nz-box-a">
+      <div class="nz-box-a-header">
+        <div class="nz-icon">🇳🇿</div>
+        <div class="nz-box-a-title">NZ notes</div>
+      </div>
+      <div class="nz-box-a-body">
+        <p><strong>Funding:</strong> Metformin is fully subsidised on the PHARMAC community schedule. No Special Authority required. Available as standard-release and modified-release (Glucophage XR) tablets.</p>
+        <p><strong>Scheduling:</strong> Prescription medicine (Rx). Pharmacist-only supply not available.</p>
+        <p><strong>Formulations in NZ:</strong> 500 mg and 850 mg tablets (standard-release); 500 mg, 750 mg, 1000 mg tablets (modified-release). Modified-release often better tolerated for GI side effects.</p>
+        <p><strong>NZ practice note:</strong> BPAC NZ recommends metformin as first-line in T2DM unless contraindicated. eGFR should be checked before initiating and regularly thereafter. PHARMAC funds the standard-release formulation at full subsidy; modified-release may have patient co-payment.</p>
+      </div>
+      <div class="funding-strip">
+        <span class="funding-chip fc-funded">Fully subsidised</span>
+        <span class="funding-chip fc-rx">Prescription only</span>
+        <span class="funding-chip fc-sa">No Special Authority</span>
+      </div>
+    </div>
+
+    <br>
+    <p class="variant-label">NZ notes — Variant B: Left border strip</p>
+
+    <div class="nz-box-b">
+      <div class="nz-box-b-title">NZ context</div>
+      <div class="nz-box-b-body">
+        Fully subsidised on PHARMAC community schedule. No Special Authority. Available as 500 mg and 850 mg standard-release tablets and 500–1000 mg modified-release (Glucophage XR). Prescription medicine. BPAC NZ recommends as first-line for T2DM. Modified-release generally better tolerated — consider switching if persistent GI side effects.
+      </div>
+      <div class="funding-strip">
+        <span class="funding-chip fc-funded">Fully subsidised</span>
+        <span class="funding-chip fc-rx">Prescription only</span>
+      </div>
+    </div>
+
+    <br><br>
+
+  </div>
+
+</body>
+</html>

@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PharmDC — Metformin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'DM Sans', system-ui, sans-serif;
+      font-size: 14px;
+      line-height: 1.6;
+      background: #fff;
+      color: #111;
+      -webkit-font-smoothing: antialiased;
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── TOP NAV ── */
+    .topnav {
+      height: 52px;
+      background: #fff;
+      border-bottom: 0.5px solid #ebebeb;
+      display: flex;
+      align-items: center;
+      padding: 0 32px;
+      flex-shrink: 0;
+      z-index: 20;
+    }
+    .brand { font-size: 16px; font-weight: 500; letter-spacing: -0.03em; color: #111; margin-right: 36px; flex-shrink: 0; }
+    .brand span { color: #1D9E75; }
+    .nav-tabs { display: flex; align-items: stretch; height: 100%; flex: 1; }
+    .nav-tab {
+      display: flex; align-items: center; padding: 0 15px;
+      font-size: 13px; color: #999; text-decoration: none;
+      border-bottom: 2px solid transparent;
+      transition: color 0.1s, border-color 0.12s; cursor: pointer; white-space: nowrap;
+    }
+    .nav-tab:hover { color: #333; }
+    .nav-tab.active { color: #1D9E75; font-weight: 500; border-bottom-color: #1D9E75; }
+    .topnav-right { display: flex; align-items: center; gap: 10px; margin-left: auto; }
+    .cmd-btn {
+      display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px;
+      background: #f5f5f5; border: 0.5px solid #e4e4e4; border-radius: 8px;
+      font-family: inherit; font-size: 12.5px; color: #999; cursor: pointer;
+      min-width: 175px; transition: background 0.1s;
+    }
+    .cmd-btn:hover { background: #efefef; }
+    .cmd-shortcut { margin-left: auto; background: #ebebeb; border-radius: 4px; padding: 1px 5px; font-size: 10px; color: #bbb; font-weight: 500; }
+    .btn-generate {
+      display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px;
+      background: #1D9E75; color: #fff; border: none; border-radius: 7px;
+      font-family: inherit; font-size: 12.5px; font-weight: 500; cursor: pointer; transition: background 0.15s;
+    }
+    .btn-generate:hover { background: #0F6E56; }
+    .avatar { width: 28px; height: 28px; border-radius: 50%; background: #1D9E75; color: #fff; font-size: 10.5px; font-weight: 500; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+
+    /* ── MAIN ── */
+    .main { flex: 1; overflow-y: auto; }
+    .content-wrap { max-width: 880px; margin: 0 auto; padding: 40px 32px 80px; }
+
+    /* Breadcrumb */
+    .breadcrumb {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 12.5px; color: #bbb; margin-bottom: 24px;
+    }
+    .breadcrumb a { color: #bbb; text-decoration: none; transition: color 0.1s; }
+    .breadcrumb a:hover { color: #1D9E75; }
+    .breadcrumb-sep { color: #ddd; }
+    .breadcrumb-current { color: #666; font-weight: 500; }
+
+    /* Entry header */
+    .entry-header { margin-bottom: 28px; }
+    .entry-title {
+      font-size: 28px; font-weight: 400; color: #111;
+      letter-spacing: -0.03em; line-height: 1.15; margin-bottom: 8px;
+    }
+    .entry-meta {
+      display: flex; align-items: center; flex-wrap: wrap; gap: 8px;
+    }
+    .meta-tag {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-size: 12px; padding: 3px 10px; border-radius: 20px;
+      border: 0.5px solid #e8e8e8; color: #666; background: #fafafa;
+    }
+    .meta-tag.funded { background: #E1F5EE; border-color: #9FE1CB; color: #0F6E56; }
+    .meta-tag.class  { background: #f0f4ff; border-color: #c7d5f8; color: #3b5bdb; }
+    .meta-tag.rx     { background: #fff8f0; border-color: #fdd8a8; color: #d97706; }
+    .meta-dot { width: 5px; height: 5px; border-radius: 50%; background: currentColor; opacity: 0.6; }
+
+    /* Action buttons */
+    .entry-actions {
+      display: flex; align-items: center; gap: 8px; margin-top: 16px;
+    }
+    .btn-action {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 6px 14px; background: #fff; border: 0.5px solid #e4e4e4;
+      border-radius: 7px; font-family: inherit; font-size: 12.5px; color: #555;
+      cursor: pointer; transition: background 0.1s, border-color 0.1s;
+    }
+    .btn-action:hover { background: #f8f8f8; border-color: #ccc; }
+
+    /* Tab strip */
+    .tab-strip {
+      display: flex; gap: 0; border-bottom: 0.5px solid #f0f0f0;
+      margin-bottom: 32px; overflow-x: auto;
+    }
+    .tab-strip::-webkit-scrollbar { display: none; }
+    .tab {
+      padding: 10px 16px; font-size: 13px; color: #999; cursor: pointer;
+      border-bottom: 2px solid transparent; white-space: nowrap;
+      transition: color 0.1s, border-color 0.12s; text-decoration: none;
+    }
+    .tab:hover { color: #444; }
+    .tab.active { color: #1D9E75; font-weight: 500; border-bottom-color: #1D9E75; }
+
+    /* ── CONTENT SECTIONS ── */
+
+    /* Overview prose */
+    .prose-section { margin-bottom: 32px; }
+    .prose-label {
+      font-size: 11px; font-weight: 500; color: #ccc;
+      letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 10px;
+    }
+    .prose-body { font-size: 14px; color: #333; line-height: 1.7; }
+    .prose-body p { margin-bottom: 10px; }
+    .prose-body p:last-child { margin-bottom: 0; }
+
+    /* Key facts row */
+    .key-facts {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 1px; background: #f0f0f0; border: 0.5px solid #f0f0f0;
+      border-radius: 10px; overflow: hidden; margin-bottom: 28px;
+    }
+    .fact-cell { background: #fff; padding: 14px 18px; }
+    .fact-label { font-size: 10.5px; color: #bbb; letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 4px; }
+    .fact-value { font-size: 13.5px; font-weight: 500; color: #111; }
+
+    /* Dosing table */
+    .table-wrap {
+      border: 0.5px solid #ebebeb; border-radius: 10px;
+      overflow: hidden; margin-bottom: 28px;
+    }
+    .data-table { width: 100%; border-collapse: collapse; }
+    .data-table thead tr { background: #fafafa; }
+    .data-table th {
+      padding: 10px 16px; text-align: left;
+      font-size: 11px; font-weight: 500; color: #aaa;
+      letter-spacing: 0.06em; text-transform: uppercase;
+      border-bottom: 0.5px solid #ebebeb;
+    }
+    .data-table td {
+      padding: 12px 16px; font-size: 13.5px; color: #222;
+      border-bottom: 0.5px solid #f5f5f5; vertical-align: top;
+    }
+    .data-table tr:last-child td { border-bottom: none; }
+    .data-table tbody tr:hover td { background: #fafffe; }
+    .td-muted { color: #888; font-size: 13px; }
+    .td-bold { font-weight: 500; }
+
+    /* Renal dosing traffic-light */
+    .renal-table { width: 100%; border-collapse: collapse; }
+    .renal-table thead tr { background: #fafafa; }
+    .renal-table th {
+      padding: 10px 16px; text-align: left;
+      font-size: 11px; font-weight: 500; color: #aaa;
+      letter-spacing: 0.06em; text-transform: uppercase;
+      border-bottom: 0.5px solid #ebebeb;
+    }
+    .renal-table td {
+      padding: 12px 16px; font-size: 13.5px; color: #222;
+      border-bottom: 0.5px solid #f5f5f5; vertical-align: middle;
+    }
+    .renal-table tr:last-child td { border-bottom: none; }
+
+    .tl-cell { display: flex; align-items: center; gap: 10px; }
+    .tl-dot {
+      width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0;
+    }
+    .tl-green  { background: #22c55e; }
+    .tl-amber  { background: #f59e0b; }
+    .tl-orange { background: #f97316; }
+    .tl-red    { background: #ef4444; }
+
+    .tl-badge {
+      display: inline-block; font-size: 11.5px; font-weight: 500;
+      padding: 2px 9px; border-radius: 4px;
+    }
+    .badge-green  { background: #dcfce7; color: #166534; }
+    .badge-amber  { background: #fef9c3; color: #854d0e; }
+    .badge-orange { background: #ffedd5; color: #9a3412; }
+    .badge-red    { background: #fee2e2; color: #991b1b; }
+
+    /* Adverse effects */
+    .ae-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 28px; }
+    .ae-card {
+      border: 0.5px solid #ebebeb; border-radius: 10px; padding: 16px 18px;
+    }
+    .ae-card-title {
+      font-size: 12px; font-weight: 500; color: #888;
+      letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 10px;
+    }
+    .ae-card.serious .ae-card-title { color: #c0392b; }
+    .ae-list { list-style: none; }
+    .ae-list li {
+      font-size: 13.5px; color: #333; padding: 4px 0;
+      border-bottom: 0.5px solid #f5f5f5; display: flex; gap: 8px; align-items: baseline;
+    }
+    .ae-list li:last-child { border-bottom: none; }
+    .ae-list li::before { content: '—'; color: #ddd; flex-shrink: 0; font-size: 12px; }
+
+    /* Counselling */
+    .counsel-list { list-style: none; }
+    .counsel-list li {
+      display: flex; gap: 12px; align-items: baseline;
+      padding: 10px 0; border-bottom: 0.5px solid #f5f5f5;
+      font-size: 14px; color: #333; line-height: 1.55;
+    }
+    .counsel-list li:last-child { border-bottom: none; }
+    .counsel-num {
+      font-size: 11px; font-weight: 500; color: #1D9E75;
+      background: #E1F5EE; border-radius: 50%; width: 20px; height: 20px;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+
+    /* NZ callout */
+    .nz-callout {
+      background: #f0faf6; border: 0.5px solid #9FE1CB;
+      border-radius: 10px; padding: 18px 20px; margin-bottom: 16px;
+    }
+    .nz-callout-title {
+      font-size: 12px; font-weight: 500; color: #0F6E56;
+      letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 10px;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .nz-callout-body { font-size: 13.5px; color: #1a3d2e; line-height: 1.6; }
+    .nz-callout-body p { margin-bottom: 8px; }
+    .nz-callout-body p:last-child { margin-bottom: 0; }
+
+    .funding-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+    .funding-chip {
+      font-size: 12px; padding: 3px 10px; border-radius: 20px; font-weight: 500;
+    }
+    .chip-funded   { background: #E1F5EE; color: #0F6E56; border: 0.5px solid #9FE1CB; }
+    .chip-sa       { background: #fef9c3; color: #854d0e; border: 0.5px solid #fde047; }
+    .chip-rx       { background: #fff8f0; color: #d97706; border: 0.5px solid #fdd8a8; }
+
+
+    /* ── AI WIDGET (shared) ── */
+    .ai-trigger {
+      position: fixed; bottom: 24px; right: 24px; width: 48px; height: 48px;
+      border-radius: 50%; background: #1D9E75; border: none; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 4px 16px rgba(29,158,117,0.35);
+      transition: background 0.15s, transform 0.15s; z-index: 100;
+    }
+    .ai-trigger:hover { background: #0F6E56; transform: scale(1.06); }
+    .ai-trigger.open { background: #0F6E56; transform: rotate(45deg); }
+    .ai-panel {
+      position: fixed; bottom: 84px; right: 24px; width: 340px; height: 460px;
+      background: #fff; border: 0.5px solid #e4e4e4; border-radius: 14px;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.12); display: flex; flex-direction: column;
+      z-index: 99; overflow: hidden;
+      opacity: 0; transform: translateY(12px) scale(0.97); pointer-events: none;
+      transition: opacity 0.2s cubic-bezier(0.4,0,0.2,1), transform 0.2s cubic-bezier(0.4,0,0.2,1);
+    }
+    .ai-panel.open { opacity: 1; transform: translateY(0) scale(1); pointer-events: all; }
+    .ai-header { padding: 13px 15px 11px; border-bottom: 0.5px solid #f0f0f0; display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+    .ai-header-icon { width: 28px; height: 28px; border-radius: 8px; background: #E1F5EE; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .ai-header-text { flex: 1; }
+    .ai-header-title { font-size: 13px; font-weight: 500; color: #111; line-height: 1.2; }
+    .ai-header-sub { font-size: 11px; color: #bbb; }
+    .ai-close { width: 24px; height: 24px; border: none; background: none; cursor: pointer; color: #ccc; font-size: 18px; display: flex; align-items: center; justify-content: center; border-radius: 4px; transition: color 0.1s; padding: 0; line-height: 1; }
+    .ai-close:hover { color: #888; background: #f5f5f5; }
+    .ai-messages { flex: 1; overflow-y: auto; padding: 13px 13px 6px; display: flex; flex-direction: column; gap: 10px; }
+    .msg { display: flex; gap: 8px; align-items: flex-start; }
+    .msg.user { flex-direction: row-reverse; }
+    .msg-avatar { width: 24px; height: 24px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 500; margin-top: 2px; }
+    .msg.assistant .msg-avatar { background: #E1F5EE; color: #1D9E75; }
+    .msg.user .msg-avatar { background: #1D9E75; color: #fff; }
+    .msg-bubble { max-width: 82%; padding: 9px 12px; border-radius: 10px; font-size: 13px; line-height: 1.5; }
+    .msg.assistant .msg-bubble { background: #f7f7f7; color: #1a1a1a; border-radius: 10px 10px 10px 3px; }
+    .msg.user .msg-bubble { background: #1D9E75; color: #fff; border-radius: 10px 10px 3px 10px; }
+    .msg-source { font-size: 10.5px; color: #bbb; margin-top: 4px; display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
+    .source-chip { background: #f0f0f0; border-radius: 4px; padding: 1px 6px; color: #888; font-size: 10px; }
+    .ai-suggestions { padding: 0 13px 8px; display: flex; flex-wrap: wrap; gap: 6px; flex-shrink: 0; }
+    .sugg-chip { display: inline-block; padding: 5px 10px; background: #f5f5f5; border: 0.5px solid #e8e8e8; border-radius: 20px; font-size: 11.5px; color: #666; cursor: pointer; font-family: inherit; transition: background 0.1s, border-color 0.1s, color 0.1s; white-space: nowrap; }
+    .sugg-chip:hover { background: #E1F5EE; border-color: #1D9E75; color: #0F6E56; }
+    .ai-input-row { padding: 9px 12px; border-top: 0.5px solid #f0f0f0; display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+    .ai-input { flex: 1; border: 0.5px solid #e4e4e4; border-radius: 8px; padding: 8px 12px; font-family: inherit; font-size: 13px; color: #111; outline: none; background: #f9f9f9; transition: border-color 0.15s; }
+    .ai-input:focus { border-color: #1D9E75; background: #fff; }
+    .ai-input::placeholder { color: #ccc; }
+    .ai-send { width: 32px; height: 32px; border-radius: 8px; background: #1D9E75; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: background 0.15s; }
+    .ai-send:hover { background: #0F6E56; }
+  </style>
+</head>
+<body>
+
+  <!-- TOP NAV -->
+  <nav class="topnav">
+    <div class="brand">Pharm<span>DC</span></div>
+    <div class="nav-tabs">
+      <a class="nav-tab" href="concept-d.html">Home</a>
+      <a class="nav-tab active" href="#">Drugs &amp; Medicines</a>
+      <a class="nav-tab" href="concept-d-condition.html">Health Conditions</a>
+      <a class="nav-tab" href="#">Anatomy &amp; Physiology</a>
+      <a class="nav-tab" href="#">Clinical Skills</a>
+      <a class="nav-tab" href="#">Law &amp; Regulation</a>
+    </div>
+    <div class="topnav-right">
+      <button class="cmd-btn">
+        <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><circle cx="7" cy="7" r="5" stroke="#bbb" stroke-width="1.5"/><path d="M11 11l3 3" stroke="#bbb" stroke-width="1.5" stroke-linecap="round"/></svg>
+        Search entries…
+        <span class="cmd-shortcut">⌘K</span>
+      </button>
+      <button class="btn-generate">
+        <svg width="11" height="11" viewBox="0 0 16 16" fill="none"><path d="M8 2v12M2 8h12" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/></svg>
+        Generate
+      </button>
+      <div class="avatar">DC</div>
+    </div>
+  </nav>
+
+  <!-- MAIN -->
+  <main class="main">
+    <div class="content-wrap">
+
+      <!-- Breadcrumb -->
+      <div class="breadcrumb">
+        <a href="concept-d.html">Home</a>
+        <span class="breadcrumb-sep">›</span>
+        <a href="#">Drugs &amp; Medicines</a>
+        <span class="breadcrumb-sep">›</span>
+        <span class="breadcrumb-current">Metformin</span>
+      </div>
+
+      <!-- Entry header -->
+      <div class="entry-header">
+        <div class="entry-title">Metformin</div>
+        <div class="entry-meta">
+          <span class="meta-tag class"><span class="meta-dot"></span>Biguanide</span>
+          <span class="meta-tag funded"><span class="meta-dot"></span>PHARMAC funded</span>
+          <span class="meta-tag rx"><span class="meta-dot"></span>Prescription only</span>
+          <span class="meta-tag">Oral antidiabetic</span>
+          <span class="meta-tag">T2DM · PCOS</span>
+        </div>
+        <div class="entry-actions">
+          <button class="btn-action">
+            <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M11 2H5a1 1 0 00-1 1v10a1 1 0 001 1h6a1 1 0 001-1V3a1 1 0 00-1-1z" stroke="currentColor" stroke-width="1.3"/><path d="M8 5v6M5.5 8h5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+            Edit
+          </button>
+          <button class="btn-action">
+            <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M2 4l5 5 3-3 4 5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Regenerate
+          </button>
+          <button class="btn-action">
+            <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M8 2l1.8 3.6L14 6.3l-3 2.9.7 4.1L8 11.1l-3.7 2.2.7-4.1-3-2.9 4.2-.7z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>
+            Bookmark
+          </button>
+        </div>
+      </div>
+
+      <!-- Tab strip — showing Dosing as active -->
+      <div class="tab-strip" id="tabStrip">
+        <a class="tab" data-tab="overview" href="#">Overview</a>
+        <a class="tab active" data-tab="dosing" href="#">Dosing</a>
+        <a class="tab" data-tab="renal" href="#">Renal dosing</a>
+        <a class="tab" data-tab="ae" href="#">Adverse effects</a>
+        <a class="tab" data-tab="interactions" href="#">Interactions</a>
+        <a class="tab" data-tab="counselling" href="#">Counselling</a>
+        <a class="tab" data-tab="nz" href="#">NZ notes</a>
+      </div>
+
+      <!-- OVERVIEW TAB (hidden by default) -->
+      <div id="tab-overview" class="tab-content" style="display:none">
+        <div class="key-facts">
+          <div class="fact-cell">
+            <div class="fact-label">Drug class</div>
+            <div class="fact-value">Biguanide</div>
+          </div>
+          <div class="fact-cell">
+            <div class="fact-label">Mechanism</div>
+            <div class="fact-value">AMPK activation → ↓ hepatic gluconeogenesis</div>
+          </div>
+          <div class="fact-cell">
+            <div class="fact-label">Clinical role</div>
+            <div class="fact-value">First-line T2DM; also used in PCOS</div>
+          </div>
+        </div>
+        <div class="prose-section">
+          <div class="prose-label">Mechanism of action</div>
+          <div class="prose-body">
+            <p>Metformin activates AMP-activated protein kinase (AMPK) in hepatocytes, primarily suppressing hepatic glucose output (gluconeogenesis and glycogenolysis). Unlike sulfonylureas, it does not stimulate insulin secretion and therefore does not cause hypoglycaemia as monotherapy.</p>
+            <p>It also improves peripheral insulin sensitivity in muscle and adipose tissue, and modestly reduces intestinal glucose absorption. The net effect is a reduction in fasting plasma glucose and HbA1c without weight gain.</p>
+          </div>
+        </div>
+        <div class="prose-section">
+          <div class="prose-label">Clinical role</div>
+          <div class="prose-body">
+            <p>First-line pharmacotherapy for type 2 diabetes mellitus in most guidelines including BPAC NZ. Cardiovascular outcome data (UKPDS) supports reduction in macrovascular events in overweight patients. Also used off-label (and funded in NZ) for polycystic ovarian syndrome (PCOS) where it improves insulin resistance and may restore ovulation.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- DOSING TAB (visible by default) -->
+      <div id="tab-dosing" class="tab-content">
+        <div class="prose-section">
+          <div class="prose-label">Standard dosing</div>
+        </div>
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Indication</th>
+                <th>Starting dose</th>
+                <th>Titration</th>
+                <th>Maintenance</th>
+                <th>Maximum</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="td-bold">Type 2 diabetes</td>
+                <td>500 mg once or twice daily with meals</td>
+                <td>↑ by 500 mg weekly as tolerated</td>
+                <td>1000–2000 mg/day in divided doses</td>
+                <td class="td-bold">3000 mg/day</td>
+              </tr>
+              <tr>
+                <td class="td-bold">PCOS</td>
+                <td>500 mg once daily with food</td>
+                <td>↑ by 500 mg weekly</td>
+                <td>1000–1500 mg/day</td>
+                <td class="td-bold">2000 mg/day</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="prose-section">
+          <div class="prose-label">Dosing notes</div>
+          <div class="prose-body">
+            <p>Always take with or immediately after food — this significantly reduces GI side effects. Slow titration (weekly increments) improves tolerability. Modified-release (MR) formulations once daily at evening meal may further reduce GI symptoms if IR not tolerated.</p>
+            <p>If HbA1c target not met at maximum tolerated dose, add a second agent (SGLT-2 inhibitor or DPP-4 inhibitor preferred in NZ based on BPAC guidance).</p>
+          </div>
+        </div>
+
+        <div class="prose-section">
+          <div class="prose-label">Renal dosing (preview)</div>
+        </div>
+        <div class="table-wrap">
+          <table class="renal-table">
+            <thead>
+              <tr>
+                <th>eGFR (mL/min/1.73 m²)</th>
+                <th>Status</th>
+                <th>Recommendation</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>≥ 60</td>
+                <td><div class="tl-cell"><div class="tl-dot tl-green"></div><span class="tl-badge badge-green">Use normally</span></div></td>
+                <td class="td-muted">Full dose. No adjustment required.</td>
+              </tr>
+              <tr>
+                <td>45–59</td>
+                <td><div class="tl-cell"><div class="tl-dot tl-amber"></div><span class="tl-badge badge-amber">Caution</span></div></td>
+                <td class="td-muted">Continue, but monitor renal function more frequently (3–6 monthly). Avoid in acute illness.</td>
+              </tr>
+              <tr>
+                <td>30–44</td>
+                <td><div class="tl-cell"><div class="tl-dot tl-orange"></div><span class="tl-badge badge-orange">Reduce dose</span></div></td>
+                <td class="td-muted">Maximum 1000 mg/day. Increased monitoring required. Withhold if acute illness or procedures.</td>
+              </tr>
+              <tr>
+                <td>&lt; 30</td>
+                <td><div class="tl-cell"><div class="tl-dot tl-red"></div><span class="tl-badge badge-red">Contraindicated</span></div></td>
+                <td class="td-muted">Do not use. Risk of metformin accumulation and lactic acidosis.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ADVERSE EFFECTS TAB (hidden) -->
+      <div id="tab-ae" class="tab-content" style="display:none">
+        <div class="ae-grid">
+          <div class="ae-card">
+            <div class="ae-card-title">Common</div>
+            <ul class="ae-list">
+              <li>Nausea, vomiting, diarrhoea (usually transient)</li>
+              <li>Abdominal discomfort, bloating</li>
+              <li>Metallic taste</li>
+              <li>Reduced appetite (sometimes desired)</li>
+              <li>Vitamin B12 deficiency with long-term use</li>
+            </ul>
+          </div>
+          <div class="ae-card serious">
+            <div class="ae-card-title">Serious</div>
+            <ul class="ae-list">
+              <li>Lactic acidosis (rare; risk ↑ with renal impairment)</li>
+              <li>Severe B12 deficiency (megaloblastic anaemia)</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- COUNSELLING TAB (hidden) -->
+      <div id="tab-counselling" class="tab-content" style="display:none">
+        <ul class="counsel-list">
+          <li><span class="counsel-num">1</span>Take with or immediately after food to reduce stomach upset.</li>
+          <li><span class="counsel-num">2</span>Start low and increase slowly — the first few weeks may cause some nausea, which usually settles.</li>
+          <li><span class="counsel-num">3</span>This medicine does not cause low blood sugars on its own. If taking with other diabetes medicines, know the signs of hypoglycaemia.</li>
+          <li><span class="counsel-num">4</span>If you need to have a CT scan with contrast dye, tell the radiology team — you may need to stop metformin temporarily.</li>
+          <li><span class="counsel-num">5</span>During any serious illness, surgery, or if you cannot eat or drink, hold metformin and seek advice.</li>
+          <li><span class="counsel-num">6</span>Long-term use can reduce vitamin B12 absorption. A blood test to check levels is recommended every 1–2 years.</li>
+          <li><span class="counsel-num">7</span>Continue even when blood sugars are good — this medicine works continuously to keep them that way.</li>
+        </ul>
+      </div>
+
+      <!-- NZ NOTES TAB (hidden) -->
+      <div id="tab-nz" class="tab-content" style="display:none">
+        <div class="nz-callout">
+          <div class="nz-callout-title">
+            <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="#0F6E56" stroke-width="1.4"/><path d="M8 5v3.5L10 10" stroke="#0F6E56" stroke-width="1.4" stroke-linecap="round"/></svg>
+            NZ-specific information
+          </div>
+          <div class="nz-callout-body">
+            <p><strong>PHARMAC funding:</strong> Metformin IR and MR are fully funded on the Community Pharmaceutical Schedule with no Special Authority required for T2DM. PCOS use is funded under Special Authority (SA criteria apply).</p>
+            <p><strong>Available formulations:</strong> Metformin IR 500 mg, 850 mg tablets; Metformin MR 500 mg tablets (once-daily dosing). Brands: Mylan, Apotex, and others.</p>
+            <p><strong>NZ scheduling:</strong> Prescription Medicine (Part I). Cannot be supplied without a prescription.</p>
+            <p><strong>BPAC NZ guidance:</strong> Preferred first-line agent for T2DM. Continue in combination therapy. Review HbA1c at 3 months post-initiation; if target not met, add SGLT-2i (empagliflozin/dapagliflozin) or DPP-4i per BPAC algorithm.</p>
+          </div>
+          <div class="funding-chips">
+            <span class="funding-chip chip-funded">Funded (T2DM)</span>
+            <span class="funding-chip chip-sa">SA required (PCOS)</span>
+            <span class="funding-chip chip-rx">Prescription only</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+
+  <!-- AI WIDGET -->
+  <button class="ai-trigger" id="aiTrigger">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+      <path d="M12 2L9.5 9.5L2 12L9.5 14.5L12 22L14.5 14.5L22 12L14.5 9.5L12 2Z" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/>
+    </svg>
+  </button>
+  <div class="ai-panel" id="aiPanel">
+    <div class="ai-header">
+      <div class="ai-header-icon">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 2L9.5 9.5L2 12L9.5 14.5L12 22L14.5 14.5L22 12L14.5 9.5L12 2Z" stroke="#1D9E75" stroke-width="1.8" stroke-linejoin="round"/></svg>
+      </div>
+      <div class="ai-header-text">
+        <div class="ai-header-title">PharmDC AI</div>
+        <div class="ai-header-sub">Viewing: Metformin</div>
+      </div>
+      <button class="ai-close" id="aiClose">×</button>
+    </div>
+    <div class="ai-messages">
+      <div class="msg assistant">
+        <div class="msg-avatar">AI</div>
+        <div>
+          <div class="msg-bubble">You're viewing Metformin. I can answer questions about this entry or search across your whole knowledge base.</div>
+        </div>
+      </div>
+    </div>
+    <div class="ai-suggestions">
+      <span class="sugg-chip">Compare with glipizide</span>
+      <span class="sugg-chip">Metformin in pregnancy</span>
+      <span class="sugg-chip">Sick day rules</span>
+    </div>
+    <div class="ai-input-row">
+      <input class="ai-input" type="text" placeholder="Ask about this entry…">
+      <button class="ai-send">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M2 8h12M10 4l4 4-4 4" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <script>
+    // Tab switching
+    document.querySelectorAll('.tab').forEach(tab => {
+      tab.addEventListener('click', e => {
+        e.preventDefault();
+        const name = tab.dataset.tab;
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c => c.style.display = 'none');
+        tab.classList.add('active');
+        const el = document.getElementById('tab-' + name);
+        if (el) el.style.display = 'block';
+      });
+    });
+
+    // AI widget
+    const trigger = document.getElementById('aiTrigger');
+    const panel   = document.getElementById('aiPanel');
+    document.getElementById('aiClose').addEventListener('click', () => { panel.classList.remove('open'); trigger.classList.remove('open'); });
+    trigger.addEventListener('click', () => { panel.classList.toggle('open'); trigger.classList.toggle('open'); });
+  </script>
+</body>
+</html>

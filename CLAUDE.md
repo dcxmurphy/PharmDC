@@ -17,16 +17,25 @@ It is NOT a product for other users or a replacement for NZF/MIMS. It is a perso
 ---
 
 ## Tech Stack
-- **Frontend**: Vanilla HTML, CSS, JavaScript — single `index.html` or minimal multi-file. No frameworks, no build step.
+- **Frontend**: Vanilla HTML, CSS, JavaScript — multi-file, no frameworks, no build step
+  - `index.html` — full app shell
+  - `styles.css` — all styles
+  - `app.js` — all frontend logic
 - **Database + Auth**: Supabase
   - Project URL: `https://gakjmoiwsqfxdmmpfmga.supabase.co`
   - Anon key: stored in environment variable `SUPABASE_ANON_KEY`
+  - Loaded via CDN: `@supabase/supabase-js@2`
 - **AI generation**: Anthropic API
-  - Model: `claude-sonnet-4-20250514`
+  - Model: `claude-sonnet-4-6`
   - API key: stored in environment variable `ANTHROPIC_API_KEY`
-  - Note: the API key is called from a backend/edge function — NEVER expose it in frontend code
+  - NEVER expose the API key in frontend code — always call via Vercel edge function
 - **Hosting**: Vercel
   - Environment variables set in Vercel dashboard: `ANTHROPIC_API_KEY`, `SUPABASE_ANON_KEY`
+  - `vercel.json` rewrites all non-API routes to `index.html`
+- **CDN dependencies** (loaded in `index.html`):
+  - `@supabase/supabase-js@2`
+  - `marked` (markdown rendering)
+  - `dompurify` (XSS sanitisation)
 
 ---
 
@@ -39,118 +48,166 @@ It is NOT a product for other users or a replacement for NZF/MIMS. It is a perso
   - `#1D9E75` — primary
   - `#0F6E56` — hover/dark
   - `#085041` — deep
-- **Typography**: system-ui / sans-serif. Two weights only: 400 (regular) and 500 (medium). Never 600 or 700.
-- **Borders**: 0.5px, always. `border: 0.5px solid` with low-opacity border colours.
-- **Border radius**: 8px (components), 12px (cards)
-- **Backgrounds**: white primary surface, light grey secondary surface
+- **Typography**: DM Sans (Google Fonts). Weights: 300, 400, 500. Never 600 or 700.
+- **Borders**: 0.5px, always. `border: 0.5px solid var(--border)`
+- **Border radius**: `--radius-sm: 8px` (components), `--radius-md: 12px` (cards)
+- **Backgrounds**: `--bg` (white/near-black), `--bg-secondary`, `--bg-hover`
 - **No gradients, no shadows, no decorative effects** — completely flat UI
-- **Dark mode**: all colours must work in both light and dark mode using CSS variables
+- **Dark mode**: all colours defined as CSS variables with `@media (prefers-color-scheme: dark)` override
 - **Spacing**: rem for vertical rhythm, px for component internals
 - **Sentence case everywhere** — never Title Case or ALL CAPS in UI
+
+### CSS Variables
+```css
+:root {
+  --bg:            #ffffff;
+  --bg-secondary:  #f6f6f6;
+  --bg-hover:      #f2f2f2;
+  --text:          #111111;
+  --text-2:        #555555;
+  --text-muted:    #aaaaaa;
+  --border:        #e8e8e8;
+  --border-subtle: rgba(0,0,0,0.06);
+  --accent:        #1D9E75;
+  --accent-light:  #E1F5EE;
+  --accent-mid:    #5DCAA5;
+  --accent-hover:  #0F6E56;
+  --danger:        #c0392b;
+  --topnav-h:      52px;
+  --content-max:   880px;
+  --radius-sm:     8px;
+  --radius-md:     12px;
+}
+```
+Dark mode overrides `--bg`, `--bg-secondary`, `--bg-hover`, `--text`, `--text-2`, `--text-muted`, `--border`, `--border-subtle`, `--accent-light`, `--accent-hover`.
 
 ### Brand
 ```
 PharmDC
 ```
-The "Pharm" is rendered in `--color-text-primary` and "DC" in `#1D9E75` (teal). Subtitle: "Personal knowledge base" in muted small text.
+"Pharm" rendered in `var(--text)`, "DC" in `var(--accent)`. Subtitle: "Personal knowledge base" in muted small text.
 
-### Sidebar layout
-- Width: 230px
-- Brand at top
-- Global search input
-- Nav items with left border active indicator (2px teal)
-- User chip at bottom (avatar initials "DC", name, role "Pharmacist · NZ")
+### Layout — Top nav
+The app uses a **horizontal top navigation bar**, not a sidebar.
 
-### Nav active state
+- **Height**: `var(--topnav-h)` = 52px
+- **Left**: brand (`PharmDC`)
+- **Centre**: horizontal nav tabs (Home, Drugs & Medicines, Health Conditions, Anatomy & Physiology, Clinical Skills, Law & Regulation)
+- **Right**: ⌘K search button | Generate button (primary) | DC avatar (circle, opens dropdown)
+
+### Nav active state (tab underline, not left border)
 ```css
-border-left: 2px solid #1D9E75;
-color: #0F6E56;
-font-weight: 500;
-background: var(--color-background-primary);
+.top-nav-tab.active {
+  color: var(--accent);
+  font-weight: 500;
+  border-bottom: 2px solid var(--accent);
+}
 ```
+
+### Mobile layout
+On small screens the top nav is hidden. Instead:
+- **Mobile bar**: brand + hamburger menu button
+- **Mobile drawer**: slides in from left, lists all nav items
+- **Mobile overlay**: darkens content when drawer is open
 
 ---
 
 ## Information Architecture — Five Sections
 
 ### 1. Drugs & medicines
-Drug monographs. Alphabetical list with A–Z filter strip. Each entry has a consistent template (see below).
+Drug monographs. Alphabetical list with A–Z filter strip. Template key: `drug`.
 
 ### 2. Health conditions & therapeutics
-Disease entries. Includes pathophysiology, clinical features, severity grading, stepwise treatment, special populations, monitoring, NZ notes. Therapeutics is integrated INTO the condition entry — not a separate section.
+Disease entries. Includes pathophysiology, clinical features, severity grading, stepwise treatment, special populations, monitoring, NZ notes. Therapeutics is integrated INTO the condition entry. Template key: `condition`.
 
 ### 3. Anatomy & physiology
-Foundational science entries. DC wants to be able to refresh background knowledge without googling. Organised by body system.
+Foundational science entries. Organised by body system. The section list view shows 16 body system tiles (Cardiovascular, Respiratory, Neurology, Psychiatry, Endocrine, Gastroenterology, Renal, Musculoskeletal, Dermatology, Haematology, Infectious Disease, Ophthalmology, ENT, Immunology, Reproductive Health, Oncology). Template key: `anatomy`.
 
 ### 4. Clinical skills & calculations
-Formulas, TDM guidance, dose converters, worked examples. Each entry has a purpose, formula/method, worked example, when to use it, common pitfalls.
+Formulas, TDM guidance, dose converters, worked examples. Template key: `skill`.
 
 ### 5. NZ law & regulation
-NZ-specific pharmacy practice law and regulation. PHARMAC, Medicines Act, controlled drugs, scope of practice, Special Authority, standing orders.
+NZ-specific pharmacy practice law and regulation. Template key: `regulation`.
 
 ---
 
 ## Entry Templates
 
-### Drug entry template
-Sections (in this order, always):
-1. **Overview** — mechanism, drug class, clinical role
-2. **Dosing** — initial, titration, maintenance, maximum; presented as a clean table
-3. **Renal dosing** — traffic light table (green/amber/red dots with eGFR thresholds)
-4. **Hepatic dosing** — if clinically relevant
-5. **Adverse effects** — common and serious, in plain language
-6. **Contraindications & cautions**
-7. **Key interactions** — only clinically significant ones, with management note
-8. **Counselling points** — bullet list of what to tell the patient
-9. **NZ-specific notes** — PHARMAC funding status, Special Authority if applicable, available formulations, NZ scheduling, any NZ practice pearls
+All templates return JSON from the AI. Each key's value is a markdown string.
 
-### Health condition entry template
-Sections (in this order, always):
-1. **Overview** — what it is, prevalence, clinical significance
-2. **Pathophysiology** — mechanism of disease
-3. **Clinical features** — signs, symptoms, severity grading (visual cards if applicable)
-4. **Non-pharmacological management**
-5. **Pharmacological management** — stepwise (numbered steps, severity-tagged), including special populations (pregnancy, renal, paediatric, elderly)
-6. **Drug summary table** — key medicines at a glance (drug | dose | key notes)
-7. **Monitoring** — what to check, how often
-8. **Counselling points**
-9. **NZ-specific notes** — relevant NZ guidelines (BPAC NZ), funding, local practice context
+### Drug entry (`drug`)
+JSON keys (in this order):
+1. `overview` — mechanism, drug class, clinical role
+2. `dosing` — markdown table: Indication | Starting dose | Maintenance dose | Maximum dose
+3. `renal_dosing` — markdown table with 🟢/🟡/🔴 status column by eGFR thresholds
+4. `hepatic_dosing` — dose adjustments for hepatic impairment (or "No clinically significant adjustment required")
+5. `adverse_effects` — **Common** and **Serious** subheadings
+6. `contraindications` — absolute contraindications + cautions
+7. `interactions` — markdown table: Drug or class | Mechanism | Clinical significance | Management
+8. `counselling` — 8–12 patient counselling bullet points
+9. `nz_notes` — PHARMAC funding, Special Authority, NZ scheduling, available formulations, NZ practice pearls
 
-### Anatomy & physiology entry template
-Sections:
-1. **Overview**
-2. **Key structures**
-3. **Physiological function**
-4. **Clinical relevance to pharmacy**
-5. **Common pathological changes**
+### Health condition entry (`condition`)
+JSON keys (in this order):
+1. `overview` — what it is, NZ prevalence, clinical significance
+2. `pathophysiology` — mechanism of disease
+3. `clinical_features` — signs/symptoms + severity grading table (Mild/Moderate/Severe)
+4. `non_pharmacological` — lifestyle and non-drug interventions
+5. `pharmacological` — stepwise treatment numbered by severity (e.g. **Step 1 (mild):**), including special populations
+6. `drug_summary` — markdown table: Drug | Usual dose range | Key notes
+7. `monitoring` — what to check, targets, frequency
+8. `counselling` — patient counselling bullet points
+9. `nz_notes` — BPAC NZ guidance, PHARMAC funding, NZ clinical guidelines
 
-### Clinical skills & calculations entry template
-Sections:
-1. **Purpose** — what this is used for clinically
-2. **Formula / method** — clearly displayed
-3. **Worked example** — step by step
-4. **Interpretation** — what the result means clinically
-5. **When to use / when not to**
-6. **Common pitfalls**
-7. **NZ context** — if relevant (e.g. which eGFR equation NZ labs use)
+### Anatomy & physiology entry (`anatomy`)
+JSON keys:
+1. `overview`
+2. `key_structures` — markdown table: Structure | Location | Function
+3. `physiological_function`
+4. `clinical_relevance`
+5. `pathological_changes`
 
-### NZ law & regulation entry template
-Sections:
-1. **Overview** — what this regulation covers
-2. **Legal basis** — which Act or regulation
-3. **Practical rules** — what a pharmacist must do / cannot do
-4. **Common scenarios** — worked examples of real practice situations
-5. **Recent changes** — any updates to be aware of
+### Clinical skills & calculations entry (`skill`)
+JSON keys:
+1. `purpose`
+2. `formula_method` — formula displayed prominently with units
+3. `worked_example` — step-by-step with realistic patient values
+4. `interpretation` — target ranges, thresholds, action points
+5. `when_to_use` — include when NOT to use (limitations)
+6. `pitfalls`
+7. `nz_context`
+
+### NZ law & regulation entry (`regulation`)
+JSON keys:
+1. `overview`
+2. `legal_basis` — Act(s), regulation(s), section numbers
+3. `practical_rules` — bullet list of must/cannot
+4. `common_scenarios` — 3–4 worked examples as **Scenario:** ... **What to do:** ...
+5. `recent_changes`
 
 ---
 
 ## AI Generation System
 
-When DC clicks "Generate entry", a form appears asking for the topic name. DC types e.g. "Warfarin" or "Atrial fibrillation" or "Renal system" and hits Generate.
+### Generate modal flow
+1. User clicks "Generate" in the top nav
+2. Modal opens with:
+   - Section selector (dropdown: Drugs & Medicines / Health Conditions / Anatomy & Physiology / Clinical Skills / Law & Regulation)
+   - Topic name input
+   - Suggestion chips (pre-filled common topics per section)
+3. On submit: loading spinner → AI generates entry → auto-saves to Supabase → navigates to new entry
 
-The app automatically detects which template to use based on the topic (drug → drug template, disease → condition template, etc.) and sends a request to the Anthropic API via a Vercel edge function.
+### Vercel edge function: `api/generate.js`
+Receives `{ topic, template, section }` via POST. Selects the matching template prompt from `TEMPLATE_PROMPTS`, calls Anthropic API, strips any markdown fences, validates JSON, and returns `{ content: rawJsonString }`.
 
-### System prompt for AI generation (use this exactly):
+Model: `claude-sonnet-4-6`, max_tokens: 4096.
+
+### Vercel edge function: `api/chat.js`
+Powers the AI chat widget. Receives `{ query }` via POST. Searches Supabase for relevant entries (title ilike match), builds context string, calls Anthropic API with `CHAT_SYSTEM_PROMPT`, returns `{ answer, sources }`.
+
+Model: `claude-sonnet-4-6`, max_tokens: 1024.
+
+### System prompt for generation (in `api/generate.js`):
 ```
 You are a clinical knowledge base writer for PharmDC, a personal reference tool for a New Zealand-registered pharmacist.
 
@@ -169,36 +226,27 @@ NZ-specific context to always apply:
 - Spell correctly for NZ English (e.g. "colour" not "color", "recognise" not "recognize")
 ```
 
-### API call (Vercel edge function):
-```javascript
-// /api/generate.js
-export default async function handler(req, res) {
-  const { topic, template } = req.body;
-  
-  const response = await fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-api-key': process.env.ANTHROPIC_API_KEY,
-      'anthropic-version': '2023-06-01'
-    },
-    body: JSON.stringify({
-      model: 'claude-sonnet-4-20250514',
-      max_tokens: 4000,
-      system: SYSTEM_PROMPT, // as above
-      messages: [{
-        role: 'user',
-        content: `Generate a complete PharmDC ${template} entry for: "${topic}". 
-        Return a JSON object with keys matching the template sections exactly.
-        Each section value should be a string of well-formatted prose or structured data as appropriate.`
-      }]
-    })
-  });
-  
-  const data = await response.json();
-  res.json({ content: data.content[0].text });
-}
-```
+---
+
+## AI Chat Widget
+
+A floating button (bottom-right, teal sparkle icon) opens a slide-in panel (`ai-panel`) anchored to the right side of the screen. The widget:
+- Greets DC by name
+- Shows 3 suggestion chips on load (e.g. "Metformin renal dosing", "Acne treatment steps", "Warfarin interactions")
+- Sends queries to `api/chat.js`
+- Displays assistant responses as markdown (via `marked` + `dompurify`)
+- Shows source entry titles when the answer is based on knowledge base entries
+
+---
+
+## Search
+
+⌘K (or the search button in the top nav) opens a **full-screen search overlay**:
+- Blurred backdrop
+- Input field with search icon
+- Results list (entry title + section)
+- Esc to close
+- Clicking a result navigates to that entry
 
 ---
 
@@ -219,14 +267,12 @@ create table entries (
   is_favourite boolean default false
 );
 
--- Row level security: users can only see their own entries
 alter table entries enable row level security;
 
 create policy "Users can manage their own entries"
   on entries for all
   using (auth.uid() = user_id);
 
--- Index for fast search and section filtering
 create index entries_user_section on entries(user_id, section);
 create index entries_title_search on entries using gin(to_tsvector('english', title));
 ```
@@ -253,59 +299,36 @@ create policy "Users can manage their own recent views"
 ## UI Patterns
 
 ### Entry list view
-- Search bar at top
-- A–Z filter strip (for drugs section)
+- Section-level search bar
+- A–Z filter strip (drugs section only)
+- Body system tiles (anatomy section only)
 - Alphabetical grouping with group labels
-- Each row: entry name (bold) | metadata/class (muted) | chevron right
+- Each row: entry name | metadata/class (muted) | chevron right
 - Hover: entry name turns teal
 
 ### Entry detail view
-- Header: icon in teal rounded square | title | subtitle | tags row
-- Horizontal tab strip for sections (underline active indicator in teal)
-- Each tab's content in consistent block components
-- Footer buttons: Edit | Regenerate | Bookmark | Back
-
-### Generate flow
-- Centred empty state with sparkle icon
-- Single text input + Generate button
-- Suggestion chips below (quick-fire common topics)
-- On submit: loading state → entry populates → auto-save to Supabase
+- Header: teal rounded-square icon | title | subtitle | tags row
+- Horizontal tab strip, bottom-border active indicator in teal
+- Each tab renders its markdown content via `marked` + `dompurify`
+- Footer: Edit | Regenerate | Bookmark | Back
 
 ### Home dashboard
 - Welcome message with DC's name
-- 4 stat cards (entry count per section)
-- Browse by section (4 category cards)
-- Recently viewed list (pulled from recent_views table)
+- 5 stat cards (entry count per section)
+- Browse by section tiles
+- Recently viewed list
 
 ---
 
-## Existing Generated Entry Example
-A complete acne vulgaris condition entry has already been designed and approved. It demonstrates the correct depth, structure, NZ contextualisation, and visual treatment for condition entries. Use it as the gold standard for quality.
-
-Key quality markers from that entry:
-- Pathophysiology explains mechanism clearly without being a textbook
-- Severity grading uses visual colour-coded cards (mild/moderate/severe)
-- Treatment is stepwise and numbered with severity tags
-- Drug summary table gives a quick at-a-glance reference
-- NZ notes section covers PHARMAC funding pills (colour-coded: OTC/funded/SA/prescription), BPAC NZ guidance, and pharmacist-specific practice notes
-
----
-
-## What Has Been Built So Far
-- Full interactive UI prototype (built in Claude.ai chat as a widget)
-- Complete app shell with all five sections navigable
-- Metformin drug entry (fully populated, demonstrates drug template)
-- Acne vulgaris condition entry (fully populated, demonstrates condition template)
-- Renal dosing calculator widget
-
-## What Needs Building Next
-1. Set up Supabase schema (run the SQL above in Supabase SQL editor)
-2. Build the real multi-file web app:
-   - `index.html` — full app shell matching the prototype design
-   - `api/generate.js` — Vercel edge function for AI generation
-   - `vercel.json` — Vercel config
-3. Wire up Supabase auth (email/password login)
-4. Wire up entry CRUD (create, read, update, delete from `entries` table)
-5. Wire up AI generation → auto-save flow
-6. Deploy to Vercel
-
+## What Has Been Built
+- Full app shell: top nav (desktop), mobile bar + drawer
+- Supabase auth (email/password login, row-level security)
+- All five sections navigable with entry list + detail views
+- A–Z filter (drugs), body system tiles (anatomy)
+- AI entry generation via `api/generate.js` with template-specific JSON prompts
+- AI chat widget via `api/chat.js`
+- ⌘K search overlay
+- Generate modal with section selector + suggestion chips
+- Supabase CRUD for entries
+- Vercel deployment (`vercel.json`)
+- Supabase schema (`supabase/schema.sql`)

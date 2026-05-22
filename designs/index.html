@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PharmDC — Design Concepts</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'DM Sans', system-ui, sans-serif;
+      background: #f5f5f5;
+      color: #111;
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      background: #fff;
+      border-bottom: 0.5px solid #e8e8e8;
+      padding: 20px 40px;
+      display: flex;
+      align-items: baseline;
+      gap: 16px;
+    }
+    .brand { font-size: 18px; font-weight: 500; letter-spacing: -0.03em; }
+    .brand span { color: #1D9E75; }
+    .header-sub { font-size: 13px; color: #aaa; }
+
+    .page-content {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 40px 32px 64px;
+      width: 100%;
+    }
+
+    h1 {
+      font-size: 24px;
+      font-weight: 400;
+      letter-spacing: -0.025em;
+      color: #111;
+      margin-bottom: 6px;
+    }
+    .intro {
+      font-size: 14px;
+      color: #888;
+      margin-bottom: 40px;
+      line-height: 1.6;
+    }
+
+    .concepts-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+    }
+
+    .concept-card {
+      background: #fff;
+      border: 0.5px solid #e4e4e4;
+      border-radius: 12px;
+      overflow: hidden;
+      text-decoration: none;
+      display: block;
+      transition: border-color 0.15s, transform 0.15s, box-shadow 0.15s;
+    }
+    .concept-card:hover {
+      border-color: #1D9E75;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    }
+
+    /* Preview thumbnail using an iframe */
+    .concept-preview {
+      width: 100%;
+      height: 240px;
+      position: relative;
+      overflow: hidden;
+      background: #f8f8f8;
+      border-bottom: 0.5px solid #e4e4e4;
+    }
+    .concept-preview iframe {
+      width: 160%;
+      height: 160%;
+      border: none;
+      transform: scale(0.625);
+      transform-origin: top left;
+      pointer-events: none;
+    }
+
+    .concept-info {
+      padding: 18px 22px 20px;
+    }
+    .concept-id {
+      font-size: 10.5px;
+      font-weight: 500;
+      color: #1D9E75;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+    .concept-name {
+      font-size: 16px;
+      font-weight: 500;
+      color: #111;
+      margin-bottom: 6px;
+      letter-spacing: -0.015em;
+    }
+    .concept-desc {
+      font-size: 13px;
+      color: #888;
+      line-height: 1.5;
+      margin-bottom: 14px;
+    }
+    .concept-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .tag {
+      font-size: 11px;
+      padding: 3px 9px;
+      border-radius: 20px;
+      background: #f5f5f5;
+      color: #666;
+      border: 0.5px solid #e8e8e8;
+    }
+
+    .open-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 12.5px;
+      font-weight: 500;
+      color: #1D9E75;
+      margin-top: 12px;
+    }
+    .open-link svg { transition: transform 0.1s; }
+    .concept-card:hover .open-link svg { transform: translateX(2px); }
+
+    .notes {
+      margin-top: 40px;
+      background: #fff;
+      border: 0.5px solid #e4e4e4;
+      border-radius: 10px;
+      padding: 22px 26px;
+    }
+    .notes h2 {
+      font-size: 13px;
+      font-weight: 500;
+      color: #111;
+      margin-bottom: 10px;
+    }
+    .notes p {
+      font-size: 13px;
+      color: #777;
+      line-height: 1.65;
+      margin-bottom: 8px;
+    }
+    .notes p:last-child { margin-bottom: 0; }
+    .notes strong { color: #333; font-weight: 500; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand">Pharm<span>DC</span></div>
+    <div class="header-sub">Design concepts — choose a direction</div>
+  </header>
+
+  <div class="page-content">
+    <h1>Four design directions</h1>
+    <p class="intro">Each concept shows the home dashboard. Click any card to open the full-size version. Mix and match — you might like A's typography with C's section colours, or D's top nav with B's dark mode.</p>
+
+    <div class="concepts-grid">
+
+      <!-- CONCEPT A -->
+      <a class="concept-card" href="concept-a.html" target="_blank">
+        <div class="concept-preview">
+          <iframe src="concept-a.html" tabindex="-1" aria-hidden="true"></iframe>
+        </div>
+        <div class="concept-info">
+          <div class="concept-id">Concept A</div>
+          <div class="concept-name">Refined minimal</div>
+          <div class="concept-desc">White canvas, light sidebar, generous whitespace. Closest to the current direction but polished — clean stats, tidy section grid, subtle teal accents throughout.</div>
+          <div class="concept-tags">
+            <span class="tag">Left sidebar</span>
+            <span class="tag">White background</span>
+            <span class="tag">Minimal</span>
+            <span class="tag">Teal accents</span>
+          </div>
+          <div class="open-link">Open full size <svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="#1D9E75" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        </div>
+      </a>
+
+      <!-- CONCEPT B -->
+      <a class="concept-card" href="concept-b.html" target="_blank">
+        <div class="concept-preview">
+          <iframe src="concept-b.html" tabindex="-1" aria-hidden="true"></iframe>
+        </div>
+        <div class="concept-info">
+          <div class="concept-id">Concept B</div>
+          <div class="concept-name">Dark pro</div>
+          <div class="concept-desc">Charcoal dark mode, near-black sidebar, teal stats that glow. Feels like a serious clinical tool — easy on the eyes during a long shift. Top bar with sticky actions.</div>
+          <div class="concept-tags">
+            <span class="tag">Dark mode</span>
+            <span class="tag">Left sidebar</span>
+            <span class="tag">Pro / clinical</span>
+            <span class="tag">Sticky top bar</span>
+          </div>
+          <div class="open-link">Open full size <svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="#1D9E75" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        </div>
+      </a>
+
+      <!-- CONCEPT C -->
+      <a class="concept-card" href="concept-c.html" target="_blank">
+        <div class="concept-preview">
+          <iframe src="concept-c.html" tabindex="-1" aria-hidden="true"></iframe>
+        </div>
+        <div class="concept-info">
+          <div class="concept-id">Concept C</div>
+          <div class="concept-name">Structured</div>
+          <div class="concept-desc">Dark slate sidebar against a light grey canvas. Each section gets its own colour (blue drugs, red conditions, purple anatomy etc.). Table-style recent entries for fast scanning.</div>
+          <div class="concept-tags">
+            <span class="tag">Dark sidebar</span>
+            <span class="tag">Section colours</span>
+            <span class="tag">Grey canvas</span>
+            <span class="tag">Table layout</span>
+          </div>
+          <div class="open-link">Open full size <svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="#1D9E75" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        </div>
+      </a>
+
+      <!-- CONCEPT D -->
+      <a class="concept-card" href="concept-d.html" target="_blank">
+        <div class="concept-preview">
+          <iframe src="concept-d.html" tabindex="-1" aria-hidden="true"></iframe>
+        </div>
+        <div class="concept-info">
+          <div class="concept-id">Concept D</div>
+          <div class="concept-name">Command</div>
+          <div class="concept-desc">No sidebar — sections live in a top nav tab strip. Centred content (max 880px), large greeting, prominent ⌘K search bar. Inspired by Linear / Superhuman. Most modern SaaS feel.</div>
+          <div class="concept-tags">
+            <span class="tag">Top nav</span>
+            <span class="tag">No sidebar</span>
+            <span class="tag">⌘K search</span>
+            <span class="tag">Centred layout</span>
+          </div>
+          <div class="open-link">Open full size <svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="#1D9E75" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        </div>
+      </a>
+
+    </div>
+
+    <div class="notes">
+      <h2>How to give feedback</h2>
+      <p>You don't have to pick one wholesale. Common combos worth considering:</p>
+      <p><strong>A + B</strong> — A's layout and spacing but switched to B's dark palette.</p>
+      <p><strong>A + C colours</strong> — A's clean white layout but with per-section colour coding (blue for drugs, red for conditions etc.) instead of all-teal.</p>
+      <p><strong>D layout + A palette</strong> — Top nav tabs (no sidebar) but white/minimal like A rather than the centred hero style.</p>
+      <p>Tell me what you like about each — typography, spacing, the sidebar approach, section colours, the stats layout — and I'll combine them into a final direction.</p>
+    </div>
+  </div>
+</body>
+</html>

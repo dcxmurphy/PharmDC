@@ -17,8 +17,9 @@ NZ-specific context to always apply:
 const TEMPLATE_PROMPTS = {
   drug: (topic) => `Generate a complete PharmDC drug monograph for: "${topic}".
 
-Return a JSON object with EXACTLY these keys (values are markdown strings):
+Return a JSON object with EXACTLY these keys:
 {
+  "drug_class": "One-line string: drug class and therapeutic role. Format: '[Class] · [Role]', e.g. 'Biguanide · Oral antidiabetic' or 'ACE inhibitor · Antihypertensive'. No markdown.",
   "overview": "Drug class, mechanism of action, clinical role and main indications. 2-3 paragraphs.",
   "dosing": "Markdown table with columns: Indication | Starting dose | Maintenance dose | Maximum dose. Include all major indications.",
   "renal_dosing": "Markdown table: eGFR (mL/min) | Dose adjustment | Notes. Add a Status column using 🟢 Normal dose, 🟡 Reduce dose, 🔴 Avoid/contraindicated.",
@@ -27,8 +28,11 @@ Return a JSON object with EXACTLY these keys (values are markdown strings):
   "contraindications": "Markdown list of absolute contraindications, then a list of important cautions/relative contraindications.",
   "interactions": "Markdown table: Drug or class | Mechanism | Clinical significance | Management. Cover the most important interactions only.",
   "counselling": "Markdown bullet list of 8-12 patient counselling points in plain language.",
-  "nz_notes": "PHARMAC funding status (fully subsidised / part charge / not funded), Special Authority criteria if applicable, NZ Medicine schedule classification, formulations available in NZ, any NZ practice pearls."
+  "nz_notes": "PHARMAC funding status (fully subsidised / part charge / not funded), Special Authority criteria if applicable, NZ Medicine schedule classification, formulations available in NZ, any NZ practice pearls.",
+  "body_systems": ["array", "of", "1-3 strings"]
 }
+
+For "body_systems", return a JSON array of 1–3 body system names that this drug primarily acts on or is clinically relevant to. Choose ONLY from this exact list: Cardiovascular, Respiratory, Neurology, Psychiatry, Endocrine, Gastroenterology, Renal, Musculoskeletal, Dermatology, Haematology, Infectious Disease, Ophthalmology, ENT, Immunology, Reproductive Health, Oncology. Example: ["Endocrine", "Renal"].
 
 Return ONLY valid JSON. No preamble, no code fences.`,
 

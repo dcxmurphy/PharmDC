@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PharmDC — Concept C: Structured</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'DM Sans', system-ui, sans-serif;
+      font-size: 14px;
+      line-height: 1.6;
+      background: #f0f2f6;
+      color: #1a1a2e;
+      -webkit-font-smoothing: antialiased;
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+    }
+
+    .concept-label {
+      position: fixed;
+      top: 12px;
+      right: 16px;
+      background: #1D9E75;
+      color: #fff;
+      font-size: 11px;
+      font-weight: 500;
+      padding: 4px 10px;
+      border-radius: 20px;
+      z-index: 9999;
+      letter-spacing: 0.02em;
+    }
+
+    /* ── SIDEBAR ── dark slate contrast with light canvas */
+    .sidebar {
+      width: 220px;
+      flex-shrink: 0;
+      background: #1e2333;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow-y: auto;
+    }
+
+    .sidebar-top {
+      padding: 22px 18px 16px;
+      border-bottom: 0.5px solid rgba(255,255,255,0.06);
+    }
+    .brand {
+      font-size: 17px;
+      font-weight: 500;
+      letter-spacing: -0.03em;
+      color: #fff;
+    }
+    .brand span { color: #1D9E75; }
+    .brand-sub { font-size: 10.5px; color: rgba(255,255,255,0.2); margin-top: 2px; }
+
+    .sidebar-search { padding: 12px 14px 8px; }
+    .search-wrap { position: relative; }
+    .search-box {
+      width: 100%;
+      background: rgba(255,255,255,0.06);
+      border: 0.5px solid rgba(255,255,255,0.1);
+      border-radius: 7px;
+      padding: 7px 10px 7px 30px;
+      font-family: inherit;
+      font-size: 12.5px;
+      color: #fff;
+      outline: none;
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .search-box:focus { background: rgba(29,158,117,0.1); border-color: rgba(29,158,117,0.5); }
+    .search-box::placeholder { color: rgba(255,255,255,0.2); }
+    .search-icon { position: absolute; left: 9px; top: 50%; transform: translateY(-50%); pointer-events: none; }
+
+    /* Section nav items with colour accents */
+    .sidebar-nav { flex: 1; padding: 8px 0 12px; }
+    .nav-section-label {
+      font-size: 9.5px;
+      font-weight: 500;
+      color: rgba(255,255,255,0.2);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 8px 18px 4px;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 18px;
+      font-size: 13px;
+      color: rgba(255,255,255,0.45);
+      text-decoration: none;
+      border-left: 2.5px solid transparent;
+      transition: background 0.1s, color 0.1s;
+      cursor: pointer;
+    }
+    .nav-item:hover { background: rgba(255,255,255,0.04); color: rgba(255,255,255,0.75); }
+    .nav-item.active { color: #fff; font-weight: 500; background: rgba(255,255,255,0.06); }
+
+    /* Per-section accent colours */
+    .nav-item[data-s="home"].active    { border-left-color: #1D9E75; }
+    .nav-item[data-s="drugs"].active   { border-left-color: #60a5fa; }
+    .nav-item[data-s="cond"].active    { border-left-color: #f87171; }
+    .nav-item[data-s="anat"].active    { border-left-color: #a78bfa; }
+    .nav-item[data-s="skill"].active   { border-left-color: #fbbf24; }
+    .nav-item[data-s="reg"].active     { border-left-color: #34d399; }
+
+    .nav-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .dot-home  { background: #1D9E75; }
+    .dot-drugs { background: #60a5fa; }
+    .dot-cond  { background: #f87171; }
+    .dot-anat  { background: #a78bfa; }
+    .dot-skill { background: #fbbf24; }
+    .dot-reg   { background: #34d399; }
+
+    .sidebar-footer {
+      padding: 13px 16px;
+      border-top: 0.5px solid rgba(255,255,255,0.06);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .avatar {
+      width: 28px; height: 28px; border-radius: 50%;
+      background: #1D9E75; color: #fff;
+      font-size: 10.5px; font-weight: 500;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .user-name { font-size: 12px; font-weight: 500; color: rgba(255,255,255,0.7); }
+    .user-role { font-size: 10.5px; color: rgba(255,255,255,0.25); }
+
+    /* ── MAIN ── */
+    .main { flex: 1; overflow-y: auto; }
+
+    /* Top bar */
+    .top-bar {
+      background: #fff;
+      border-bottom: 0.5px solid #e5e7ef;
+      height: 50px;
+      display: flex;
+      align-items: center;
+      padding: 0 28px;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .breadcrumb { font-size: 13px; color: #8890aa; display: flex; align-items: center; gap: 6px; }
+    .breadcrumb strong { color: #1a1a2e; font-weight: 500; }
+    .breadcrumb-sep { color: #ccc; }
+    .btn-generate {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 6px 14px;
+      background: #1D9E75; color: #fff; border: none;
+      border-radius: 7px; font-family: inherit; font-size: 12.5px; font-weight: 500;
+      cursor: pointer; transition: background 0.15s;
+    }
+    .btn-generate:hover { background: #0F6E56; }
+
+    /* Page content */
+    .content-inner { padding: 28px; }
+
+    .page-title { font-size: 20px; font-weight: 500; color: #1a1a2e; letter-spacing: -0.02em; }
+    .page-sub { font-size: 12.5px; color: #8890aa; margin-top: 3px; }
+
+    /* Stats cards — each section colour */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 10px;
+      margin-top: 22px;
+    }
+    .stat-card {
+      background: #fff;
+      border-radius: 10px;
+      border: 0.5px solid #e5e7ef;
+      padding: 16px 18px;
+      position: relative;
+      overflow: hidden;
+    }
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+    }
+    .stat-card.drugs::before  { background: #60a5fa; }
+    .stat-card.cond::before   { background: #f87171; }
+    .stat-card.anat::before   { background: #a78bfa; }
+    .stat-card.skill::before  { background: #fbbf24; }
+    .stat-card.reg::before    { background: #34d399; }
+    .stat-num {
+      font-size: 28px;
+      font-weight: 400;
+      color: #1a1a2e;
+      letter-spacing: -0.03em;
+      line-height: 1;
+    }
+    .stat-label { font-size: 11px; color: #8890aa; margin-top: 5px; }
+
+    /* Section cards */
+    .section-row-label {
+      font-size: 10.5px;
+      font-weight: 500;
+      color: #8890aa;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin: 24px 0 12px;
+    }
+
+    .sections-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+    .section-card {
+      background: #fff;
+      border: 0.5px solid #e5e7ef;
+      border-radius: 10px;
+      padding: 18px 20px;
+      cursor: pointer;
+      transition: box-shadow 0.15s, border-color 0.15s;
+      text-decoration: none;
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+    }
+    .section-card:hover { border-color: #c8cad8; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+
+    .section-color-bar {
+      width: 3px;
+      height: 36px;
+      border-radius: 3px;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .bar-drugs  { background: #60a5fa; }
+    .bar-cond   { background: #f87171; }
+    .bar-anat   { background: #a78bfa; }
+    .bar-skill  { background: #fbbf24; }
+    .bar-reg    { background: #34d399; }
+
+    .section-info {}
+    .section-name { font-size: 13.5px; font-weight: 500; color: #1a1a2e; margin-bottom: 3px; }
+    .section-count { font-size: 11.5px; color: #8890aa; }
+
+    /* Entry table */
+    .table-label {
+      font-size: 10.5px;
+      font-weight: 500;
+      color: #8890aa;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin: 24px 0 10px;
+    }
+    .entry-table {
+      background: #fff;
+      border: 0.5px solid #e5e7ef;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .table-header {
+      display: grid;
+      grid-template-columns: 1fr 120px 80px;
+      padding: 9px 18px;
+      background: #f8f9fb;
+      border-bottom: 0.5px solid #e5e7ef;
+    }
+    .th {
+      font-size: 10.5px;
+      font-weight: 500;
+      color: #8890aa;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+    .entry-row {
+      display: grid;
+      grid-template-columns: 1fr 120px 80px;
+      padding: 10px 18px;
+      border-bottom: 0.5px solid #f3f4f8;
+      cursor: pointer;
+      align-items: center;
+      transition: background 0.1s;
+    }
+    .entry-row:last-child { border-bottom: none; }
+    .entry-row:hover { background: #f8f9fb; }
+    .entry-name { font-size: 13px; font-weight: 500; color: #1a1a2e; }
+    .entry-row:hover .entry-name { color: #1D9E75; }
+    .entry-section { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; }
+    .section-pip { width: 6px; height: 6px; border-radius: 50%; }
+    .entry-time { font-size: 11.5px; color: #8890aa; text-align: right; }
+  </style>
+</head>
+<body>
+  <div class="concept-label">C — Structured</div>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-top">
+      <div class="brand">Pharm<span>DC</span></div>
+      <div class="brand-sub">Personal knowledge base</div>
+    </div>
+
+    <div class="sidebar-search">
+      <div class="search-wrap">
+        <svg class="search-icon" width="12" height="12" viewBox="0 0 16 16" fill="none">
+          <circle cx="7" cy="7" r="5" stroke="rgba(255,255,255,0.25)" stroke-width="1.5"/>
+          <path d="M11 11l3 3" stroke="rgba(255,255,255,0.25)" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+        <input class="search-box" type="search" placeholder="Search…">
+      </div>
+    </div>
+
+    <div class="sidebar-nav">
+      <div class="nav-section-label">Navigation</div>
+      <a class="nav-item active" data-s="home" href="#">
+        <span class="nav-dot dot-home"></span> Home
+      </a>
+      <a class="nav-item" data-s="drugs" href="#">
+        <span class="nav-dot dot-drugs"></span> Drugs &amp; medicines
+      </a>
+      <a class="nav-item" data-s="cond" href="#">
+        <span class="nav-dot dot-cond"></span> Health conditions
+      </a>
+      <a class="nav-item" data-s="anat" href="#">
+        <span class="nav-dot dot-anat"></span> Anatomy &amp; physiology
+      </a>
+      <a class="nav-item" data-s="skill" href="#">
+        <span class="nav-dot dot-skill"></span> Clinical skills
+      </a>
+      <a class="nav-item" data-s="reg" href="#">
+        <span class="nav-dot dot-reg"></span> NZ law &amp; regulation
+      </a>
+    </div>
+
+    <div class="sidebar-footer">
+      <div class="avatar">DC</div>
+      <div>
+        <div class="user-name">DC</div>
+        <div class="user-role">Pharmacist · NZ</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+    <div class="top-bar">
+      <div class="breadcrumb">
+        <strong>Home</strong>
+      </div>
+      <button class="btn-generate">
+        <svg width="11" height="11" viewBox="0 0 16 16" fill="none"><path d="M8 2v12M2 8h12" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/></svg>
+        Generate entry
+      </button>
+    </div>
+
+    <div class="content-inner">
+      <div class="page-title">Good morning, DC</div>
+      <div class="page-sub">Thursday, 22 May 2026 · 25 entries across 5 sections</div>
+
+      <div class="stats-grid">
+        <div class="stat-card drugs">
+          <div class="stat-num">12</div>
+          <div class="stat-label">Drugs</div>
+        </div>
+        <div class="stat-card cond">
+          <div class="stat-num">8</div>
+          <div class="stat-label">Conditions</div>
+        </div>
+        <div class="stat-card anat">
+          <div class="stat-num">5</div>
+          <div class="stat-label">Anatomy</div>
+        </div>
+        <div class="stat-card skill">
+          <div class="stat-num">4</div>
+          <div class="stat-label">Skills</div>
+        </div>
+        <div class="stat-card reg">
+          <div class="stat-num">6</div>
+          <div class="stat-label">Regulation</div>
+        </div>
+      </div>
+
+      <div class="section-row-label">Browse by section</div>
+      <div class="sections-grid">
+        <a class="section-card" href="#">
+          <div class="section-color-bar bar-drugs"></div>
+          <div class="section-info">
+            <div class="section-name">Drugs &amp; medicines</div>
+            <div class="section-count">12 entries · A–Z index</div>
+          </div>
+        </a>
+        <a class="section-card" href="#">
+          <div class="section-color-bar bar-cond"></div>
+          <div class="section-info">
+            <div class="section-name">Health conditions</div>
+            <div class="section-count">8 entries</div>
+          </div>
+        </a>
+        <a class="section-card" href="#">
+          <div class="section-color-bar bar-anat"></div>
+          <div class="section-info">
+            <div class="section-name">Anatomy &amp; physiology</div>
+            <div class="section-count">5 entries</div>
+          </div>
+        </a>
+        <a class="section-card" href="#">
+          <div class="section-color-bar bar-skill"></div>
+          <div class="section-info">
+            <div class="section-name">Clinical skills</div>
+            <div class="section-count">4 entries</div>
+          </div>
+        </a>
+        <a class="section-card" href="#">
+          <div class="section-color-bar bar-reg"></div>
+          <div class="section-info">
+            <div class="section-name">NZ law &amp; regulation</div>
+            <div class="section-count">6 entries</div>
+          </div>
+        </a>
+      </div>
+
+      <div class="table-label">Recently viewed</div>
+      <div class="entry-table">
+        <div class="table-header">
+          <div class="th">Entry</div>
+          <div class="th">Section</div>
+          <div class="th" style="text-align:right">Last viewed</div>
+        </div>
+        <div class="entry-row">
+          <div class="entry-name">Metformin</div>
+          <div class="entry-section"><span class="section-pip" style="background:#60a5fa"></span> Drug</div>
+          <div class="entry-time">2h ago</div>
+        </div>
+        <div class="entry-row">
+          <div class="entry-name">Acne vulgaris</div>
+          <div class="entry-section"><span class="section-pip" style="background:#f87171"></span> Condition</div>
+          <div class="entry-time">Yesterday</div>
+        </div>
+        <div class="entry-row">
+          <div class="entry-name">Renal system</div>
+          <div class="entry-section"><span class="section-pip" style="background:#a78bfa"></span> Anatomy</div>
+          <div class="entry-time">2d ago</div>
+        </div>
+        <div class="entry-row">
+          <div class="entry-name">CrCl / eGFR calculation</div>
+          <div class="entry-section"><span class="section-pip" style="background:#fbbf24"></span> Skill</div>
+          <div class="entry-time">3d ago</div>
+        </div>
+        <div class="entry-row">
+          <div class="entry-name">Atorvastatin</div>
+          <div class="entry-section"><span class="section-pip" style="background:#60a5fa"></span> Drug</div>
+          <div class="entry-time">4d ago</div>
+        </div>
+      </div>
+    </div>
+  </main>
+</body>
+</html>
