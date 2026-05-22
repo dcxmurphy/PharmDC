@@ -60,7 +60,7 @@ REQUIRED. **Funding:** [PHARMAC status], **Special Authority:** [criteria or Non
 ---FIELD_END
 
 ---FIELD_START: body_systems
-Comma-separated list of 1-3 from: Cardiovascular, Respiratory, Neurology, Psychiatry, Endocrine, Gastroenterology, Renal, Musculoskeletal, Dermatology, Haematology, Infectious Disease, Ophthalmology, ENT, Immunology, Reproductive Health, Oncology
+REQUIRED. Comma-separated list of 1-3 body systems that this drug primarily acts on or is relevant to. Choose from ONLY: Cardiovascular, Respiratory, Neurology, Psychiatry, Endocrine, Gastroenterology, Renal, Musculoskeletal, Dermatology, Haematology, Infectious Disease, Ophthalmology, ENT, Immunology, Reproductive Health, Oncology. Example: Endocrine, Renal
 ---FIELD_END`,
 
   condition: (topic) => `Generate a complete PharmDC health condition & therapeutics entry for: "${topic}".
