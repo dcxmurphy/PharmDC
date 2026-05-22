@@ -15,26 +15,23 @@ NZ-specific context to always apply:
 - Spell correctly for NZ English (e.g. "colour" not "color", "recognise" not "recognize")`;
 
 const TEMPLATE_PROMPTS = {
-  drug: (topic) => `Generate a complete PharmDC drug monograph for: "${topic}".
+  drug: (topic) => `Generate a clinical drug monograph for: "${topic}".
 
-Return a JSON object with EXACTLY these keys:
+CRITICAL: Output ONLY valid JSON with no markdown code fences, no preamble, no trailing text. All field values are markdown strings. Ensure all quotes and newlines in values are properly JSON-escaped (use \\n for line breaks, \\" for quotes).
+
 {
-  "drug_class": "One-line string: drug class and therapeutic role. Format: '[Class] · [Role]', e.g. 'Biguanide · Oral antidiabetic' or 'ACE inhibitor · Antihypertensive'. No markdown.",
-  "overview": "Drug class, mechanism of action, clinical role and main indications. 2-3 paragraphs. REQUIRED STRUCTURE:\n\n1. Simple mechanism callout: Include on its own line — '> ⚡ **Mechanism:** [one concise sentence]'\n\n2. Detailed MOA: Immediately after, include a markdown h3 heading '### Detailed mechanism of action' followed by 3-5 detailed paragraphs covering molecular targets, signaling cascades, key tissue effects, any feedback loops, and clinical relevance. (This section will be auto-converted to an expandable dropdown by the app.)\n\n3. Warning callouts (if needed): Include '> ⚠️ **Note:** [important note]' or '> 🚨 **Warning:** [serious warning]' as separate blockquotes within the overview text.",
-  "dosing": "Markdown table with columns: Indication | Starting dose | Maintenance dose | Maximum dose. Include all major indications.",
-  "renal_dosing": "Markdown table with columns: Status | eGFR (mL/min) | Dose adjustment | Notes. The Status column is REQUIRED and MUST use EXACTLY one of these four emoji per row — 🟢 (Normal dose, eGFR ≥60), 🟡 (Use with caution, eGFR 30–60), 🟠 (Significant reduction required, eGFR 15–30), 🔴 (Avoid / Contraindicated, eGFR <15 or dialysis). Every single row must begin with the appropriate emoji. Do not omit or substitute the emoji.",
-  "hepatic_dosing": "If dose adjustments are required: markdown table with columns: Status | Severity | Dose adjustment | Notes. Status column MUST use 🟢 (Child-Pugh A — normal dose), 🟡 (Child-Pugh B — use with caution), 🔴 (Child-Pugh C — avoid). If not relevant, write the single line: 'No clinically significant adjustment required'.",
-  "adverse_effects": "List common (>1%) effects then serious/rare effects. Use markdown subheadings **Common** and **Serious**.",
-  "contraindications": "Format EXACTLY as: First, a markdown heading '### Absolute contraindications' followed by a markdown list of contraindications. Then, a markdown heading '### Cautions and relative contraindications' followed by another markdown list. These sections will be automatically styled in the app.",
-  "interactions": "Markdown table: Drug or class | Mechanism | Clinical significance | Management. Cover the most important interactions only.",
-  "counselling": "Markdown bullet list of 8-12 patient counselling points in plain language.",
-  "nz_notes": "Format with bold labels on separate lines: **Funding:** [PHARMAC status — fully subsidised, part charge, or not funded]. **Special Authority:** [SA criteria summary, or 'None']. **Schedule:** [NZ Medicine classification: Prescription / Pharmacist-only / Restricted / General sale]. **Formulations:** [available NZ formulations and strengths]. **Practice notes:** [NZ-specific clinical pearls, BPAC NZ or NZF guidance references].",
-  "body_systems": ["array", "of", "1-3 strings"]
-}
-
-For "body_systems", return a JSON array of 1–3 body system names that this drug primarily acts on or is clinically relevant to. Choose ONLY from this exact list: Cardiovascular, Respiratory, Neurology, Psychiatry, Endocrine, Gastroenterology, Renal, Musculoskeletal, Dermatology, Haematology, Infectious Disease, Ophthalmology, ENT, Immunology, Reproductive Health, Oncology. Example: ["Endocrine", "Renal"].
-
-Return ONLY valid JSON. No preamble, no code fences.`,
+  "drug_class": "One-line format '[Class] · [Role]' e.g. 'Biguanide · Oral antidiabetic'",
+  "overview": "2-3 paragraphs on class, mechanism, indications. Start with a blockquote: > ⚡ **Mechanism:** [one-sentence summary]. Then include ### Detailed mechanism of action heading followed by detailed paragraphs. Include warning blockquotes (> ⚠️ or > 🚨) if needed.",
+  "dosing": "Markdown table: Indication | Starting dose | Maintenance dose | Maximum dose",
+  "renal_dosing": "Markdown table: Status | eGFR (mL/min) | Dose adjustment | Notes. MUST start each Status cell with 🟢/🟡/🟠/🔴 emoji.",
+  "hepatic_dosing": "Markdown table (if needed): Status | Severity | Dose adjustment | Notes with 🟢/🟡/🔴 emoji, OR write: 'No clinically significant adjustment required'",
+  "adverse_effects": "Use markdown subheadings **Common** and **Serious** with bullet lists",
+  "contraindications": "Start with ### Absolute contraindications (bullet list), then ### Cautions and relative contraindications (bullet list)",
+  "interactions": "Markdown table: Drug | Mechanism | Significance | Management",
+  "counselling": "Bullet list of 8-12 patient counselling points",
+  "nz_notes": "Use bold labels: **Funding:** [status], **Special Authority:** [criteria], **Schedule:** [classification], **Formulations:** [list], **Practice notes:** [pearls]",
+  "body_systems": "JSON array of 1-3 strings from: Cardiovascular, Respiratory, Neurology, Psychiatry, Endocrine, Gastroenterology, Renal, Musculoskeletal, Dermatology, Haematology, Infectious Disease, Ophthalmology, ENT, Immunology, Reproductive Health, Oncology"
+}`,
 
   condition: (topic) => `Generate a complete PharmDC health condition & therapeutics entry for: "${topic}".
 
@@ -139,11 +136,27 @@ export default async function handler(req, res) {
     raw = raw.replace(/^```(?:json)?\n?/, '').replace(/\n?```$/, '').trim();
 
     // Validate it's parseable JSON before sending
-    JSON.parse(raw);
+    try {
+      JSON.parse(raw);
+    } catch (parseErr) {
+      // JSON parse error — provide diagnostic info
+      console.error('JSON parse error:', parseErr.message);
+      console.error('Raw response (first 500 chars):', raw.substring(0, 500));
+
+      // Try to extract error position for better debugging
+      const match = parseErr.message.match(/position (\d+)/);
+      if (match) {
+        const pos = parseInt(match[1]);
+        const context = raw.substring(Math.max(0, pos - 50), Math.min(raw.length, pos + 50));
+        console.error(`Context around error position ${pos}:`, context);
+      }
+
+      throw new Error(`JSON formatting error from AI: ${parseErr.message}. The model may have returned malformed JSON. Try again.`);
+    }
 
     res.json({ content: raw });
   } catch (err) {
-    console.error('Generate error:', err);
+    console.error('Generate error:', err.message);
     res.status(500).json({ error: err.message });
   }
 }
