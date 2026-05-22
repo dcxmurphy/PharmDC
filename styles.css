@@ -884,7 +884,8 @@ input, textarea, select { font-family: inherit; font-size: inherit; }
    CONDITION ENTRY — PHARMACOLOGICAL STEP BLOCKS
    ============================================================ */
 .step-block {
-  margin: 16px 0;
+  margin: 14px 0;
+  border: 0.5px solid var(--border);
   border-left: 3px solid var(--accent);
   border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
   background: var(--bg-secondary);
@@ -893,19 +894,52 @@ input, textarea, select { font-family: inherit; font-size: inherit; }
 .step-block-special {
   border-left-color: var(--text-muted);
 }
-.step-label {
-  padding: 10px 16px 8px;
+.step-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 16px 10px;
+  border-bottom: 0.5px solid var(--border-subtle);
+}
+.step-num {
+  width: 26px;
+  height: 26px;
+  min-width: 26px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.step-header-text {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+.step-title-text {
   font-size: 13px;
   font-weight: 500;
-  color: var(--accent);
-  letter-spacing: 0.01em;
-  background: var(--bg-secondary);
+  color: var(--text);
+  line-height: 1.3;
 }
-.step-block-special .step-label {
+.step-severity {
+  font-size: 11.5px;
+  color: var(--text-muted);
+  text-transform: capitalize;
+}
+.step-label {
+  padding: 10px 16px 9px;
+  font-size: 13px;
+  font-weight: 500;
   color: var(--text-2);
+  border-bottom: 0.5px solid var(--border-subtle);
 }
 .step-content {
-  padding: 0 16px 14px;
+  padding: 12px 16px 14px;
   font-size: 13.5px;
   color: var(--text-2);
   line-height: 1.7;
@@ -913,7 +947,36 @@ input, textarea, select { font-family: inherit; font-size: inherit; }
 .step-content p  { margin-bottom: 0.6em; }
 .step-content ul,
 .step-content ol { margin: 0.3em 0 0.6em 1.25em; }
-.step-content li { margin-bottom: 4px; }
+.step-content li { margin-bottom: 5px; }
+.step-content li strong:first-child { color: var(--text); }
+
+/* ============================================================
+   CONDITION ENTRY — RED FLAGS BOX
+   ============================================================ */
+.red-flags-box {
+  margin: 20px 0;
+  padding: 14px 16px;
+  background: #fff5f5;
+  border: 0.5px solid #fca5a5;
+  border-left: 3px solid #ef4444;
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+}
+.red-flags-title {
+  font-size: 13px;
+  font-weight: 500;
+  color: #991b1b;
+  margin-bottom: 8px;
+  padding-bottom: 7px;
+  border-bottom: 0.5px solid #fca5a5;
+}
+.red-flags-box ul { margin: 0 0 0 1.1em; padding: 0; }
+.red-flags-box li {
+  font-size: 13px;
+  color: #7f1d1d;
+  margin-bottom: 5px;
+  line-height: 1.55;
+}
+.red-flags-box li::marker { color: #ef4444; }
 
 /* ============================================================
    CONDITION ENTRY — NON-PHARMACOLOGICAL LIFESTYLE GRID
@@ -1369,11 +1432,18 @@ input, textarea, select { font-family: inherit; font-size: inherit; }
   :root:not([data-theme="light"]) .pill-sev-moderate { background: rgba(234,179,8,0.15); color: #fde68a; }
   :root:not([data-theme="light"]) .pill-sev-severe   { background: rgba(239,68,68,0.15); color: #fca5a5; }
   :root:not([data-theme="light"]) .pill-drug-name    { background: rgba(29,158,117,0.15); color: #5dcaa5; }
-  :root:not([data-theme="light"]) .step-block        { background: #1e1e1e; border-left-color: var(--accent); }
+  :root:not([data-theme="light"]) .step-block        { background: #1e1e1e; border-color: #2a2a2a; border-left-color: var(--accent); }
   :root:not([data-theme="light"]) .step-block-special { border-left-color: #555555; }
-  :root:not([data-theme="light"]) .step-label        { color: var(--accent-hover); }
-  :root:not([data-theme="light"]) .step-block-special .step-label { color: #aaaaaa; }
+  :root:not([data-theme="light"]) .step-header       { border-bottom-color: rgba(255,255,255,0.06); }
+  :root:not([data-theme="light"]) .step-num          { background: var(--accent); }
+  :root:not([data-theme="light"]) .step-title-text   { color: #eeeeee; }
+  :root:not([data-theme="light"]) .step-severity     { color: #555555; }
+  :root:not([data-theme="light"]) .step-label        { color: #aaaaaa; border-bottom-color: rgba(255,255,255,0.06); }
   :root:not([data-theme="light"]) .step-content      { color: #aaaaaa; }
+  :root:not([data-theme="light"]) .step-content li strong:first-child { color: #eeeeee; }
+  :root:not([data-theme="light"]) .red-flags-box     { background: rgba(239,68,68,0.07); border-color: rgba(239,68,68,0.25); border-left-color: #ef4444; }
+  :root:not([data-theme="light"]) .red-flags-title   { color: #fca5a5; border-bottom-color: rgba(239,68,68,0.25); }
+  :root:not([data-theme="light"]) .red-flags-box li  { color: #fca5a5; }
   :root:not([data-theme="light"]) .lifestyle-card    { background: #1e1e1e; border-color: #2a2a2a; }
   :root:not([data-theme="light"]) .lifestyle-card-title { color: var(--accent-hover); border-bottom-color: #2a2a2a; }
   :root:not([data-theme="light"]) .lifestyle-card li { color: #aaaaaa; }
@@ -1415,11 +1485,18 @@ input, textarea, select { font-family: inherit; font-size: inherit; }
 :root[data-theme="dark"] .pill-sev-moderate { background: rgba(234,179,8,0.15); color: #fde68a; }
 :root[data-theme="dark"] .pill-sev-severe   { background: rgba(239,68,68,0.15); color: #fca5a5; }
 :root[data-theme="dark"] .pill-drug-name    { background: rgba(29,158,117,0.15); color: #5dcaa5; }
-:root[data-theme="dark"] .step-block        { background: #1e1e1e; border-left-color: var(--accent); }
+:root[data-theme="dark"] .step-block        { background: #1e1e1e; border-color: #2a2a2a; border-left-color: var(--accent); }
 :root[data-theme="dark"] .step-block-special { border-left-color: #555555; }
-:root[data-theme="dark"] .step-label        { color: var(--accent-hover); }
-:root[data-theme="dark"] .step-block-special .step-label { color: #aaaaaa; }
+:root[data-theme="dark"] .step-header       { border-bottom-color: rgba(255,255,255,0.06); }
+:root[data-theme="dark"] .step-num          { background: var(--accent); }
+:root[data-theme="dark"] .step-title-text   { color: #eeeeee; }
+:root[data-theme="dark"] .step-severity     { color: #555555; }
+:root[data-theme="dark"] .step-label        { color: #aaaaaa; border-bottom-color: rgba(255,255,255,0.06); }
 :root[data-theme="dark"] .step-content      { color: #aaaaaa; }
+:root[data-theme="dark"] .step-content li strong:first-child { color: #eeeeee; }
+:root[data-theme="dark"] .red-flags-box     { background: rgba(239,68,68,0.07); border-color: rgba(239,68,68,0.25); border-left-color: #ef4444; }
+:root[data-theme="dark"] .red-flags-title   { color: #fca5a5; border-bottom-color: rgba(239,68,68,0.25); }
+:root[data-theme="dark"] .red-flags-box li  { color: #fca5a5; }
 :root[data-theme="dark"] .lifestyle-card    { background: #1e1e1e; border-color: #2a2a2a; }
 :root[data-theme="dark"] .lifestyle-card-title { color: var(--accent-hover); border-bottom-color: #2a2a2a; }
 :root[data-theme="dark"] .lifestyle-card li { color: #aaaaaa; }

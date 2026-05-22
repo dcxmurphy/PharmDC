@@ -69,15 +69,12 @@ const SECTIONS = {
     icon: '<path d="M8 2C4.7 2 2 4.7 2 8s2.7 6 6 6 6-2.7 6-6-2.7-6-6-6zm0 2v4m0 4v.1" stroke="currentColor" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round"/><path d="M6 8h4" stroke="currentColor" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round"/>',
     azFilter: false,
     tabs: [
-      { key: 'overview',            label: 'Overview' },
-      { key: 'pathophysiology',     label: 'Pathophysiology' },
-      { key: 'clinical_features',   label: 'Clinical Features' },
-      { key: 'non_pharmacological', label: 'Non-Pharmacological' },
-      { key: 'pharmacological',     label: 'Pharmacological' },
-      { key: 'drug_summary',        label: 'Drug Summary' },
-      { key: 'monitoring',          label: 'Monitoring' },
-      { key: 'counselling',         label: 'Counselling' },
-      { key: 'nz_notes',            label: 'NZ Notes' },
+      { key: 'overview',          label: 'Overview' },
+      { key: 'clinical_features', label: 'Clinical features' },
+      { key: 'pharmacological',   label: 'Treatment' },
+      { key: 'drug_summary',      label: 'Drug summary' },
+      { key: 'monitoring',        label: 'Monitoring' },
+      { key: 'counselling',       label: 'Counselling' },
     ],
     suggestions: ['Hypertension', 'Type 2 Diabetes', 'Asthma', 'Atrial Fibrillation', 'GORD', 'Heart Failure'],
   },
@@ -710,32 +707,29 @@ function postProcessTabContent() {
     else if (text.startsWith('🚨')) bq.classList.add('callout-red');
   });
 
-  // Transform "Detailed mechanism of action" h3 + paragraphs into expandable details element (Overview tab)
+  // Overview tab: convert "Detailed mechanism of action" (drugs) or "Detailed pathophysiology" (conditions) h3 into expandable dropdown
   if (activeTab === 'overview') {
-    const h3s = panel.querySelectorAll('h3');
-    h3s.forEach(h3 => {
-      if (h3.textContent.toLowerCase().includes('detailed mechanism')) {
-        const details = document.createElement('details');
-        details.className = 'moa-details';
-        const summary = document.createElement('summary');
-        summary.innerHTML = '<span class="moa-chevron">▾</span><span>Detailed mechanism of action</span>';
-        details.appendChild(summary);
+    panel.querySelectorAll('h3').forEach(h3 => {
+      const text = h3.textContent.toLowerCase();
+      let label = '';
+      if (text.includes('detailed mechanism')) label = 'Detailed mechanism of action';
+      else if (text.includes('detailed pathophysiology')) label = 'Detailed pathophysiology';
+      if (!label) return;
 
-        // Wrap all following paragraphs in a single div (prevents each paragraph getting its own box from CSS)
-        const bodyDiv = document.createElement('div');
-        let current = h3.nextElementSibling;
-        while (current && current.tagName !== 'H2' && current.tagName !== 'H3' && current.tagName !== 'BLOCKQUOTE') {
-          if (current.tagName === 'P') {
-            const next = current.nextElementSibling; // Save BEFORE moving
-            bodyDiv.appendChild(current);
-            current = next;
-          } else {
-            current = current.nextElementSibling;
-          }
-        }
-        details.appendChild(bodyDiv);
-        h3.replaceWith(details);
+      const details = document.createElement('details');
+      details.className = 'moa-details';
+      const summary = document.createElement('summary');
+      summary.innerHTML = `<span class="moa-chevron">▾</span><span>${label}</span>`;
+      details.appendChild(summary);
+      const bodyDiv = document.createElement('div');
+      let current = h3.nextElementSibling;
+      while (current && current.tagName !== 'H2' && current.tagName !== 'H3' && current.tagName !== 'BLOCKQUOTE') {
+        const next = current.nextElementSibling;
+        bodyDiv.appendChild(current);
+        current = next;
       }
+      details.appendChild(bodyDiv);
+      h3.replaceWith(details);
     });
   }
 
@@ -872,36 +866,15 @@ function postProcessTabContent() {
 
   // ── CONDITION-SPECIFIC POST-PROCESSING ────────────────────────────────────
 
-  // Pathophysiology tab: convert "Detailed pathophysiology" h3 → expandable details (mirrors MOA dropdown)
-  if (activeTab === 'pathophysiology') {
-    panel.querySelectorAll('h3').forEach(h3 => {
-      if (h3.textContent.toLowerCase().includes('detailed pathophysiology')) {
-        const details = document.createElement('details');
-        details.className = 'moa-details';
-        const summary = document.createElement('summary');
-        summary.innerHTML = '<span class="moa-chevron">▾</span><span>Detailed pathophysiology</span>';
-        details.appendChild(summary);
-        const bodyDiv = document.createElement('div');
-        let current = h3.nextElementSibling;
-        while (current && current.tagName !== 'H2' && current.tagName !== 'H3' && current.tagName !== 'BLOCKQUOTE') {
-          const next = current.nextElementSibling;
-          bodyDiv.appendChild(current);
-          current = next;
-        }
-        details.appendChild(bodyDiv);
-        h3.replaceWith(details);
-      }
-    });
-  }
-
-  // Clinical features: severity row tinting + pills (Mild=green, Moderate=amber, Severe=red)
+  // Clinical features: severity tinting + signs/symptoms card grid + red flags box
   if (activeTab === 'clinical_features') {
+    // Severity table row tinting + pills
     panel.querySelectorAll('table tbody tr').forEach(row => {
       const cell = row.querySelector('td:first-child');
       if (!cell) return;
       const text = cell.textContent.trim().toLowerCase();
       let pillClass = '', rowClass = '';
-      if (text === 'mild')     { pillClass = 'pill-sev-mild';     rowClass = 'row-green'; }
+      if (text === 'mild')          { pillClass = 'pill-sev-mild';     rowClass = 'row-green'; }
       else if (text === 'moderate') { pillClass = 'pill-sev-moderate'; rowClass = 'row-amber'; }
       else if (text === 'severe')   { pillClass = 'pill-sev-severe';   rowClass = 'row-red';   }
       if (pillClass) {
@@ -913,55 +886,93 @@ function postProcessTabContent() {
         row.classList.add(rowClass);
       }
     });
-  }
 
-  // Non-pharmacological: convert h3 + bullets into lifestyle category cards
-  if (activeTab === 'non_pharmacological') {
+    // Red flags box: detect ### Red flags h3 + ul, convert to styled red box
+    // Signs/symptoms: remaining h3+content pairs → two-column card grid
+    // Process in one pass over static h3 array
+    const h3List = Array.from(panel.querySelectorAll('h3'));
     const grid = document.createElement('div');
     grid.className = 'lifestyle-grid';
-    const children = Array.from(panel.children);
-    let i = 0;
-    while (i < children.length) {
-      const el = children[i];
-      if (el.tagName === 'H3') {
+
+    h3List.forEach(h3 => {
+      const title = h3.textContent.trim();
+      const isRedFlags = /red\s*flag/i.test(title);
+
+      // Collect all siblings until next h3
+      const items = [];
+      let cur = h3.nextElementSibling;
+      while (cur && cur.tagName !== 'H3') {
+        items.push(cur);
+        cur = cur.nextElementSibling;
+      }
+
+      if (isRedFlags) {
+        const box = document.createElement('div');
+        box.className = 'red-flags-box';
+        const boxTitle = document.createElement('div');
+        boxTitle.className = 'red-flags-title';
+        boxTitle.textContent = 'Red flags — seek urgent review';
+        box.appendChild(boxTitle);
+        items.forEach(el => box.appendChild(el.cloneNode(true)));
+        // Insert red flags box after last sibling item (or after h3 if no items)
+        const anchor = items.length ? items[items.length - 1] : h3;
+        anchor.after(box);
+      } else {
         const card = document.createElement('div');
         card.className = 'lifestyle-card';
-        const titleDiv = document.createElement('div');
-        titleDiv.className = 'lifestyle-card-title';
-        titleDiv.textContent = el.textContent.trim();
-        card.appendChild(titleDiv);
-        i++;
-        while (i < children.length && children[i].tagName !== 'H3') {
-          card.appendChild(children[i].cloneNode(true));
-          i++;
-        }
+        const cardTitle = document.createElement('div');
+        cardTitle.className = 'lifestyle-card-title';
+        cardTitle.textContent = title;
+        card.appendChild(cardTitle);
+        items.forEach(el => card.appendChild(el.cloneNode(true)));
         grid.appendChild(card);
-      } else {
-        // Top-level content before first h3 (intro paragraph etc.) — keep it
-        grid.appendChild(el.cloneNode(true));
-        i++;
       }
-    }
+
+      // Remove original h3 and its items from panel
+      items.forEach(el => el.remove());
+      h3.remove();
+    });
+
+    // Insert grid before red flags box, or at end if none
     if (grid.children.length > 0) {
-      panel.innerHTML = '';
-      panel.appendChild(grid);
+      const redBox = panel.querySelector('.red-flags-box');
+      if (redBox) panel.insertBefore(grid, redBox);
+      else panel.appendChild(grid);
     }
   }
 
-  // Pharmacological: convert ### Step N / ### Special populations h3s into step blocks
+  // Pharmacological: step blocks with numbered badge + special populations block
   if (activeTab === 'pharmacological') {
     panel.querySelectorAll('h3').forEach(h3 => {
       const text = h3.textContent.trim();
-      const isStep = /^step\s+\d+/i.test(text);
+      const isStep    = /^step\s+\d+/i.test(text);
       const isSpecial = /special\s+population/i.test(text);
       if (!isStep && !isSpecial) return;
 
       const block = document.createElement('div');
       block.className = isStep ? 'step-block' : 'step-block step-block-special';
-      const label = document.createElement('div');
-      label.className = 'step-label';
-      label.textContent = text;
-      block.appendChild(label);
+
+      if (isStep) {
+        const stepMatch = text.match(/^step\s+(\d+)\s*\(?([^):]*)/i);
+        const num = stepMatch ? stepMatch[1] : '?';
+        const ctx = stepMatch ? stepMatch[2].replace(/\)$/, '').trim() : '';
+        const header = document.createElement('div');
+        header.className = 'step-header';
+        const badge = document.createElement('div');
+        badge.className = 'step-num';
+        badge.textContent = num;
+        const headText = document.createElement('div');
+        headText.className = 'step-header-text';
+        headText.innerHTML = `<span class="step-title-text">Step ${num}</span>${ctx ? `<span class="step-severity">${ctx}</span>` : ''}`;
+        header.appendChild(badge);
+        header.appendChild(headText);
+        block.appendChild(header);
+      } else {
+        const label = document.createElement('div');
+        label.className = 'step-label';
+        label.textContent = text;
+        block.appendChild(label);
+      }
 
       const content = document.createElement('div');
       content.className = 'step-content';
@@ -976,29 +987,39 @@ function postProcessTabContent() {
     });
   }
 
-  // Drug summary: teal pill on drug name (first column)
+  // Drug summary: teal pill on drug name (first column), muted class column
   if (activeTab === 'drug_summary') {
     panel.querySelectorAll('table tbody tr').forEach(row => {
-      const cell = row.querySelector('td:first-child');
-      if (!cell || !cell.textContent.trim()) return;
-      const pill = document.createElement('span');
-      pill.className = 'pill pill-drug-name';
-      pill.textContent = cell.textContent.trim();
-      cell.innerHTML = '';
-      cell.appendChild(pill);
-    });
-    // Bold parameter column in drug summary
-    panel.querySelectorAll('table tbody tr').forEach(row => {
-      const second = row.querySelector('td:nth-child(2)');
-      if (second) second.style.color = 'var(--text-muted)';
+      const cells = row.querySelectorAll('td');
+      if (cells[0] && cells[0].textContent.trim()) {
+        const pill = document.createElement('span');
+        pill.className = 'pill pill-drug-name';
+        pill.textContent = cells[0].textContent.trim();
+        cells[0].innerHTML = '';
+        cells[0].appendChild(pill);
+      }
+      if (cells[1]) cells[1].style.color = 'var(--text-muted)';
     });
   }
 
-  // Monitoring: bold parameter column, accent-left border on rows
+  // Monitoring: teal pill on Parameter, green pill on Target
   if (activeTab === 'monitoring') {
     panel.querySelectorAll('table tbody tr').forEach(row => {
       const cells = row.querySelectorAll('td');
-      if (cells[0]) cells[0].style.fontWeight = '500';
+      if (cells[0] && cells[0].textContent.trim()) {
+        const pill = document.createElement('span');
+        pill.className = 'pill pill-indication';
+        pill.textContent = cells[0].textContent.trim();
+        cells[0].innerHTML = '';
+        cells[0].appendChild(pill);
+      }
+      if (cells[1] && cells[1].textContent.trim()) {
+        const pill = document.createElement('span');
+        pill.className = 'pill pill-green';
+        pill.textContent = cells[1].textContent.trim();
+        cells[1].innerHTML = '';
+        cells[1].appendChild(pill);
+      }
     });
   }
 

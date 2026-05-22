@@ -76,43 +76,31 @@ One-line format: [Condition category] · [Brief clinical significance]
 ---FIELD_END
 
 ---FIELD_START: header_badges
-Comma-separated "Label|colour" pairs. colour is teal (NZ guideline or funded treatment), amber (notifiable/emergent), or slate (body system/category/prevalence). Example: BPAC NZ guideline|teal, Skin & soft tissue|slate, NZ incidence: common|slate. Include 1 teal badge for primary NZ guideline and 2-3 slate badges for body system, category, and prevalence.
+Comma-separated "Label|colour" pairs. colour is teal (NZ guideline or funded treatment), amber (notifiable/emergent), or slate (body system/category/prevalence). Example: BPAC NZ guideline|teal, Skin & soft tissue|slate, NZ incidence: common|slate. Include 1 teal badge for the primary NZ guideline and 2-3 slate badges for body system, category, and prevalence.
 ---FIELD_END
 
 ---FIELD_START: overview
-2-3 paragraphs: what the condition is, NZ prevalence/epidemiology, and clinical significance to pharmacy. Then: blockquote > ⚡ **Key point:** [one sentence clinical pearl most relevant to a pharmacist]. Then any warning blockquotes if relevant (> ⚠️ **Note:** or > 🚨 **Warning:**).
----FIELD_END
-
----FIELD_START: pathophysiology
-Brief 1-2 sentence summary of the core mechanism and how it drives symptoms. Then: ### Detailed pathophysiology, followed by 3-4 detailed paragraphs covering the molecular/cellular mechanism, relevant pathways, and how this informs pharmacotherapy choices.
+2-3 paragraphs: what the condition is, NZ prevalence/epidemiology, and clinical significance to pharmacy practice. Then: blockquote > ⚡ **Key point:** [one sentence clinical pearl most useful to a pharmacist]. Then any warning blockquotes if relevant (> ⚠️ **Note:** or > 🚨 **Warning:**). Then: ### Detailed pathophysiology, followed by 3-4 paragraphs covering the core mechanism, relevant pathways, and how the pathophysiology directly informs pharmacotherapy choices (e.g. why certain drug classes work, what goes wrong at a molecular/cellular level).
 ---FIELD_END
 
 ---FIELD_START: clinical_features
-Signs and symptoms organised by category. Severity classification table MUST come first with EXACTLY these columns: Severity | Defining features | Typical presentation. Row labels MUST be exactly: Mild / Moderate / Severe (single capitalised word). Then list key signs and symptoms by category using h3 headings (e.g. ### Symptoms, ### Signs, ### Red flags).
----FIELD_END
-
----FIELD_START: non_pharmacological
-Non-drug interventions. Use ### h3 headings for each category (e.g. ### Diet & nutrition, ### Exercise, ### Smoking & alcohol, ### Weight management). Under each heading, provide 2-4 bullet points. Include evidence quality where known (e.g. *Strong evidence*, *Moderate evidence*, *Expert consensus*).
+Severity classification table FIRST — EXACTLY these columns: Severity | Defining features | Typical presentation. Row labels MUST be exactly: Mild / Moderate / Severe. Then use ### h3 headings for each category of features (e.g. ### Symptoms, ### Signs, ### Investigations). Then end with a ### Red flags section as a bullet list of features requiring urgent review or hospital referral.
 ---FIELD_END
 
 ---FIELD_START: pharmacological
-Stepwise treatment algorithm. Use ### Step 1 (mild): / ### Step 2 (moderate): / ### Step 3 (severe): as h3 headings. Under each step, describe recommended agents, typical NZ doses, and rationale as bullet points. End with a ### Special populations section covering pregnancy, renal impairment, elderly, and paediatrics as relevant (bullet points per population).
+Stepwise treatment algorithm. Use ### Step 1 (mild) / ### Step 2 (moderate) / ### Step 3 (severe) as h3 headings (no colon). Under each step, list recommended agents as bullet points: **Drug name** dose and frequency — rationale/notes. Use NZ drug names and PHARMAC-funded agents where available. End with ### Special populations as an h3, with bullet points covering pregnancy, renal impairment, elderly, and paediatrics as relevant.
 ---FIELD_END
 
 ---FIELD_START: drug_summary
-Markdown table with exactly these columns: Drug | Class | Usual dose range | Key notes. Include all first- and second-line agents. Drug column: plain drug name only (no formatting). Class column: short drug class name.
+Markdown table with exactly these columns: Drug | Class | Usual dose range | Key notes. Drug column: plain drug name only. Class: short drug class. Include all first- and second-line agents.
 ---FIELD_END
 
 ---FIELD_START: monitoring
-Markdown table with exactly these columns: Parameter | Target | Frequency | Action if outside target. Include clinical, biochemical, and symptom monitoring parameters relevant to this condition and its treatment.
+Markdown table with exactly these columns: Parameter | Target | Frequency | Action if outside target. Cover clinical, biochemical, and symptom parameters relevant to the condition and its pharmacological treatment.
 ---FIELD_END
 
 ---FIELD_START: counselling
-8-12 markdown bullet points in plain language for patients. Cover: understanding the condition, how treatments work, lifestyle measures, side effects to watch for, when to seek help.
----FIELD_END
-
----FIELD_START: nz_notes
-Short format: **Guideline:** [primary NZ guideline], **Funded treatments:** [key PHARMAC-funded agents], **Notifiable:** [yes/no — if relevant], **NZ context:** [1-2 NZ-specific practice pearls or local considerations].
+12-16 markdown bullet points combining lifestyle advice AND patient counselling. Cover: understanding the condition, lifestyle and non-drug measures (diet, exercise, smoking, weight, alcohol as relevant), how medications work, adherence, side effects to watch for, when to seek help, NZ-specific resources or support. Write in plain language appropriate for patients.
 ---FIELD_END`,
 
   anatomy: (topic) => `Generate a complete PharmDC anatomy & physiology entry for: "${topic}".
@@ -222,7 +210,7 @@ export default async function handler(req, res) {
       },
       body: JSON.stringify({
         model: 'claude-sonnet-4-6',
-        max_tokens: 6000,
+        max_tokens: 8000,
         system: SYSTEM_PROMPT,
         messages: [{ role: 'user', content: buildPrompt(topic) }],
       }),
