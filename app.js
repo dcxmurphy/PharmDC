@@ -684,9 +684,24 @@ function postProcessTabContent() {
     wrap.className = 'table-wrap';
     table.parentNode.insertBefore(wrap, table);
     wrap.appendChild(table);
-    // Non-dosing tabs get muted grey header
-    if (activeTab !== 'dosing') table.classList.add('t-plain');
+    // All tabs get muted grey header
+    table.classList.add('t-plain');
   });
+
+  // Dosing tab: teal pill on Indication column (first column, each body row)
+  if (activeTab === 'dosing') {
+    panel.querySelectorAll('table tbody tr').forEach(row => {
+      const cell = row.querySelector('td:first-child');
+      if (!cell) return;
+      const text = cell.textContent.trim();
+      if (!text) return;
+      const pill = document.createElement('span');
+      pill.className = 'pill pill-indication';
+      pill.textContent = text;
+      cell.innerHTML = '';
+      cell.appendChild(pill);
+    });
+  }
 
   // Classify blockquotes by lead emoji — amber for ⚠️, red for 🚨, default teal for everything else
   panel.querySelectorAll('blockquote').forEach(bq => {

@@ -978,6 +978,7 @@ input, textarea, select { font-family: inherit; font-size: inherit; }
 .pill-amber { background: #fef9c3; color: #854d0e; }
 .pill-orange { background: #ffedd5; color: #9a3412; }
 .pill-red { background: #fee2e2; color: #991b1b; }
+.pill-indication { background: var(--accent-light); color: var(--accent-hover); }
 
 /* Adverse effects severity badges */
 .ae-sev {
@@ -1272,6 +1273,7 @@ input, textarea, select { font-family: inherit; font-size: inherit; }
   :root:not([data-theme="light"]) .pill-amber { background: rgba(234,179,8,0.15); color: #fde68a; }
   :root:not([data-theme="light"]) .pill-orange { background: rgba(249,115,22,0.15); color: #fdba74; }
   :root:not([data-theme="light"]) .pill-red { background: rgba(239,68,68,0.15); color: #fca5a5; }
+  :root:not([data-theme="light"]) .pill-indication { background: rgba(29,158,117,0.15); color: #5dcaa5; }
   :root:not([data-theme="light"]) .ae-sev.sev-common { background: #2a2a2a; color: #aaaaaa; }
   :root:not([data-theme="light"]) .ae-sev.sev-serious { background: rgba(239,68,68,0.15); color: #fca5a5; }
   :root:not([data-theme="light"]) .ae-sev.sev-rare { background: rgba(168,85,247,0.15); color: #d8b4fe; }
@@ -1305,6 +1307,7 @@ input, textarea, select { font-family: inherit; font-size: inherit; }
 :root[data-theme="dark"] .pill-amber { background: rgba(234,179,8,0.15); color: #fde68a; }
 :root[data-theme="dark"] .pill-orange { background: rgba(249,115,22,0.15); color: #fdba74; }
 :root[data-theme="dark"] .pill-red { background: rgba(239,68,68,0.15); color: #fca5a5; }
+:root[data-theme="dark"] .pill-indication { background: rgba(29,158,117,0.15); color: #5dcaa5; }
 :root[data-theme="dark"] .ae-sev.sev-common { background: #2a2a2a; color: #aaaaaa; }
 :root[data-theme="dark"] .ae-sev.sev-serious { background: rgba(239,68,68,0.15); color: #fca5a5; }
 :root[data-theme="dark"] .ae-sev.sev-rare { background: rgba(168,85,247,0.15); color: #d8b4fe; }

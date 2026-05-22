@@ -32,7 +32,7 @@ Comma-separated list of "Label|colour" pairs for display badges. colour is teal 
 ---FIELD_END
 
 ---FIELD_START: dosing
-Markdown table: Indication | Starting dose | Maintenance dose | Maximum dose. Make Indication entries BOLD (e.g. **Type 2 diabetes**). Include all major indications.
+Markdown table with exactly 3 columns: Indication | Dose | Notes. Indication entries are plain text (no bold, no formatting). Dose column: synthesise starting dose, titration, and maintenance/target range into one concise string (e.g. "500 mg once daily, titrate to 1000–2000 mg/day over 2–4 weeks"). Notes column: clinical nuance, NZ-specific caveats, timing, food interactions, off-label status, or any other relevant context. Include all major indications.
 ---FIELD_END
 
 ---FIELD_START: renal_dosing
