@@ -48,15 +48,18 @@ Two sections: ### Absolute contraindications with bullet list, then ### Cautions
 ---FIELD_END
 
 ---FIELD_START: interactions
-Markdown table: Drug | Mechanism | Severity | Management. CRITICAL: Severity cell MUST start with emoji + keyword: "🔴 CRITICAL", "🟠 HIGH", "🟡 MODERATE", or "🟢 MINOR". Sort rows by severity (CRITICAL first, then HIGH, MODERATE, MINOR). MUST generate this field even if no major interactions — list at least 3 common interactions.
+REQUIRED — ABSOLUTELY GENERATE THIS FIELD. Markdown table with 4 columns: Drug or class | Mechanism | Severity | Management. CRITICAL: Severity cell MUST start with emoji + keyword exactly as shown: "🔴 CRITICAL" (major risk), "🟠 HIGH" (significant), "🟡 MODERATE" (monitor), or "🟢 MINOR". Sort rows by severity (CRITICAL first). Generate AT LEAST 3 interactions even if not major. THIS MUST BE GENERATED.
 ---FIELD_END
 
 ---FIELD_START: counselling
-REQUIRED — ALWAYS generate this field. 8-12 bullet points in plain language. Cover: how to take the drug, common side effects, what to watch for, when to contact doctor. If no specific counselling points, provide general guidance. ALWAYS GENERATE.
+REQUIRED — ABSOLUTELY GENERATE THIS FIELD OR THE ENTRY WILL BE INCOMPLETE. Generate 8-12 patient counselling bullet points in plain language. Cover: how to take the drug, common side effects, what to watch for, when to contact a doctor. Format as a markdown bullet list. Example:
+- Take with food to reduce nausea
+- Dizziness may occur initially
+If no drug-specific counselling, generate general guidance. THIS MUST BE GENERATED.
 ---FIELD_END
 
 ---FIELD_START: nz_notes
-REQUIRED — ALWAYS generate this field. **Funding:** [PHARMAC status], **Special Authority:** [criteria or None], **Schedule:** [Rx/Pharmacist-only/Restricted/General sale], **Formulations:** [available in NZ], **Practice notes:** [NZ guidance/pearls]. Never leave blank — always provide at least funding and scheduling. ALWAYS GENERATE.
+REQUIRED — ABSOLUTELY GENERATE THIS FIELD OR THE ENTRY WILL BE INCOMPLETE. Include EXACTLY these sections: **Funding:** [PHARMAC subsidy status], **Special Authority:** [criteria or "Not required"], **Schedule:** [Rx/Pharmacist-only/Restricted/General sale], **Formulations:** [list available in NZ], **Practice notes:** [NZ-specific guidance]. THIS MUST BE GENERATED WITHOUT FAIL.
 ---FIELD_END
 
 ---FIELD_START: body_systems
@@ -246,8 +249,16 @@ export default async function handler(req, res) {
 
     // Validate we got some fields
     if (Object.keys(fields).length === 0) {
+      console.error('No fields parsed. Raw response sample:', raw.substring(0, 500));
       throw new Error('No fields found in AI response. Response may be malformed.');
     }
+
+    // Log which fields were parsed (for debugging)
+    const parsedFields = Object.keys(fields);
+    console.log('Parsed fields:', parsedFields);
+    if (!parsedFields.includes('counselling')) console.warn('WARNING: counselling field missing');
+    if (!parsedFields.includes('nz_notes')) console.warn('WARNING: nz_notes field missing');
+    if (!parsedFields.includes('interactions')) console.warn('WARNING: interactions field missing');
 
     // Convert to JSON string for client
     const jsonStr = JSON.stringify(fields);

@@ -787,12 +787,13 @@ input, textarea, select { font-family: inherit; font-size: inherit; }
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 8px;
+  margin-bottom: 1.25em;
 }
 .counsel-card {
   background: var(--bg);
   border: 0.5px solid var(--border);
-  border-radius: var(--radius-sm);
-  padding: 12px 14px;
+  border-radius: 10px;
+  padding: 13px 15px;
   font-size: 13.5px;
   color: var(--text);
   line-height: 1.55;
@@ -906,46 +907,48 @@ input, textarea, select { font-family: inherit; font-size: inherit; }
 /* Pill badges — for renal/hepatic Status column */
 .pill {
   display: inline-block;
-  padding: 4px 10px;
-  border-radius: 16px;
-  font-size: 12.5px;
-  font-weight: 500;
-  white-space: nowrap;
-}
-.pill-green { background: #dcfce7; color: #15803d; }
-.pill-amber { background: #fef3c7; color: #a16207; }
-.pill-orange { background: #ffedd5; color: #9a3412; }
-.pill-red { background: #fee2e2; color: #b91c1c; }
-
-/* Adverse effects severity badges */
-.ae-sev {
-  display: inline-block;
-  padding: 3px 9px;
-  border-radius: 4px;
+  padding: 2px 9px;
+  border-radius: 20px;
   font-size: 11.5px;
   font-weight: 500;
   white-space: nowrap;
 }
-.ae-sev.sev-common { background: #f1f5f9; color: #334155; }
+.pill-green { background: #dcfce7; color: #166534; }
+.pill-amber { background: #fef9c3; color: #854d0e; }
+.pill-orange { background: #ffedd5; color: #9a3412; }
+.pill-red { background: #fee2e2; color: #991b1b; }
+
+/* Adverse effects severity badges */
+.ae-sev {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 500;
+  padding: 2px 7px;
+  border-radius: 4px;
+  white-space: nowrap;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.ae-sev.sev-common { background: #f1f5f9; color: #64748b; }
 .ae-sev.sev-serious { background: #fee2e2; color: #991b1b; }
 .ae-sev.sev-rare { background: #f5f3ff; color: #6b21a8; }
 
 /* Interaction severity visual bars */
 .sig-bar {
-  display: flex;
+  display: inline-flex;
+  gap: 2px;
   align-items: center;
-  gap: 3px;
-  height: 16px;
+  justify-content: center;
 }
 .sig-block {
-  width: 10px;
-  height: 6px;
-  border-radius: 1px;
+  width: 7px;
+  height: 13px;
+  border-radius: 2px;
 }
-.sig-block-red { background: #ef4444; }
-.sig-block-orange { background: #f97316; }
-.sig-block-yellow { background: #eab308; }
-.sig-block-empty { background: #d1d5db; }
+.sig-red { background: #ef4444; }
+.sig-orange { background: #f97316; }
+.sig-amber { background: #eab308; }
+.sig-empty { background: #e5e7eb; }
 
 /* Renal / hepatic row tints — applied via JS after render */
 .markdown-content .row-green td { background: #f0fdf4; }
@@ -1120,28 +1123,69 @@ input, textarea, select { font-family: inherit; font-size: inherit; }
 /* NZ Notes card */
 .nz-notes-card {
   border: 0.5px solid var(--accent-mid);
-  border-radius: var(--radius-md);
+  border-radius: 12px;
   overflow: hidden;
+  background: #f0faf6;
+  padding: 20px 22px;
 }
 .nz-notes-header {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 11px 18px;
-  background: var(--accent);
-  color: rgba(255,255,255,0.9);
+  margin-bottom: 14px;
 }
-.nz-notes-icon { font-size: 15px; line-height: 1; }
+.nz-notes-icon {
+  width: 26px;
+  height: 26px;
+  border-radius: 7px;
+  background: var(--accent);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  flex-shrink: 0;
+}
 .nz-notes-title {
-  font-size: 11.5px;
+  font-size: 13px;
   font-weight: 500;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
+  color: #0F6E56;
 }
 .nz-notes-body {
-  padding: 18px 20px;
-  background: var(--accent-light);
+  padding: 0;
+  background: none;
+  font-size: 13.5px;
+  color: #1a3d2e;
+  line-height: 1.65;
 }
+.nz-notes-body p {
+  margin-bottom: 8px;
+}
+.nz-notes-body p:last-child {
+  margin-bottom: 0;
+}
+.nz-notes-body strong {
+  font-weight: 500;
+}
+
+/* Funding strip with badges */
+.funding-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 14px;
+}
+.fc {
+  display: inline-flex;
+  align-items: center;
+  font-size: 12px;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-weight: 500;
+}
+.fc-funded { background: #E1F5EE; color: #0F6E56; border: 0.5px solid #9FE1CB; }
+.fc-sa { background: #fffbeb; color: #92400e; border: 0.5px solid #fcd34d; }
+.fc-rx { background: #eff6ff; color: #1e40af; border: 0.5px solid #bfdbfe; }
 .markdown-content hr {
   border: none;
   border-top: 0.5px solid var(--border);

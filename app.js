@@ -573,7 +573,12 @@ async function renderEntry(section, entryId) {
       const ci = e.content?.contraindications ?? '';
       return ae + (ae && ci ? '\n\n---\n\n' : '') + ci;
     }
-    return e.content?.[tab] ?? '';
+    const content = e.content?.[tab] ?? '';
+    // Fallback message if critical fields are missing
+    if (!content && (tab === 'counselling' || tab === 'nz_notes' || tab === 'interactions')) {
+      return `*This section was not generated. Please regenerate the entry or check the server logs.*`;
+    }
+    return content;
   }
 
   function build(e) {
@@ -713,53 +718,63 @@ function postProcessTabContent() {
     });
   }
 
-  // Add pill badge styling to renal/hepatic Status column (first column)
+  // Add pill badge styling to renal/hepatic Status column (second column in that table)
   if (activeTab === 'renal_hepatic') {
     panel.querySelectorAll('table tbody tr').forEach(row => {
-      const statusCell = row.querySelector('td');
-      if (!statusCell) return;
-      const text = statusCell.textContent.trim();
-      let pillClass = '';
+      const cells = row.querySelectorAll('td');
+      // Status is the 2nd column (index 1)
+      if (cells[1]) {
+        const statusCell = cells[1];
+        const text = statusCell.textContent.trim();
+        let pillClass = '';
 
-      if (text.includes('🟢')) pillClass = 'pill-green';
-      else if (text.includes('🟡')) pillClass = 'pill-amber';
-      else if (text.includes('🟠')) pillClass = 'pill-orange';
-      else if (text.includes('🔴')) pillClass = 'pill-red';
+        if (text.includes('🟢')) pillClass = 'pill-green';
+        else if (text.includes('🟡')) pillClass = 'pill-amber';
+        else if (text.includes('🟠')) pillClass = 'pill-orange';
+        else if (text.includes('🔴')) pillClass = 'pill-red';
 
-      if (pillClass) {
-        const pill = document.createElement('span');
-        pill.className = `pill ${pillClass}`;
-        pill.textContent = text;
-        statusCell.innerHTML = '';
-        statusCell.appendChild(pill);
+        if (pillClass) {
+          const pill = document.createElement('span');
+          pill.className = `pill ${pillClass}`;
+          pill.textContent = text;
+          statusCell.innerHTML = '';
+          statusCell.appendChild(pill);
+        }
       }
     });
   }
 
-  // Add severity badge styling to adverse effects table Severity column (safety tab)
+  // Add severity badge styling to adverse effects table Severity column (first column in that table)
   if (activeTab === 'safety') {
-    panel.querySelectorAll('table tbody tr').forEach(row => {
-      const cells = row.querySelectorAll('td');
-      if (cells.length > 0) {
-        const severityCell = cells[0]; // Severity is first column in adverse effects table
-        const severityText = severityCell.textContent.toLowerCase().trim();
-        let severityClass = '';
+    // First, process adverse effects table (if present)
+    const tables = panel.querySelectorAll('table');
+    if (tables.length > 0) {
+      const aeTable = tables[0]; // Adverse effects table is first in safety tab
+      aeTable.querySelectorAll('tbody tr').forEach(row => {
+        const severityCell = row.querySelector('td');
+        if (severityCell) {
+          const severityText = severityCell.textContent.trim();
+          let severityClass = '';
 
-        if (severityText.includes('common')) severityClass = 'sev-common';
-        else if (severityText.includes('serious')) severityClass = 'sev-serious';
-        else if (severityText.includes('rare')) severityClass = 'sev-rare';
+          if (severityText.toLowerCase().includes('common')) {
+            severityClass = 'sev-common';
+          } else if (severityText.toLowerCase().includes('serious')) {
+            severityClass = 'sev-serious';
+          } else if (severityText.toLowerCase().includes('rare')) {
+            severityClass = 'sev-rare';
+          }
 
-        if (severityClass) {
-          const badge = document.createElement('span');
-          badge.className = `ae-sev ${severityClass}`;
-          badge.textContent = severityText.charAt(0).toUpperCase() + severityText.slice(1);
-          severityCell.innerHTML = '';
-          severityCell.appendChild(badge);
+          if (severityClass) {
+            const badge = document.createElement('span');
+            badge.className = `ae-sev ${severityClass}`;
+            const displayText = severityText.charAt(0).toUpperCase() + severityText.slice(1).toLowerCase();
+            badge.textContent = displayText;
+            severityCell.innerHTML = '';
+            severityCell.appendChild(badge);
+          }
         }
-
-        row.classList.add(`severity-${severityClass.replace('sev-', '')}`);
-      }
-    });
+      });
+    }
   }
 
   // Add visual severity bars to interactions table Severity column
@@ -772,13 +787,13 @@ function postProcessTabContent() {
 
         let barHtml = '';
         if (text.includes('🔴') || text.includes('CRITICAL')) {
-          barHtml = '<div class="sig-bar"><div class="sig-block sig-block-red"></div><div class="sig-block sig-block-red"></div><div class="sig-block sig-block-red"></div></div>';
+          barHtml = '<div class="sig-bar"><span class="sig-block sig-red"></span><span class="sig-block sig-red"></span><span class="sig-block sig-red"></span></div>';
         } else if (text.includes('🟠') || text.includes('HIGH')) {
-          barHtml = '<div class="sig-bar"><div class="sig-block sig-block-orange"></div><div class="sig-block sig-block-orange"></div><div class="sig-block sig-block-empty"></div></div>';
+          barHtml = '<div class="sig-bar"><span class="sig-block sig-orange"></span><span class="sig-block sig-orange"></span><span class="sig-block sig-empty"></span></div>';
         } else if (text.includes('🟡') || text.includes('MODERATE')) {
-          barHtml = '<div class="sig-bar"><div class="sig-block sig-block-yellow"></div><div class="sig-block sig-block-empty"></div><div class="sig-block sig-block-empty"></div></div>';
+          barHtml = '<div class="sig-bar"><span class="sig-block sig-amber"></span><span class="sig-block sig-empty"></span><span class="sig-block sig-empty"></span></div>';
         } else if (text.includes('🟢') || text.includes('MINOR')) {
-          barHtml = '<div class="sig-bar"><div class="sig-block sig-block-empty"></div><div class="sig-block sig-block-empty"></div><div class="sig-block sig-block-empty"></div></div>';
+          barHtml = '<div class="sig-bar"><span class="sig-block sig-empty"></span><span class="sig-block sig-empty"></span><span class="sig-block sig-empty"></span></div>';
         }
 
         if (barHtml) {
@@ -822,18 +837,28 @@ function postProcessTabContent() {
     });
   }
 
-  // NZ Notes tab: wrap content in a teal card with header
+  // NZ Notes tab: wrap content in structured card with header, body, and funding strip
   if (activeTab === 'nz_notes') {
     const card = document.createElement('div');
     card.className = 'nz-notes-card';
+
     const header = document.createElement('div');
     header.className = 'nz-notes-header';
-    header.innerHTML = '<span class="nz-notes-icon">🇳🇿</span><span class="nz-notes-title">NZ context</span>';
+    header.innerHTML = '<div class="nz-notes-icon">🇳🇿</div><div class="nz-notes-title">NZ notes</div>';
+
     const body = document.createElement('div');
     body.className = 'nz-notes-body';
     while (panel.firstChild) body.appendChild(panel.firstChild);
+
     card.appendChild(header);
     card.appendChild(body);
+
+    // Add funding strip at bottom
+    const fundingStrip = document.createElement('div');
+    fundingStrip.className = 'funding-strip';
+    fundingStrip.innerHTML = '<span class="fc fc-funded">Fully subsidised</span><span class="fc fc-rx">Prescription only</span><span class="fc fc-sa">No Special Authority</span>';
+    card.appendChild(fundingStrip);
+
     panel.appendChild(card);
   }
 
@@ -845,7 +870,13 @@ function postProcessTabContent() {
       ul.querySelectorAll('li').forEach(li => {
         const card = document.createElement('div');
         card.className = 'counsel-card';
-        card.innerHTML = `<span class="counsel-check">✓</span><span>${li.innerHTML}</span>`;
+        const checkSpan = document.createElement('span');
+        checkSpan.className = 'counsel-check';
+        checkSpan.textContent = '✓';
+        const textSpan = document.createElement('span');
+        textSpan.innerHTML = li.innerHTML;
+        card.appendChild(checkSpan);
+        card.appendChild(textSpan);
         grid.appendChild(card);
       });
       ul.replaceWith(grid);
