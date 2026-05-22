@@ -874,6 +874,97 @@ input, textarea, select { font-family: inherit; font-size: inherit; }
 }
 
 /* ============================================================
+   CONDITION ENTRY — SEVERITY PILLS
+   ============================================================ */
+.pill-sev-mild     { background: #dcfce7; color: #166534; }
+.pill-sev-moderate { background: #fef9c3; color: #854d0e; }
+.pill-sev-severe   { background: #fee2e2; color: #991b1b; }
+
+/* ============================================================
+   CONDITION ENTRY — PHARMACOLOGICAL STEP BLOCKS
+   ============================================================ */
+.step-block {
+  margin: 16px 0;
+  border-left: 3px solid var(--accent);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  background: var(--bg-secondary);
+  overflow: hidden;
+}
+.step-block-special {
+  border-left-color: var(--text-muted);
+}
+.step-label {
+  padding: 10px 16px 8px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--accent);
+  letter-spacing: 0.01em;
+  background: var(--bg-secondary);
+}
+.step-block-special .step-label {
+  color: var(--text-2);
+}
+.step-content {
+  padding: 0 16px 14px;
+  font-size: 13.5px;
+  color: var(--text-2);
+  line-height: 1.7;
+}
+.step-content p  { margin-bottom: 0.6em; }
+.step-content ul,
+.step-content ol { margin: 0.3em 0 0.6em 1.25em; }
+.step-content li { margin-bottom: 4px; }
+
+/* ============================================================
+   CONDITION ENTRY — NON-PHARMACOLOGICAL LIFESTYLE GRID
+   ============================================================ */
+.lifestyle-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin: 12px 0 20px;
+}
+.lifestyle-card {
+  background: var(--bg-secondary);
+  border: 0.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 14px 16px;
+  break-inside: avoid;
+}
+.lifestyle-card-title {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--accent);
+  margin-bottom: 8px;
+  padding-bottom: 7px;
+  border-bottom: 0.5px solid var(--border);
+}
+.lifestyle-card ul { margin: 0 0 0 1.1em; padding: 0; }
+.lifestyle-card li {
+  font-size: 13px;
+  color: var(--text-2);
+  margin-bottom: 5px;
+  line-height: 1.55;
+}
+.lifestyle-card p {
+  font-size: 13px;
+  color: var(--text-2);
+  margin: 0;
+}
+@media (max-width: 600px) {
+  .lifestyle-grid { grid-template-columns: 1fr; }
+}
+
+/* ============================================================
+   CONDITION ENTRY — DRUG SUMMARY NAME PILL
+   ============================================================ */
+.pill-drug-name {
+  background: var(--accent-light);
+  color: var(--accent-hover);
+  font-weight: 500;
+}
+
+/* ============================================================
    MARKDOWN CONTENT
    ============================================================ */
 .markdown-content {
@@ -1274,6 +1365,18 @@ input, textarea, select { font-family: inherit; font-size: inherit; }
   :root:not([data-theme="light"]) .pill-orange { background: rgba(249,115,22,0.15); color: #fdba74; }
   :root:not([data-theme="light"]) .pill-red { background: rgba(239,68,68,0.15); color: #fca5a5; }
   :root:not([data-theme="light"]) .pill-indication { background: rgba(29,158,117,0.15); color: #5dcaa5; }
+  :root:not([data-theme="light"]) .pill-sev-mild     { background: rgba(34,197,94,0.15); color: #86efac; }
+  :root:not([data-theme="light"]) .pill-sev-moderate { background: rgba(234,179,8,0.15); color: #fde68a; }
+  :root:not([data-theme="light"]) .pill-sev-severe   { background: rgba(239,68,68,0.15); color: #fca5a5; }
+  :root:not([data-theme="light"]) .pill-drug-name    { background: rgba(29,158,117,0.15); color: #5dcaa5; }
+  :root:not([data-theme="light"]) .step-block        { background: #1e1e1e; border-left-color: var(--accent); }
+  :root:not([data-theme="light"]) .step-block-special { border-left-color: #555555; }
+  :root:not([data-theme="light"]) .step-label        { color: var(--accent-hover); }
+  :root:not([data-theme="light"]) .step-block-special .step-label { color: #aaaaaa; }
+  :root:not([data-theme="light"]) .step-content      { color: #aaaaaa; }
+  :root:not([data-theme="light"]) .lifestyle-card    { background: #1e1e1e; border-color: #2a2a2a; }
+  :root:not([data-theme="light"]) .lifestyle-card-title { color: var(--accent-hover); border-bottom-color: #2a2a2a; }
+  :root:not([data-theme="light"]) .lifestyle-card li { color: #aaaaaa; }
   :root:not([data-theme="light"]) .ae-sev.sev-common { background: #2a2a2a; color: #aaaaaa; }
   :root:not([data-theme="light"]) .ae-sev.sev-serious { background: rgba(239,68,68,0.15); color: #fca5a5; }
   :root:not([data-theme="light"]) .ae-sev.sev-rare { background: rgba(168,85,247,0.15); color: #d8b4fe; }
@@ -1308,6 +1411,18 @@ input, textarea, select { font-family: inherit; font-size: inherit; }
 :root[data-theme="dark"] .pill-orange { background: rgba(249,115,22,0.15); color: #fdba74; }
 :root[data-theme="dark"] .pill-red { background: rgba(239,68,68,0.15); color: #fca5a5; }
 :root[data-theme="dark"] .pill-indication { background: rgba(29,158,117,0.15); color: #5dcaa5; }
+:root[data-theme="dark"] .pill-sev-mild     { background: rgba(34,197,94,0.15); color: #86efac; }
+:root[data-theme="dark"] .pill-sev-moderate { background: rgba(234,179,8,0.15); color: #fde68a; }
+:root[data-theme="dark"] .pill-sev-severe   { background: rgba(239,68,68,0.15); color: #fca5a5; }
+:root[data-theme="dark"] .pill-drug-name    { background: rgba(29,158,117,0.15); color: #5dcaa5; }
+:root[data-theme="dark"] .step-block        { background: #1e1e1e; border-left-color: var(--accent); }
+:root[data-theme="dark"] .step-block-special { border-left-color: #555555; }
+:root[data-theme="dark"] .step-label        { color: var(--accent-hover); }
+:root[data-theme="dark"] .step-block-special .step-label { color: #aaaaaa; }
+:root[data-theme="dark"] .step-content      { color: #aaaaaa; }
+:root[data-theme="dark"] .lifestyle-card    { background: #1e1e1e; border-color: #2a2a2a; }
+:root[data-theme="dark"] .lifestyle-card-title { color: var(--accent-hover); border-bottom-color: #2a2a2a; }
+:root[data-theme="dark"] .lifestyle-card li { color: #aaaaaa; }
 :root[data-theme="dark"] .ae-sev.sev-common { background: #2a2a2a; color: #aaaaaa; }
 :root[data-theme="dark"] .ae-sev.sev-serious { background: rgba(239,68,68,0.15); color: #fca5a5; }
 :root[data-theme="dark"] .ae-sev.sev-rare { background: rgba(168,85,247,0.15); color: #d8b4fe; }

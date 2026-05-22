@@ -71,40 +71,48 @@ REQUIRED. Comma-separated list of 1-3 body systems that this drug primarily acts
 
 OUTPUT FORMAT — Use delimiter structure, NO JSON:
 
+---FIELD_START: condition_subtitle
+One-line format: [Condition category] · [Brief clinical significance]
+---FIELD_END
+
+---FIELD_START: header_badges
+Comma-separated "Label|colour" pairs. colour is teal (NZ guideline or funded treatment), amber (notifiable/emergent), or slate (body system/category/prevalence). Example: BPAC NZ guideline|teal, Skin & soft tissue|slate, NZ incidence: common|slate. Include 1 teal badge for primary NZ guideline and 2-3 slate badges for body system, category, and prevalence.
+---FIELD_END
+
 ---FIELD_START: overview
-What it is, NZ prevalence/epidemiology, clinical significance. 2-3 paragraphs.
+2-3 paragraphs: what the condition is, NZ prevalence/epidemiology, and clinical significance to pharmacy. Then: blockquote > ⚡ **Key point:** [one sentence clinical pearl most relevant to a pharmacist]. Then any warning blockquotes if relevant (> ⚠️ **Note:** or > 🚨 **Warning:**).
 ---FIELD_END
 
 ---FIELD_START: pathophysiology
-Mechanism of disease. Focus on pharmacotherapy relevance.
+Brief 1-2 sentence summary of the core mechanism and how it drives symptoms. Then: ### Detailed pathophysiology, followed by 3-4 detailed paragraphs covering the molecular/cellular mechanism, relevant pathways, and how this informs pharmacotherapy choices.
 ---FIELD_END
 
 ---FIELD_START: clinical_features
-Signs and symptoms. Include severity table: Severity | Defining features | Typical picture (rows: Mild/Moderate/Severe)
+Signs and symptoms organised by category. Severity classification table MUST come first with EXACTLY these columns: Severity | Defining features | Typical presentation. Row labels MUST be exactly: Mild / Moderate / Severe (single capitalised word). Then list key signs and symptoms by category using h3 headings (e.g. ### Symptoms, ### Signs, ### Red flags).
 ---FIELD_END
 
 ---FIELD_START: non_pharmacological
-Lifestyle and non-drug interventions with evidence summary
+Non-drug interventions. Use ### h3 headings for each category (e.g. ### Diet & nutrition, ### Exercise, ### Smoking & alcohol, ### Weight management). Under each heading, provide 2-4 bullet points. Include evidence quality where known (e.g. *Strong evidence*, *Moderate evidence*, *Expert consensus*).
 ---FIELD_END
 
 ---FIELD_START: pharmacological
-Stepwise algorithm numbered by severity (e.g. **Step 1 (mild):**). Include special populations.
+Stepwise treatment algorithm. Use ### Step 1 (mild): / ### Step 2 (moderate): / ### Step 3 (severe): as h3 headings. Under each step, describe recommended agents, typical NZ doses, and rationale as bullet points. End with a ### Special populations section covering pregnancy, renal impairment, elderly, and paediatrics as relevant (bullet points per population).
 ---FIELD_END
 
 ---FIELD_START: drug_summary
-Markdown table: Drug | Usual dose range | Key notes. All first- and second-line agents.
+Markdown table with exactly these columns: Drug | Class | Usual dose range | Key notes. Include all first- and second-line agents. Drug column: plain drug name only (no formatting). Class column: short drug class name.
 ---FIELD_END
 
 ---FIELD_START: monitoring
-What to monitor, target values, frequency. Table or list.
+Markdown table with exactly these columns: Parameter | Target | Frequency | Action if outside target. Include clinical, biochemical, and symptom monitoring parameters relevant to this condition and its treatment.
 ---FIELD_END
 
 ---FIELD_START: counselling
-Markdown bullet list of patient counselling points
+8-12 markdown bullet points in plain language for patients. Cover: understanding the condition, how treatments work, lifestyle measures, side effects to watch for, when to seek help.
 ---FIELD_END
 
 ---FIELD_START: nz_notes
-BPAC NZ guidance, PHARMAC funding, NZ guidelines (Heart Foundation, Diabetes NZ, etc.), local context
+Short format: **Guideline:** [primary NZ guideline], **Funded treatments:** [key PHARMAC-funded agents], **Notifiable:** [yes/no — if relevant], **NZ context:** [1-2 NZ-specific practice pearls or local considerations].
 ---FIELD_END`,
 
   anatomy: (topic) => `Generate a complete PharmDC anatomy & physiology entry for: "${topic}".
