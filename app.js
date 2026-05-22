@@ -698,16 +698,51 @@ function postProcessTabContent() {
         summary.innerHTML = '<span class="moa-chevron">▾</span><span>Detailed mechanism of action</span>';
         details.appendChild(summary);
 
-        // Collect all paragraphs after h3 until next heading or end
+        // Collect all paragraphs after h3 until next heading, blockquote, or end
         let current = h3.nextElementSibling;
         const fragment = document.createDocumentFragment();
-        while (current && current.tagName !== 'H2' && current.tagName !== 'H3') {
-          const next = current.nextElementSibling;
-          fragment.appendChild(current.cloneNode(true));
-          current = next;
+        while (current && current.tagName !== 'H2' && current.tagName !== 'H3' && current.tagName !== 'BLOCKQUOTE') {
+          if (current.tagName === 'P') {
+            fragment.appendChild(current.cloneNode(true));
+          }
+          current = current.nextElementSibling;
         }
         details.appendChild(fragment);
         h3.replaceWith(details);
+      }
+    });
+  }
+
+  // Add severity styling to adverse effects table rows and interactions table rows
+  if (activeTab === 'adverse_effects' || activeTab === 'safety') {
+    panel.querySelectorAll('table tbody tr').forEach(row => {
+      const firstCell = row.querySelector('td');
+      if (!firstCell) return;
+      const severity = firstCell.textContent.toLowerCase().trim();
+      if (severity.includes('common')) row.classList.add('severity-common');
+      else if (severity.includes('serious')) row.classList.add('severity-serious');
+      else if (severity.includes('rare')) row.classList.add('severity-rare');
+    });
+  }
+
+  // Add visual severity bars to interactions table based on emoji/keyword
+  if (activeTab === 'interactions') {
+    panel.querySelectorAll('table tbody tr').forEach(row => {
+      const cells = row.querySelectorAll('td');
+      if (cells.length > 0) {
+        const severityCell = cells[2]; // Severity column
+        if (severityCell) {
+          const text = severityCell.textContent;
+          if (text.includes('🔴') || text.includes('CRITICAL')) {
+            severityCell.classList.add('sev-critical');
+          } else if (text.includes('🟠') || text.includes('HIGH')) {
+            severityCell.classList.add('sev-high');
+          } else if (text.includes('🟡') || text.includes('MODERATE')) {
+            severityCell.classList.add('sev-moderate');
+          } else if (text.includes('🟢') || text.includes('MINOR')) {
+            severityCell.classList.add('sev-minor');
+          }
+        }
       }
     });
   }

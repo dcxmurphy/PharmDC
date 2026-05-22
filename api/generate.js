@@ -24,11 +24,11 @@ One-line format: [Class] · [Role]
 ---FIELD_END
 
 ---FIELD_START: overview
-2-3 paragraphs on class, mechanism, indications. Start with blockquote: > ⚡ **Mechanism:** [one sentence]. Then: ### Detailed mechanism of action, followed by 3-5 paragraphs. Add warning blockquotes (> ⚠️ or > 🚨) if needed.
+1-2 paragraphs introducing the drug class, therapeutic role, and clinical significance FIRST. Then: blockquote > ⚡ **Mechanism:** [one-sentence summary]. Then: ### Detailed mechanism of action, followed by 3-4 detailed paragraphs. Then: any warning blockquotes (> ⚠️ **Note:** [warning] or > 🚨 **Warning:** [serious warning]) if relevant. Do NOT repeat warning information in the detailed mechanism.
 ---FIELD_END
 
 ---FIELD_START: dosing
-Markdown table: Indication | Starting dose | Maintenance dose | Maximum dose
+Markdown table: Indication | Starting dose | Maintenance dose | Maximum dose. Make Indication entries BOLD (e.g. **Type 2 diabetes**). Include all major indications.
 ---FIELD_END
 
 ---FIELD_START: renal_dosing
@@ -40,23 +40,23 @@ Markdown table: Status | Severity | Dose adjustment | Notes with emoji, OR: "No 
 ---FIELD_END
 
 ---FIELD_START: adverse_effects
-Markdown: **Common** heading with bullet list, **Serious** heading with bullet list.
+Markdown table: Severity | Effect | Action if it occurs. Severity is "Common" (>1%), "Serious", or "Rare". List common effects first, then serious/rare. Each row shows the effect and what to do about it.
 ---FIELD_END
 
 ---FIELD_START: contraindications
-### Absolute contraindications (bullet list), then ### Cautions and relative contraindications (bullet list)
+Two sections: ### Absolute contraindications with bullet list, then ### Cautions and relative contraindications with bullet list. Keep lists simple with one item per line.
 ---FIELD_END
 
 ---FIELD_START: interactions
-Markdown table: Drug | Mechanism | Significance | Management
+Markdown table: Drug | Mechanism | Severity | Management. Severity column MUST start with severity keyword for visual indication: "🔴 CRITICAL" (major risk, contraindicated), "🟠 HIGH" (significant interaction, dose adjustment), "🟡 MODERATE" (monitor), or "🟢 MINOR". Sort rows by severity (CRITICAL first, then HIGH, MODERATE, MINOR).
 ---FIELD_END
 
 ---FIELD_START: counselling
-8-12 bullet points in plain language
+REQUIRED. 8-12 bullet points in plain language. If no specific counselling points, provide general guidance on how to take the drug, common side effects, what to watch for, and when to contact doctor.
 ---FIELD_END
 
 ---FIELD_START: nz_notes
-**Funding:** [status], **Special Authority:** [criteria], **Schedule:** [class], **Formulations:** [list], **Practice notes:** [pearls]
+REQUIRED. **Funding:** [PHARMAC status], **Special Authority:** [criteria or None], **Schedule:** [Rx/Pharmacist-only/Restricted/General sale], **Formulations:** [available in NZ], **Practice notes:** [NZ guidance/pearls]. Never leave this blank — always provide at least funding and scheduling info.
 ---FIELD_END
 
 ---FIELD_START: body_systems

@@ -889,6 +889,20 @@ input, textarea, select { font-family: inherit; font-size: inherit; }
 .markdown-content tr:last-child td { border-bottom: none; }
 .markdown-content tbody tr:hover td { background: #f9fffd; }
 
+/* Adverse effects & interactions severity styling */
+.markdown-content tbody tr.severity-common td { background: #f1f5f9; }
+.markdown-content tbody tr.severity-common td:first-child { border-left: 3px solid #64748b; }
+.markdown-content tbody tr.severity-serious td { background: #fee2e2; }
+.markdown-content tbody tr.severity-serious td:first-child { border-left: 3px solid #ef4444; }
+.markdown-content tbody tr.severity-rare td { background: #f5f3ff; }
+.markdown-content tbody tr.severity-rare td:first-child { border-left: 3px solid #a855f7; }
+
+/* Interaction severity indicators */
+.markdown-content td.sev-critical { background: #fee2e2; font-weight: 500; }
+.markdown-content td.sev-high { background: #fed7aa; }
+.markdown-content td.sev-moderate { background: #fef3c7; }
+.markdown-content td.sev-minor { background: #dcfce7; }
+
 /* Renal / hepatic row tints — applied via JS after render */
 .markdown-content .row-green td { background: #f0fdf4; }
 .markdown-content .row-green td:first-child { border-left: 3px solid #22c55e; }
