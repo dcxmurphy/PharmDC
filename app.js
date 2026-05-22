@@ -687,6 +687,31 @@ function postProcessTabContent() {
     else if (text.startsWith('🚨')) bq.classList.add('callout-red');
   });
 
+  // Transform "Detailed mechanism of action" h3 + paragraphs into expandable details element (Overview tab)
+  if (activeTab === 'overview') {
+    const h3s = panel.querySelectorAll('h3');
+    h3s.forEach(h3 => {
+      if (h3.textContent.toLowerCase().includes('detailed mechanism')) {
+        const details = document.createElement('details');
+        details.className = 'moa-details';
+        const summary = document.createElement('summary');
+        summary.innerHTML = '<span class="moa-chevron">▾</span><span>Detailed mechanism of action</span>';
+        details.appendChild(summary);
+
+        // Collect all paragraphs after h3 until next heading or end
+        let current = h3.nextElementSibling;
+        const fragment = document.createDocumentFragment();
+        while (current && current.tagName !== 'H2' && current.tagName !== 'H3') {
+          const next = current.nextElementSibling;
+          fragment.appendChild(current.cloneNode(true));
+          current = next;
+        }
+        details.appendChild(fragment);
+        h3.replaceWith(details);
+      }
+    });
+  }
+
   // Wrap contraindications and cautions sections in styled boxes (Safety tab only)
   if (activeTab === 'safety') {
     panel.querySelectorAll('h3').forEach(h3 => {

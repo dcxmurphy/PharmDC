@@ -961,6 +961,21 @@ input, textarea, select { font-family: inherit; font-size: inherit; }
 }
 .markdown-content details > p:last-of-type { margin-bottom: 0; }
 
+/* MOA details dropdown (specific styling) */
+.markdown-content .moa-details summary {
+  font-weight: 500;
+  color: #0F6E56;
+}
+.moa-chevron {
+  font-size: 16px;
+  transition: transform 0.2s;
+  line-height: 1;
+  display: inline-block;
+}
+.markdown-content .moa-details[open] .moa-chevron {
+  transform: rotate(180deg);
+}
+
 /* Contraindications & cautions boxes */
 .contra-box,
 .caution-box {
