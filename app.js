@@ -55,7 +55,6 @@ const SECTIONS = {
       { key: 'safety',        label: 'Safety' },
       { key: 'interactions',      label: 'Interactions' },
       { key: 'counselling',       label: 'Counselling' },
-      { key: 'nz_notes',          label: 'NZ Notes' },
     ],
     suggestions: ['Warfarin', 'Metformin', 'Atorvastatin', 'Ramipril', 'Amlodipine', 'Omeprazole'],
   },
@@ -551,6 +550,24 @@ function renderEmpty(section) {
    RENDER: ENTRY DETAIL
    ============================================================ */
 
+function renderHeaderBadges(entry) {
+  // Parse header_badges field: "Funded|teal, Prescription only|amber, T2DM|slate"
+  if (entry.content?.header_badges) {
+    return entry.content.header_badges
+      .split(',')
+      .map(s => s.trim())
+      .filter(Boolean)
+      .map(pair => {
+        const [label, colour] = pair.split('|').map(s => s.trim());
+        const cls = colour === 'teal' ? 'badge-teal' : colour === 'amber' ? 'badge-amber' : 'badge-slate';
+        return `<span class="entry-badge ${cls}">${esc(label)}</span>`;
+      })
+      .join('');
+  }
+  // Fallback: show body system tags as slate badges
+  return (entry.tags || []).map(t => `<span class="entry-badge badge-slate">${esc(t)}</span>`).join('');
+}
+
 async function renderEntry(section, entryId) {
   const cfg = SECTIONS[section];
   let entry;
@@ -598,7 +615,7 @@ async function renderEntry(section, entryId) {
           <div class="entry-main-title">${esc(e.title)}</div>
           ${e.content?.drug_class ? `<div class="entry-drug-subtitle">${esc(e.content.drug_class)}</div>` : ''}
           <div class="entry-meta">
-            ${(e.tags || []).map(t => `<span class="entry-tag-badge">${esc(t)}</span>`).join('')}
+            ${renderHeaderBadges(e)}
           </div>
           <div class="entry-actions">
             <button class="btn-icon ${e.is_favourite ? 'active' : ''}" id="fav-btn"
@@ -667,24 +684,17 @@ function postProcessTabContent() {
 
   const activeTab = document.querySelector('.tab-btn.active')?.dataset.tab;
 
-  // Colour-code renal/hepatic table rows by 🟢🟡🟠🔴 emoji (only in renal_hepatic tab)
-  if (activeTab === 'renal_hepatic') {
-    panel.querySelectorAll('tbody tr').forEach(row => {
-      const text = row.textContent;
-      if      (text.includes('🟢')) row.classList.add('row-green');
-      else if (text.includes('🟡')) row.classList.add('row-amber');
-      else if (text.includes('🟠')) row.classList.add('row-orange');
-      else if (text.includes('🔴')) row.classList.add('row-red');
-    });
-  }
+  // Row tinting for renal/hepatic is now handled in the pill-badge block below
 
-  // Wrap tables in a div so border-radius works (border-collapse: collapse prevents it on the table itself)
+  // Wrap tables in a div so border-radius works; add t-plain class for non-dosing tabs
   panel.querySelectorAll('table').forEach(table => {
     if (table.parentElement.classList.contains('table-wrap')) return;
     const wrap = document.createElement('div');
     wrap.className = 'table-wrap';
     table.parentNode.insertBefore(wrap, table);
     wrap.appendChild(table);
+    // Non-dosing tabs get muted grey header
+    if (activeTab !== 'dosing') table.classList.add('t-plain');
   });
 
   // Classify blockquotes by lead emoji — amber for ⚠️, red for 🚨, default teal for everything else
@@ -705,42 +715,57 @@ function postProcessTabContent() {
         summary.innerHTML = '<span class="moa-chevron">▾</span><span>Detailed mechanism of action</span>';
         details.appendChild(summary);
 
-        // Collect all paragraphs after h3 until next heading or blockquote, and MOVE them
+        // Wrap all following paragraphs in a single div (prevents each paragraph getting its own box from CSS)
+        const bodyDiv = document.createElement('div');
         let current = h3.nextElementSibling;
         while (current && current.tagName !== 'H2' && current.tagName !== 'H3' && current.tagName !== 'BLOCKQUOTE') {
           if (current.tagName === 'P') {
-            const next = current.nextElementSibling; // Save next sibling BEFORE moving
-            details.appendChild(current);
+            const next = current.nextElementSibling; // Save BEFORE moving
+            bodyDiv.appendChild(current);
             current = next;
           } else {
             current = current.nextElementSibling;
           }
         }
+        details.appendChild(bodyDiv);
         h3.replaceWith(details);
       }
     });
   }
 
-  // Add pill badge styling to renal/hepatic Status column (find by emoji indicators)
+  // Renal/hepatic table: bold first column, add pill badges to Status column by text
   if (activeTab === 'renal_hepatic') {
     panel.querySelectorAll('table tbody tr').forEach(row => {
       const cells = row.querySelectorAll('td');
-      // Find the Status column by looking for cells with emoji indicators
-      cells.forEach((cell, index) => {
-        const text = cell.textContent.trim();
-        let pillClass = '';
 
-        if (text.includes('🟢')) pillClass = 'pill-green';
-        else if (text.includes('🟡')) pillClass = 'pill-amber';
-        else if (text.includes('🟠')) pillClass = 'pill-orange';
-        else if (text.includes('🔴')) pillClass = 'pill-red';
+      // Bold the first column (eGFR / hepatic function values)
+      if (cells[0]) cells[0].style.fontWeight = '500';
+
+      // Find the Status cell and wrap in coloured pill — detect by text content
+      cells.forEach(cell => {
+        const text = cell.textContent.trim().toLowerCase();
+        let pillClass = '';
+        let displayText = cell.textContent.trim();
+
+        if (text === 'normal dose') pillClass = 'pill-green';
+        else if (text === 'use with caution') pillClass = 'pill-amber';
+        else if (text === 'reduce dose') pillClass = 'pill-orange';
+        else if (text === 'avoid') pillClass = 'pill-orange';
+        else if (text === 'contraindicated') pillClass = 'pill-red';
 
         if (pillClass) {
           const pill = document.createElement('span');
           pill.className = `pill ${pillClass}`;
-          pill.textContent = text;
+          pill.textContent = displayText;
           cell.innerHTML = '';
           cell.appendChild(pill);
+
+          // Apply row tint based on status
+          const row = cell.parentElement;
+          if (pillClass === 'pill-green') row.classList.add('row-green');
+          else if (pillClass === 'pill-amber') row.classList.add('row-amber');
+          else if (pillClass === 'pill-orange') row.classList.add('row-orange');
+          else if (pillClass === 'pill-red') row.classList.add('row-red');
         }
       });
     });

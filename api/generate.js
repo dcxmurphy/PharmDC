@@ -23,6 +23,10 @@ OUTPUT FORMAT — Use this exact delimiter structure. NO JSON, NO CODE FENCES, N
 One-line format: [Class] · [Role]
 ---FIELD_END
 
+---FIELD_START: header_badges
+Comma-separated list of "Label|colour" pairs for display badges. colour is teal (funded/subsidised), amber (prescription/controlled), or slate (indications/conditions). Example: Funded|teal, Prescription only|amber, Type 2 diabetes|slate, PCOS|slate. Include funding status, scheduling, and 2-3 key indications.
+---FIELD_END
+
 ---FIELD_START: overview
 1-2 paragraphs introducing the drug class, therapeutic role, and clinical significance FIRST. Then: blockquote > ⚡ **Mechanism:** [one-sentence summary]. Then: ### Detailed mechanism of action, followed by 3-4 detailed paragraphs explaining HOW the drug works. Then: any warning blockquotes (> ⚠️ **Note:** [warning] or > 🚨 **Warning:** [serious warning]) if relevant. Do NOT repeat warning information in the detailed mechanism.
 ---FIELD_END
@@ -32,11 +36,11 @@ Markdown table: Indication | Starting dose | Maintenance dose | Maximum dose. Ma
 ---FIELD_END
 
 ---FIELD_START: renal_dosing
-Markdown table: Status | eGFR | Dose adjustment | Notes. MUST start Status cell with 🟢🟡🟠🔴 emoji and include text like "🟢 Normal dose" or "🔴 Avoid if eGFR <30".
+Markdown table with exactly these 4 columns in this order: eGFR (mL/min/1.73m²) | Status | Recommendation | Notes. The Status column must contain ONLY plain text — no emoji: use "Normal dose", "Use with caution", "Reduce dose", "Avoid", or "Contraindicated".
 ---FIELD_END
 
 ---FIELD_START: hepatic_dosing
-Markdown table: Status | Severity | Dose adjustment | Notes. MUST include emoji in Status cells (e.g. "🟢 Normal dose"), OR if not applicable: "No clinically significant adjustment required"
+Markdown table with exactly these 4 columns in this order: Hepatic function | Status | Recommendation | Notes. Status must be PLAIN TEXT only — no emoji: "Normal dose", "Use with caution", "Avoid", or "Contraindicated". OR if not applicable: "No clinically significant adjustment required"
 ---FIELD_END
 
 ---FIELD_START: adverse_effects
