@@ -618,12 +618,8 @@ async function renderEntry(section, entryId) {
             ${renderHeaderBadges(e)}
           </div>
           <div class="entry-actions">
-            <button class="btn-icon ${e.is_favourite ? 'active' : ''}" id="fav-btn"
-              title="${e.is_favourite ? 'Remove from favourites' : 'Add to favourites'}">
-              ${e.is_favourite ? '★' : '☆'}
-            </button>
-            <button class="btn-icon" id="regen-btn" title="Regenerate entry">↻</button>
-            <button class="btn-icon btn-danger" id="del-btn" title="Delete entry">✕</button>
+            <button class="btn-action" id="regen-btn">↻ Update</button>
+            <button class="btn-action btn-action-danger" id="del-btn">✕ Delete</button>
           </div>
         </div>
 
@@ -650,14 +646,6 @@ async function renderEntry(section, entryId) {
         document.getElementById('tab-panel').innerHTML = md(getTabContent(e, btn.dataset.tab));
         postProcessTabContent();
       });
-    });
-
-    document.getElementById('fav-btn')?.addEventListener('click', async () => {
-      await toggleFav(e.id, e.is_favourite);
-      e.is_favourite = !e.is_favourite;
-      state.entriesCache[section] = null;
-      document.getElementById('main-content').innerHTML = build(e);
-      attach(e);
     });
 
     document.getElementById('regen-btn')?.addEventListener('click', () => openModal(section, e.title, e.id));
