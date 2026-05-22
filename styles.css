@@ -782,6 +782,43 @@ input, textarea, select { font-family: inherit; font-size: inherit; }
 .entry-footer { margin-top: 28px; padding-top: 14px; border-top: 0.5px solid var(--border); }
 .entry-date { font-size: 12px; color: var(--text-muted); }
 
+/* Counselling card grid */
+.counsel-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.counsel-card {
+  background: var(--bg);
+  border: 0.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  font-size: 13.5px;
+  color: var(--text);
+  line-height: 1.55;
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+.counsel-check {
+  width: 18px;
+  height: 18px;
+  min-width: 18px;
+  border: 0.5px solid var(--accent-mid);
+  border-radius: 4px;
+  background: var(--accent-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 2px;
+  color: var(--accent);
+  font-size: 10px;
+}
+@media (max-width: 600px) {
+  .counsel-grid { grid-template-columns: 1fr; }
+}
+
 /* ============================================================
    MARKDOWN CONTENT
    ============================================================ */

@@ -50,10 +50,9 @@ const SECTIONS = {
     azFilter: true,
     tabs: [
       { key: 'overview',          label: 'Overview' },
-      { key: 'dosing',            label: 'Dosing' },
-      { key: 'renal_dosing',      label: 'Renal Dosing' },
-      { key: 'hepatic_dosing',    label: 'Hepatic Dosing' },
-      { key: 'safety',            label: 'Safety' },
+      { key: 'dosing',         label: 'Dosing' },
+      { key: 'renal_hepatic', label: 'Renal / Hepatic' },
+      { key: 'safety',        label: 'Safety' },
       { key: 'interactions',      label: 'Interactions' },
       { key: 'counselling',       label: 'Counselling' },
       { key: 'nz_notes',          label: 'NZ Notes' },
@@ -562,8 +561,15 @@ async function renderEntry(section, entryId) {
   recordView(entryId);
 
   function getTabContent(e, tab) {
+    if (tab === 'renal_hepatic') {
+      const renal    = e.content?.renal_dosing    ?? '';
+      const hepatic  = e.content?.hepatic_dosing  ?? '';
+      const rSection = renal   ? '### Renal dosing\n\n'   + renal   : '';
+      const hSection = hepatic ? '### Hepatic dosing\n\n' + hepatic : '';
+      return rSection + (rSection && hSection ? '\n\n---\n\n' : '') + hSection;
+    }
     if (tab === 'safety') {
-      const ae = e.content?.adverse_effects ?? '';
+      const ae = e.content?.adverse_effects   ?? '';
       const ci = e.content?.contraindications ?? '';
       return ae + (ae && ci ? '\n\n---\n\n' : '') + ci;
     }
@@ -653,6 +659,8 @@ async function renderEntry(section, entryId) {
 function postProcessTabContent() {
   const panel = document.getElementById('tab-panel');
   if (!panel) return;
+
+  // Colour-code renal/hepatic table rows by 🟢🟡🟠🔴 emoji
   panel.querySelectorAll('tbody tr').forEach(row => {
     const text = row.textContent;
     if      (text.includes('🟢')) row.classList.add('row-green');
@@ -660,6 +668,22 @@ function postProcessTabContent() {
     else if (text.includes('🟠')) row.classList.add('row-orange');
     else if (text.includes('🔴')) row.classList.add('row-red');
   });
+
+  // Transform counselling bullet list → two-column checkbox card grid
+  const activeTab = document.querySelector('.tab-btn.active')?.dataset.tab;
+  if (activeTab === 'counselling') {
+    panel.querySelectorAll('ul').forEach(ul => {
+      const grid = document.createElement('div');
+      grid.className = 'counsel-grid';
+      ul.querySelectorAll('li').forEach(li => {
+        const card = document.createElement('div');
+        card.className = 'counsel-card';
+        card.innerHTML = `<span class="counsel-check">✓</span><span>${li.innerHTML}</span>`;
+        grid.appendChild(card);
+      });
+      ul.replaceWith(grid);
+    });
+  }
 }
 
 async function doSystemSearch(systemName) {
