@@ -56,7 +56,7 @@ ALWAYS GENERATE. 8-12 markdown bullet points in plain language for patients. Cov
 ---FIELD_END
 
 ---FIELD_START: nz_notes
-ALWAYS GENERATE. **Funding:** [PHARMAC subsidy status], **Special Authority:** [criteria or "None"], **Schedule:** [Rx/Pharmacist-only/Restricted/General sale], **Formulations:** [available in NZ], **Practice notes:** [NZ guidance/pearls]. Always provide funding and scheduling.
+ALWAYS GENERATE. Short format: **Funding:** [status], **Schedule:** [Rx/other], **SA:** [yes/no], **Formulations:** [NZ available]. One sentence max per section.
 ---FIELD_END
 
 ---FIELD_START: body_systems

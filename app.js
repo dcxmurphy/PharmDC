@@ -667,14 +667,16 @@ function postProcessTabContent() {
 
   const activeTab = document.querySelector('.tab-btn.active')?.dataset.tab;
 
-  // Colour-code renal/hepatic table rows by 🟢🟡🟠🔴 emoji
-  panel.querySelectorAll('tbody tr').forEach(row => {
-    const text = row.textContent;
-    if      (text.includes('🟢')) row.classList.add('row-green');
-    else if (text.includes('🟡')) row.classList.add('row-amber');
-    else if (text.includes('🟠')) row.classList.add('row-orange');
-    else if (text.includes('🔴')) row.classList.add('row-red');
-  });
+  // Colour-code renal/hepatic table rows by 🟢🟡🟠🔴 emoji (only in renal_hepatic tab)
+  if (activeTab === 'renal_hepatic') {
+    panel.querySelectorAll('tbody tr').forEach(row => {
+      const text = row.textContent;
+      if      (text.includes('🟢')) row.classList.add('row-green');
+      else if (text.includes('🟡')) row.classList.add('row-amber');
+      else if (text.includes('🟠')) row.classList.add('row-orange');
+      else if (text.includes('🔴')) row.classList.add('row-red');
+    });
+  }
 
   // Wrap tables in a div so border-radius works (border-collapse: collapse prevents it on the table itself)
   panel.querySelectorAll('table').forEach(table => {
@@ -703,29 +705,29 @@ function postProcessTabContent() {
         summary.innerHTML = '<span class="moa-chevron">▾</span><span>Detailed mechanism of action</span>';
         details.appendChild(summary);
 
-        // Collect all paragraphs after h3 until next heading, blockquote, or end, and MOVE them (not clone)
+        // Collect all paragraphs after h3 until next heading or blockquote, and MOVE them
         let current = h3.nextElementSibling;
-        const toRemove = [];
         while (current && current.tagName !== 'H2' && current.tagName !== 'H3' && current.tagName !== 'BLOCKQUOTE') {
           if (current.tagName === 'P') {
-            toRemove.push(current);
+            const next = current.nextElementSibling; // Save next sibling BEFORE moving
             details.appendChild(current);
+            current = next;
+          } else {
+            current = current.nextElementSibling;
           }
-          current = current.nextElementSibling;
         }
         h3.replaceWith(details);
       }
     });
   }
 
-  // Add pill badge styling to renal/hepatic Status column (second column in that table)
+  // Add pill badge styling to renal/hepatic Status column (find by emoji indicators)
   if (activeTab === 'renal_hepatic') {
     panel.querySelectorAll('table tbody tr').forEach(row => {
       const cells = row.querySelectorAll('td');
-      // Status is the 2nd column (index 1)
-      if (cells[1]) {
-        const statusCell = cells[1];
-        const text = statusCell.textContent.trim();
+      // Find the Status column by looking for cells with emoji indicators
+      cells.forEach((cell, index) => {
+        const text = cell.textContent.trim();
         let pillClass = '';
 
         if (text.includes('🟢')) pillClass = 'pill-green';
@@ -737,10 +739,10 @@ function postProcessTabContent() {
           const pill = document.createElement('span');
           pill.className = `pill ${pillClass}`;
           pill.textContent = text;
-          statusCell.innerHTML = '';
-          statusCell.appendChild(pill);
+          cell.innerHTML = '';
+          cell.appendChild(pill);
         }
-      }
+      });
     });
   }
 
@@ -837,7 +839,7 @@ function postProcessTabContent() {
     });
   }
 
-  // NZ Notes tab: wrap content in structured card with header, body, and funding strip
+  // NZ Notes tab: wrap content in structured card with header and body
   if (activeTab === 'nz_notes') {
     const card = document.createElement('div');
     card.className = 'nz-notes-card';
@@ -852,12 +854,6 @@ function postProcessTabContent() {
 
     card.appendChild(header);
     card.appendChild(body);
-
-    // Add funding strip at bottom
-    const fundingStrip = document.createElement('div');
-    fundingStrip.className = 'funding-strip';
-    fundingStrip.innerHTML = '<span class="fc fc-funded">Fully subsidised</span><span class="fc fc-rx">Prescription only</span><span class="fc fc-sa">No Special Authority</span>';
-    card.appendChild(fundingStrip);
 
     panel.appendChild(card);
   }
