@@ -47,6 +47,7 @@ const SECTIONS = {
     color: '#1D9E75',
     abbr: 'Rx',
     description: 'Monographs, dosing, interactions & NZ funding',
+    icon: '<path d="M2 4h12a1 1 0 011 1v8a1 1 0 01-1 1H2a1 1 0 01-1-1V5a1 1 0 011-1zm2 2v2m4-2v4m4-4v2" stroke="currentColor" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round"/>',
     azFilter: true,
     tabs: [
       { key: 'overview',          label: 'Overview' },
@@ -65,6 +66,7 @@ const SECTIONS = {
     color: '#1D9E75',
     abbr: 'Dx',
     description: 'Pathophysiology, stepwise therapeutics & monitoring',
+    icon: '<path d="M8 2C4.7 2 2 4.7 2 8s2.7 6 6 6 6-2.7 6-6-2.7-6-6-6zm0 2v4m0 4v.1" stroke="currentColor" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round"/><path d="M6 8h4" stroke="currentColor" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round"/>',
     azFilter: false,
     tabs: [
       { key: 'overview',            label: 'Overview' },
@@ -86,6 +88,7 @@ const SECTIONS = {
     color: '#1D9E75',
     abbr: 'A&P',
     description: 'Body systems, key structures & clinical relevance',
+    icon: '<path d="M8 2L3 6v3c0 3.3 2 5.5 5 6.2 3-0.7 5-2.9 5-6.2V6L8 2z" stroke="currentColor" stroke-width="1.35" stroke-linejoin="round"/><circle cx="8" cy="8.5" r="1.5" fill="currentColor"/>',
     azFilter: false,
     tabs: [
       { key: 'overview',               label: 'Overview' },
@@ -103,6 +106,7 @@ const SECTIONS = {
     color: '#1D9E75',
     abbr: 'Sk',
     description: 'Formulas, calculations, worked examples & TDM',
+    icon: '<path d="M3 3h10a1 1 0 011 1v8a1 1 0 01-1 1H3a1 1 0 01-1-1V4a1 1 0 011-1z" stroke="currentColor" stroke-width="1.35" stroke-linejoin="round"/><path d="M5 6h6M5 9h4M5 12h6" stroke="currentColor" stroke-width="1.35" stroke-linecap="round"/>',
     azFilter: false,
     tabs: [
       { key: 'purpose',        label: 'Purpose' },
@@ -122,6 +126,7 @@ const SECTIONS = {
     color: '#1D9E75',
     abbr: 'Law',
     description: 'Pharmacy law, scheduling & practice rules',
+    icon: '<path d="M8 2L3 5v2c0 2.8 1.5 5 5 5.8 3.5-0.8 5-3 5-5.8V5L8 2z" stroke="currentColor" stroke-width="1.35" stroke-linejoin="round"/><path d="M8 7v3M6.5 9h3" stroke="currentColor" stroke-width="1.35" stroke-linecap="round"/>',
     azFilter: false,
     tabs: [
       { key: 'overview',         label: 'Overview' },
@@ -223,7 +228,7 @@ function showApp() {
    ROUTING
    ============================================================ */
 
-function route() {
+async function route() {
   if (!state.user) return;
 
   const hash = window.location.hash.replace('#', '') || 'home';
@@ -237,7 +242,7 @@ function route() {
 
   if (isHome) {
     document.getElementById('main-content').innerHTML = '';
-    renderHome();
+    await renderHome();
   } else if (SECTIONS[section] && entryId) {
     setLoading();
     renderEntry(section, entryId);
@@ -246,7 +251,7 @@ function route() {
     renderList(section);
   } else {
     document.getElementById('main-content').innerHTML = '';
-    renderHome();
+    await renderHome();
   }
 }
 
@@ -387,9 +392,11 @@ async function renderHome() {
       <div class="home-sections-grid">
         ${Object.entries(SECTIONS).map(([key, cfg]) => `
           <a class="home-section-tile" href="#${key}">
-            <div class="hst-count">${counts[key] ?? 0}</div>
+            <div class="hst-icon-wrap">
+              <svg width="28" height="28" viewBox="0 0 16 16" fill="none" class="hst-icon">${cfg.icon}</svg>
+            </div>
             <div class="hst-name">${cfg.label}</div>
-            <div class="hst-desc">${cfg.description}</div>
+            <div class="hst-accent-line"></div>
           </a>
         `).join('')}
       </div>
@@ -411,12 +418,8 @@ async function renderHome() {
     </div>
   `;
 
-  document.getElementById('home-search-input').addEventListener('input', e => {
-    const q = e.target.value.trim();
-    if (q.length >= 2) doSearch(q);
-  });
   document.getElementById('home-search-bar').addEventListener('click', () => {
-    document.getElementById('home-search-input').focus();
+    openSearchOverlay();
   });
 
   document.querySelectorAll('.system-tile').forEach(tile => {

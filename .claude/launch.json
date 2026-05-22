@@ -2,9 +2,9 @@
   "version": "0.0.1",
   "configurations": [
     {
-      "name": "designs",
+      "name": "PharmDC",
       "runtimeExecutable": "python3",
-      "runtimeArgs": ["-m", "http.server", "4321", "--directory", "designs"],
+      "runtimeArgs": ["-m", "http.server", "4321"],
       "port": 4321
     }
   ]
