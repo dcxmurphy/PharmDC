@@ -687,6 +687,39 @@ function postProcessTabContent() {
     else if (text.startsWith('🚨')) bq.classList.add('callout-red');
   });
 
+  // Wrap contraindications and cautions sections in styled boxes (Safety tab only)
+  if (activeTab === 'safety') {
+    panel.querySelectorAll('h3').forEach(h3 => {
+      const text = h3.textContent.trim().toLowerCase();
+      let nextUl = h3.nextElementSibling;
+      while (nextUl && nextUl.tagName !== 'UL') nextUl = nextUl.nextElementSibling;
+
+      if (!nextUl) return;
+
+      if (text.includes('absolute') && text.includes('contraindication')) {
+        const box = document.createElement('div');
+        box.className = 'contra-box';
+        const title = document.createElement('div');
+        title.className = 'contra-box-title';
+        title.textContent = 'Absolute contraindications';
+        box.appendChild(title);
+        box.appendChild(nextUl.cloneNode(true));
+        nextUl.replaceWith(box);
+        h3.style.display = 'none';
+      } else if (text.includes('caution') || text.includes('relative')) {
+        const box = document.createElement('div');
+        box.className = 'caution-box';
+        const title = document.createElement('div');
+        title.className = 'caution-box-title';
+        title.textContent = 'Cautions / relative contraindications';
+        box.appendChild(title);
+        box.appendChild(nextUl.cloneNode(true));
+        nextUl.replaceWith(box);
+        h3.style.display = 'none';
+      }
+    });
+  }
+
   // NZ Notes tab: wrap content in a teal card with header
   if (activeTab === 'nz_notes') {
     const card = document.createElement('div');
